@@ -2426,6 +2426,7 @@ button,
 .pv-v-band {
   display: flex;
   flex-direction: row-reverse;
+  align-items: stretch;
   border: 1.5px solid #333;
   margin-bottom: 0.75rem;
   background: #fff;
@@ -2433,10 +2434,12 @@ button,
 
 .pv-v-col {
   flex: 1 1 0;
-  min-width: 34px;
+  width: 0;
+  min-width: 0;
   border-left: 1px solid #555;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .pv-v-col:last-child {
@@ -2456,19 +2459,25 @@ button,
 }
 
 .pv-v-ans {
-  min-height: 68px;
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  height: 5.6rem;
   border-bottom: 1px solid #555;
   writing-mode: vertical-rl;
   text-orientation: upright;
   white-space: nowrap;
+  line-height: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.05rem;
-  padding: 0.2rem 0;
+  padding: 0.15rem 0;
+  overflow: hidden;
 }
 
 .pv-v-prompt {
+  flex: 1 1 auto;
+  min-width: 0;
   min-height: 150px;
   writing-mode: vertical-rl;
   text-orientation: upright;
@@ -2477,13 +2486,15 @@ button,
   justify-content: flex-start;
   padding: 0.45rem 0.1rem;
   font-size: 1.1rem;
-  line-height: 1.25;
+  line-height: 1.15;
   letter-spacing: 0.04em;
+  overflow: hidden;
 }
 
 /* 橫向文字預覽表格 */
 .pv-h-table {
   width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
   border: 1.5px solid #333;
 }
@@ -2504,10 +2515,12 @@ button,
 }
 
 .pv-h-ans {
-  width: 90px;
+  width: 7.5rem;
+  max-width: 7.5rem;
   text-align: center;
   font-size: 1.1rem;
   white-space: nowrap;
+  overflow: hidden;
 }
 
 .pv-h-prompt {

@@ -2066,12 +2066,14 @@
       return buildUprightStackParagraphs([{ text: before }], fontSizeHalfPt);
     }
     const targetOpts = { text: target, bold: true, underline: bracketStyle === 'corner_underline' };
+    // 網頁直排（vertical-rl）會把「」顯示成直排字形 ﹁﹂，橫筆與國字同寬。
+    // Word 直書是逐字直立，若仍放橫排「」，標楷體筆畫只剩約三分之一寬。
     return buildUprightStackParagraphs(
       [
         { text: before },
-        { text: '「' },
+        { text: '﹁' },
         targetOpts,
-        { text: '」' },
+        { text: '﹂' },
         { text: after }
       ],
       fontSizeHalfPt
