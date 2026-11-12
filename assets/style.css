@@ -1317,6 +1317,10 @@ body {
   margin-top: 2rem;
 }
 
+.site-footer p {
+  margin: 0.2rem 0;
+}
+
 /* 桌機預設隱藏行動端專用按鈕 */
 .mobile-only-btn {
   display: none;

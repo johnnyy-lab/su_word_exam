@@ -92,7 +92,7 @@
       qType: 'balanced', // 'balanced' | 'pronunciation' | 'character'
       qSource: 'all', // 'all' | 'unpracticed' | 'weak'
       qCount: 100,
-      title: '全國語文競賽 國語字音字形測驗卷（高中學生組）',
+      title: '國立竹山高中 國語字音字形測驗卷（高中學生組）',
       paperSize: 'A4', // 'A4' | 'B4' | 'A3'
       orientation: 'landscape', // 'landscape' | 'portrait'
       textDir: 'vertical', // 'vertical' | 'horizontal'
@@ -3144,7 +3144,7 @@
     const docxTitleInput = document.getElementById('docx-title-input');
     if (docxTitleInput) {
       docxTitleInput.addEventListener('input', () => {
-        state.docx.title = docxTitleInput.value.trim() || '全國語文競賽 國語字音字形測驗卷（高中學生組）';
+        state.docx.title = docxTitleInput.value.trim() || '國立竹山高中 國語字音字形測驗卷（高中學生組）';
         renderDocxPaperPreview();
       });
     }
