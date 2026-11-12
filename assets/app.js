@@ -1811,56 +1811,65 @@
     const yinList = sampledQuestions.filter((q) => q.type === 'pronunciation');
     const xingList = sampledQuestions.filter((q) => q.type === 'character');
 
+    if (textDir === 'vertical') {
+      const plan = buildVerticalPagePlan(sampledQuestions, paperSize, orientation);
+      const roleTag = isTeacher ? '【教師標準解答卷】' : '【學生作答卷】';
+      const ratio = `${plan.box.pageW} / ${plan.box.pageH}`;
+      const titleText = `${customTitle}　　${roleTag}`;
+      const colCount = plan.colsPlan.cols;
+
+      const pagesHtml = plan.pages.map((page) => {
+        const groups = [];
+        page.bands.forEach((band) => {
+          const last = groups[groups.length - 1];
+          if (!last || last.label !== band.label) groups.push({ label: band.label, bands: [band] });
+          else last.bands.push(band);
+        });
+        const sectionsHtml = groups.map((group) => {
+          const bandsHtml = group.bands.map((band) => {
+            let colsHtml = '';
+            for (let i = 0; i < colCount; i++) {
+              const q = band.items[i];
+              const seqStr = q ? String(band.start + i + 1).padStart(3, '0') : '';
+              if (q) {
+                const ansHtml = isTeacher ? `<span class="pv-ans-filled">${escapeHtml(q.answer)}</span>` : '';
+                colsHtml += `
+                  <div class="pv-v-col">
+                    <div class="pv-v-num">${seqStr}</div>
+                    <div class="pv-v-ans">${ansHtml}</div>
+                    <div class="pv-v-prompt">${formatDocxPreviewPromptHtml(q)}</div>
+                  </div>`;
+              } else {
+                colsHtml += `
+                  <div class="pv-v-col empty">
+                    <div class="pv-v-num"></div>
+                    <div class="pv-v-ans"></div>
+                    <div class="pv-v-prompt"></div>
+                  </div>`;
+              }
+            }
+            return `<div class="pv-v-band">${colsHtml}</div>`;
+          }).join('');
+          return `<div class="pv-v-sec" style="flex:${group.bands.length} 1 0"><div class="pv-v-bands">${bandsHtml}</div><div class="pv-v-sec-label">${escapeHtml(group.label)}</div></div>`;
+        }).join('');
+        const qPt = page.fit.sz / 2;
+        return `
+          <div class="pv-v-page" style="aspect-ratio:${ratio};--pv-q:${qPt}pt">
+            <div class="pv-v-main">${sectionsHtml}</div>
+            <div class="pv-v-name">${escapeHtml(VERTICAL_NAME_TEXT)}</div>
+            <div class="pv-v-title">${escapeHtml(titleText)}</div>
+          </div>`;
+      }).join('');
+
+      sheetEl.innerHTML = pagesHtml || '<div style="padding:2rem;text-align:center;color:#87908b;">目前未抽出任何題目。</div>';
+      return;
+    }
+
     const buildSectionPreviewHtml = (secTitle, list) => {
       if (list.length === 0) return '';
 
-      if (textDir === 'vertical') {
-        // 直向文字：分區段（每區段依紙張寬度排列，由右至左，每題上為題號、中為答案格、下為直排「」題目）
-        const colsPerBand =
-          paperSize === 'A4' && orientation === 'portrait'
-            ? 15
-            : orientation === 'landscape' && (paperSize === 'B4' || paperSize === 'A3')
-            ? 25
-            : 20;
-
-        let bandsHtml = '';
-        for (let start = 0; start < list.length; start += colsPerBand) {
-          const slice = list.slice(start, start + colsPerBand);
-          let colsHtml = '';
-          for (let i = 0; i < colsPerBand; i++) {
-            const q = slice[i];
-            const seqStr = String(start + i + 1).padStart(3, '0');
-            if (q) {
-              const ansHtml = isTeacher ? `<span class="pv-ans-filled">${escapeHtml(q.answer)}</span>` : '';
-              colsHtml += `
-                <div class="pv-v-col">
-                  <div class="pv-v-num">${seqStr}</div>
-                  <div class="pv-v-ans">${ansHtml}</div>
-                  <div class="pv-v-prompt">${formatDocxPreviewPromptHtml(q)}</div>
-                </div>
-              `;
-            } else {
-              colsHtml += `
-                <div class="pv-v-col empty">
-                  <div class="pv-v-num"></div>
-                  <div class="pv-v-ans"></div>
-                  <div class="pv-v-prompt"></div>
-                </div>
-              `;
-            }
-          }
-          bandsHtml += `<div class="pv-v-band">${colsHtml}</div>`;
-        }
-
-        return `
-          <div class="pv-section">
-            <div class="pv-sec-title">${escapeHtml(secTitle)}（共 ${list.length} 題，將「 」內測驗字或注音之正確解答填入上方空格）</div>
-            ${bandsHtml}
-          </div>
-        `;
-      } else {
-        // 橫向文字：多欄表格橫排
-        const colsPerRow =
+      // 橫向文字：多欄表格橫排
+      const colsPerRow =
           paperSize === 'A4' && orientation === 'portrait'
             ? 2
             : orientation === 'landscape' && (paperSize === 'B4' || paperSize === 'A3')
@@ -1895,7 +1904,6 @@
             </table>
           </div>
         `;
-      }
     };
 
     const roleTag = isTeacher ? '【教師標準解答卷】' : '【學生測驗卷】';
@@ -2098,8 +2106,312 @@
     );
   }
 
+  const DOCX_PAPER_TWIPS = {
+    A4: { short: 11906, long: 16838 }, // 210 × 297 mm
+    B4: { short: 14570, long: 20636 }, // 257 × 364 mm（JIS B4）
+    A3: { short: 16838, long: 23811 }  // 297 × 420 mm
+  };
+  // 直書卷邊界 8mm。底部再留約 5mm 給分節符號，避免滿版表格多出空白頁。
+  const VERTICAL_MARGIN_TWIPS = 454;
+  const VERTICAL_SECTION_SLACK_TWIPS = 280;
+  const VERTICAL_NAME_TEXT = '班級＿＿＿座號＿＿姓名＿＿＿＿得分＿＿';
+
+  function getDocxPageBox(paperSize, orientation) {
+    const dim = DOCX_PAPER_TWIPS[paperSize] || DOCX_PAPER_TWIPS.A4;
+    const landscape = orientation === 'landscape';
+    return {
+      pageW: landscape ? dim.long : dim.short,
+      pageH: landscape ? dim.short : dim.long
+    };
+  }
+
+  function uprightUnitCount(text) {
+    return Array.from(String(text || '')).length;
+  }
+
+  function uprightPromptLength(q) {
+    const { before, target, after } = splitQuestionPromptParts(q);
+    return uprightUnitCount(before) + uprightUnitCount(target) + uprightUnitCount(after) + (target ? 2 : 0);
+  }
+
+  // 右側固定三直行：試題區、班級座號姓名、直書標題。欄數以 100 題能排成整頁為目標。
+  function planVerticalColumns(paperSize, orientation, contentW) {
+    const nameColW = 780;
+    const titleColWBase = 560;
+    const secColW = 440;
+    let cols;
+    if (orientation === 'landscape') {
+      cols = 25;
+    } else if (paperSize === 'A3') {
+      cols = 20;
+    } else if (paperSize === 'B4') {
+      cols = 18;
+    } else {
+      cols = 14;
+    }
+    const fixed = nameColW + titleColWBase + secColW;
+    while (cols > 8 && Math.floor((contentW - fixed) / cols) < 500) cols -= 1;
+    const colW = Math.floor((contentW - fixed) / cols);
+    const gridW = colW * cols;
+    const slack = contentW - gridW - secColW - nameColW - titleColWBase;
+    return { cols, colW, gridW, secColW, nameColW, titleColW: titleColWBase + Math.max(0, slack) };
+  }
+
+  // 100 題常分成字音、字形兩段，各段最後一列可能排不滿。列數要容得下這兩段，而不只是 100/欄數。
+  function verticalRowsPerPage(usableH, cols) {
+    const readableBand = 220 + 680 + 12 * 200;
+    const minBand = 220 + 680 + 12 * 160;
+    const readableRows = Math.max(1, Math.floor(usableH / readableBand));
+    const maxRows = Math.max(1, Math.floor(usableH / minBand));
+    const want = Math.max(Math.ceil(100 / cols), Math.ceil(50 / cols) * 2);
+    if (want <= readableRows) return want;
+    if (want <= maxRows) return want;
+    return readableRows;
+  }
+
+  function fitVerticalBand(usableH, rows, maxPromptChars) {
+    const chars = Math.max(4, maxPromptChars || 4);
+    const numH = 220;
+    const ansH = 680;
+    for (let sz = 40; sz >= 16; sz -= 2) {
+      const line = sz * 10;
+      const promptH = chars * line;
+      const bandH = numH + ansH + promptH;
+      if (bandH * rows <= usableH) {
+        return { sz, line, numH, ansH, promptH, bandH };
+      }
+    }
+    const line = 160;
+    const promptH = chars * line;
+    return { sz: 16, line, numH, ansH, promptH, bandH: numH + ansH + promptH, tight: true };
+  }
+
+  function buildVerticalPagePlan(questions, paperSize, orientation) {
+    const box = getDocxPageBox(paperSize, orientation);
+    const margin = VERTICAL_MARGIN_TWIPS;
+    const contentW = box.pageW - margin * 2;
+    const contentH = box.pageH - margin * 2;
+    const usableH = contentH - VERTICAL_SECTION_SLACK_TWIPS;
+    const colsPlan = planVerticalColumns(paperSize, orientation, contentW);
+    const rowsPerPage = verticalRowsPerPage(usableH, colsPlan.cols);
+    const bands = [];
+
+    const pushBands = (list, label) => {
+      for (let i = 0; i < list.length; i += colsPlan.cols) {
+        bands.push({ label, items: list.slice(i, i + colsPlan.cols), start: i });
+      }
+    };
+    pushBands(questions.filter((q) => q.type === 'pronunciation'), '甲、字音');
+    pushBands(questions.filter((q) => q.type === 'character'), '乙、字形');
+
+    const pages = [];
+    for (let i = 0; i < bands.length; i += rowsPerPage) {
+      const slice = bands.slice(i, i + rowsPerPage);
+      let maxPrompt = 4;
+      slice.forEach((band) => {
+        band.items.forEach((q) => {
+          maxPrompt = Math.max(maxPrompt, uprightPromptLength(q));
+        });
+      });
+      pages.push({
+        bands: slice,
+        fit: fitVerticalBand(usableH, Math.max(1, slice.length), maxPrompt),
+        maxPrompt
+      });
+    }
+    return { box, margin, contentW, usableH, colsPlan, rowsPerPage, pages };
+  }
+
+  function answerHalfPoint(ansText, fit) {
+    const n = Math.max(1, uprightUnitCount(ansText));
+    let sz = Math.min(fit.sz, Math.floor(fit.ansH / n / 10) * 2);
+    sz = Math.max(12, sz);
+    while (sz > 12 && n * sz * 10 > fit.ansH) sz -= 2;
+    return sz;
+  }
+
+  function verticalSectionPrInner(box, margin, orientAttr, withBreak) {
+    const typeXml = withBreak ? '<w:type w:val="nextPage"/>' : '';
+    return `${typeXml}
+      <w:pgSz w:w="${box.pageW}" w:h="${box.pageH}" ${orientAttr}/>
+      <w:pgMar w:top="${margin}" w:right="${margin}" w:bottom="${margin}" w:left="${margin}" w:header="0" w:footer="0" w:gutter="0"/>
+      <w:docGrid w:linePitch="100"/>`;
+  }
+
+  function verticalSectionBreakParagraph(box, margin, orientAttr) {
+    return `<w:p>
+      <w:pPr>
+        <w:spacing w:before="0" w:after="0" w:line="20" w:lineRule="exact"/>
+        <w:rPr><w:sz w:val="2"/><w:szCs w:val="2"/></w:rPr>
+        <w:sectPr>${verticalSectionPrInner(box, margin, orientAttr, true)}</w:sectPr>
+      </w:pPr>
+    </w:p>`;
+  }
+
+  function buildVerticalSheetBodyXml(questions, isTeacherCopy, includePageBreakBefore) {
+    const { paperSize, orientation, bracketStyle } = state.docx;
+    const titleInput = document.getElementById('docx-title-input');
+    const customTitle = (titleInput && titleInput.value.trim()) || state.docx.title;
+    const roleTag = isTeacherCopy ? '【教師標準解答卷】' : '【學生作答卷】';
+    const plan = buildVerticalPagePlan(questions, paperSize, orientation);
+    const { box, margin, colsPlan } = plan;
+    const orientAttr = orientation === 'landscape' ? 'w:orient="landscape"' : 'w:orient="portrait"';
+    const nilBorders = `
+      <w:tblBorders>
+        <w:top w:val="nil"/><w:left w:val="nil"/><w:bottom w:val="nil"/><w:right w:val="nil"/>
+        <w:insideH w:val="nil"/><w:insideV w:val="nil"/>
+      </w:tblBorders>`;
+    const gridBorders = `
+      <w:tblBorders>
+        <w:top w:val="single" w:sz="6" w:space="0" w:color="333333"/>
+        <w:left w:val="single" w:sz="6" w:space="0" w:color="333333"/>
+        <w:bottom w:val="single" w:sz="6" w:space="0" w:color="333333"/>
+        <w:right w:val="single" w:sz="6" w:space="0" w:color="333333"/>
+        <w:insideH w:val="single" w:sz="4" w:space="0" w:color="555555"/>
+        <w:insideV w:val="single" w:sz="4" w:space="0" w:color="555555"/>
+      </w:tblBorders>`;
+    const sideBorder = `
+      <w:tcBorders>
+        <w:top w:val="nil"/><w:left w:val="single" w:sz="6" w:space="0" w:color="333333"/>
+        <w:bottom w:val="nil"/><w:right w:val="nil"/>
+      </w:tcBorders>`;
+
+    let xml = '';
+    if (includePageBreakBefore) {
+      xml += verticalSectionBreakParagraph(box, margin, orientAttr);
+    }
+
+    plan.pages.forEach((page, pageIndex) => {
+      const fit = page.fit;
+      const titleChars = uprightUnitCount(customTitle) + 2 + uprightUnitCount(roleTag);
+      const questionH = Math.max(fit.bandH, page.bands.length * fit.bandH);
+      let titleSz = 32;
+      while (titleSz > 16 && titleChars * titleSz * 10 > Math.max(questionH, fit.bandH)) titleSz -= 2;
+
+      let bandRows = '';
+      let prevLabel = '';
+      page.bands.forEach((band) => {
+        const mergeRestart = band.label !== prevLabel;
+        prevLabel = band.label;
+        let gridCols = '';
+        let numCells = '';
+        let ansCells = '';
+        let promptCells = '';
+        for (let colIdx = 0; colIdx < colsPlan.cols; colIdx++) {
+          gridCols += `<w:gridCol w:w="${colsPlan.colW}"/>`;
+          const qOffset = colsPlan.cols - 1 - colIdx;
+          const q = band.items[qOffset];
+          const seqStr = q ? String(band.start + qOffset + 1).padStart(3, '0') : '';
+          numCells += `<w:tc>
+            <w:tcPr><w:tcW w:w="${colsPlan.colW}" w:type="dxa"/><w:vAlign w:val="center"/><w:shd w:val="clear" w:color="auto" w:fill="F4F4F0"/></w:tcPr>
+            <w:p><w:pPr><w:jc w:val="center"/><w:snapToGrid w:val="0"/><w:spacing w:before="0" w:after="0" w:line="200" w:lineRule="exact"/></w:pPr>
+              <w:r><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:eastAsia="標楷體"/><w:b/><w:sz w:val="16"/><w:szCs w:val="16"/></w:rPr><w:t>${escapeXml(seqStr)}</w:t></w:r>
+            </w:p>
+          </w:tc>`;
+          const ansText = q && isTeacherCopy ? q.answer : '';
+          const ansSz = answerHalfPoint(ansText, fit);
+          ansCells += `<w:tc>
+            <w:tcPr><w:tcW w:w="${colsPlan.colW}" w:type="dxa"/><w:vAlign w:val="center"/></w:tcPr>
+            ${buildUprightStackParagraphs([{ text: ansText, bold: true, color: '1B4D3E' }], ansSz)}
+          </w:tc>`;
+          const promptParas = q
+            ? buildUprightPromptParagraphs(q, fit.sz, bracketStyle)
+            : buildUprightStackParagraphs([{ text: '' }], fit.sz);
+          promptCells += `<w:tc>
+            <w:tcPr><w:tcW w:w="${colsPlan.colW}" w:type="dxa"/><w:vAlign w:val="top"/></w:tcPr>
+            ${promptParas}
+          </w:tc>`;
+        }
+        const labelParas = mergeRestart
+          ? buildUprightStackParagraphs([{ text: band.label, bold: true }], 24)
+          : '<w:p><w:pPr><w:spacing w:before="0" w:after="0"/></w:pPr></w:p>';
+        const mergeXml = mergeRestart ? '<w:vMerge w:val="restart"/>' : '<w:vMerge/>';
+        bandRows += `<w:tr>
+          <w:trPr><w:trHeight w:val="${fit.bandH}" w:hRule="exact"/><w:cantSplit/></w:trPr>
+          <w:tc>
+            <w:tcPr><w:tcW w:w="${colsPlan.gridW}" w:type="dxa"/><w:vAlign w:val="top"/></w:tcPr>
+            <w:tbl>
+              <w:tblPr>
+                <w:tblW w:w="${colsPlan.gridW}" w:type="dxa"/>
+                <w:tblLayout w:type="fixed"/>
+                ${gridBorders}
+                <w:tblCellMar><w:top w:w="0" w:type="dxa"/><w:left w:w="0" w:type="dxa"/><w:bottom w:w="0" w:type="dxa"/><w:right w:w="0" w:type="dxa"/></w:tblCellMar>
+              </w:tblPr>
+              <w:tblGrid>${gridCols}</w:tblGrid>
+              <w:tr><w:trPr><w:trHeight w:val="${fit.numH}" w:hRule="exact"/><w:cantSplit/></w:trPr>${numCells}</w:tr>
+              <w:tr><w:trPr><w:trHeight w:val="${fit.ansH}" w:hRule="exact"/><w:cantSplit/></w:trPr>${ansCells}</w:tr>
+              <w:tr><w:trPr><w:trHeight w:val="${fit.promptH}" w:hRule="exact"/><w:cantSplit/></w:trPr>${promptCells}</w:tr>
+            </w:tbl>
+          </w:tc>
+          <w:tc>
+            <w:tcPr>
+              <w:tcW w:w="${colsPlan.secColW}" w:type="dxa"/>
+              ${mergeXml}
+              ${sideBorder}
+              <w:vAlign w:val="center"/>
+            </w:tcPr>
+            ${labelParas}
+          </w:tc>
+        </w:tr>`;
+      });
+
+      const questionsW = colsPlan.gridW + colsPlan.secColW;
+      const pageW = questionsW + colsPlan.nameColW + colsPlan.titleColW;
+      xml += `<w:tbl>
+        <w:tblPr>
+          <w:tblW w:w="${pageW}" w:type="dxa"/>
+          <w:jc w:val="center"/>
+          <w:tblLayout w:type="fixed"/>
+          ${nilBorders}
+          <w:tblCellMar><w:top w:w="0" w:type="dxa"/><w:left w:w="0" w:type="dxa"/><w:bottom w:w="0" w:type="dxa"/><w:right w:w="0" w:type="dxa"/></w:tblCellMar>
+        </w:tblPr>
+        <w:tblGrid>
+          <w:gridCol w:w="${questionsW}"/>
+          <w:gridCol w:w="${colsPlan.nameColW}"/>
+          <w:gridCol w:w="${colsPlan.titleColW}"/>
+        </w:tblGrid>
+        <w:tr>
+          <w:trPr><w:cantSplit/></w:trPr>
+          <w:tc>
+            <w:tcPr><w:tcW w:w="${questionsW}" w:type="dxa"/><w:vAlign w:val="top"/></w:tcPr>
+            <w:tbl>
+              <w:tblPr>
+                <w:tblW w:w="${questionsW}" w:type="dxa"/>
+                <w:tblLayout w:type="fixed"/>
+                ${nilBorders}
+                <w:tblCellMar><w:top w:w="0" w:type="dxa"/><w:left w:w="0" w:type="dxa"/><w:bottom w:w="0" w:type="dxa"/><w:right w:w="0" w:type="dxa"/></w:tblCellMar>
+              </w:tblPr>
+              <w:tblGrid><w:gridCol w:w="${colsPlan.gridW}"/><w:gridCol w:w="${colsPlan.secColW}"/></w:tblGrid>
+              ${bandRows}
+            </w:tbl>
+          </w:tc>
+          <w:tc>
+            <w:tcPr><w:tcW w:w="${colsPlan.nameColW}" w:type="dxa"/>${sideBorder}<w:vAlign w:val="top"/></w:tcPr>
+            ${buildUprightStackParagraphs([{ text: VERTICAL_NAME_TEXT }], 24)}
+          </w:tc>
+          <w:tc>
+            <w:tcPr><w:tcW w:w="${colsPlan.titleColW}" w:type="dxa"/>${sideBorder}<w:vAlign w:val="top"/></w:tcPr>
+            ${buildUprightStackParagraphs(
+              [{ text: customTitle, bold: true }, { text: '　　' }, { text: roleTag }],
+              titleSz
+            )}
+          </w:tc>
+        </w:tr>
+      </w:tbl>`;
+
+      if (pageIndex < plan.pages.length - 1) {
+        xml += verticalSectionBreakParagraph(box, margin, orientAttr);
+      }
+    });
+
+    return xml;
+  }
+
   function buildDocxSheetBodyXml(questions, isTeacherCopy, includePageBreakBefore) {
     const { paperSize, orientation, textDir, bracketStyle } = state.docx;
+    if (textDir === 'vertical') {
+      return buildVerticalSheetBodyXml(questions, isTeacherCopy, includePageBreakBefore);
+    }
     const titleInput = document.getElementById('docx-title-input');
     const customTitle = (titleInput && titleInput.value.trim()) || state.docx.title;
 
@@ -2167,131 +2479,6 @@
         </w:tblBorders>
       `;
 
-      if (textDir === 'vertical') {
-        // 直向文字：傳統競賽試卷直排區段表格（由右至左題序，每欄含：題號列、直書作答格、直書「」題目列）
-        const colsPerBand =
-          paperSize === 'A4' && orientation === 'portrait'
-            ? 15
-            : orientation === 'landscape' && (paperSize === 'B4' || paperSize === 'A3')
-            ? 25
-            : 20;
-
-        const colW = Math.floor(contentW / colsPerBand);
-        const fontPtHalf = colsPerBand >= 25 && paperSize === 'A4' ? 22 : 24;
-        const lineTwips = fontPtHalf * 10;
-        const textLen = (s) => Array.from(String(s || '')).length;
-
-        for (let start = 0; start < list.length; start += colsPerBand) {
-          const slice = list.slice(start, start + colsPerBand);
-          let maxAnsChars = 1;
-          let maxPromptChars = 1;
-          slice.forEach((q) => {
-            if (!q) return;
-            if (isTeacherCopy) maxAnsChars = Math.max(maxAnsChars, textLen(q.answer));
-            const parts = splitQuestionPromptParts(q);
-            const promptLen = textLen(parts.before) + textLen(parts.target) + textLen(parts.after) + (parts.target ? 2 : 0);
-            maxPromptChars = Math.max(maxPromptChars, Math.max(promptLen, 1));
-          });
-          // 解答與題目都排成同一直行。列高一次放進整段，避免折成旁邊第二行。
-          const ansRowH = Math.max(4, maxAnsChars) * lineTwips + 120;
-          const promptRowH = Math.max(4, maxPromptChars) * lineTwips + 160;
-
-          let gridColsXml = '';
-          for (let c = 0; c < colsPerBand; c++) {
-            gridColsXml += `<w:gridCol w:w="${colW}"/>`;
-          }
-
-          let rowNumCells = '';
-          let rowAnsCells = '';
-          let rowPromptCells = '';
-
-          // 由左至右建立儲存格時，最右側欄（colIdx = colsPerBand - 1）對應本區段第 1 題（由右至左閱讀）
-          for (let colIdx = 0; colIdx < colsPerBand; colIdx++) {
-            const qOffset = colsPerBand - 1 - colIdx;
-            const q = slice[qOffset];
-            const seqNum = start + qOffset + 1;
-            const seqStr = q ? String(seqNum).padStart(3, '0') : '';
-
-            // 第 1 列：題號
-            rowNumCells += `
-              <w:tc>
-                <w:tcPr>
-                  <w:tcW w:w="${colW}" w:type="dxa"/>
-                  <w:vAlign w:val="center"/>
-                  <w:shd w:val="clear" w:color="auto" w:fill="F4F4F0"/>
-                </w:tcPr>
-                <w:p>
-                  <w:pPr><w:jc w:val="center"/><w:spacing w:before="0" w:after="0"/></w:pPr>
-                  <w:r>
-                    <w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:eastAsia="標楷體"/><w:b/><w:sz w:val="18"/><w:szCs w:val="18"/></w:rPr>
-                    <w:t>${escapeXml(seqStr)}</w:t>
-                  </w:r>
-                </w:p>
-              </w:tc>
-            `;
-
-            // 第 2 列：答案方格。整段解答留在同一格，由上而下排成同一直行。
-            const ansText = q && isTeacherCopy ? q.answer : '';
-            const ansParas = buildUprightStackParagraphs(
-              [{ text: ansText, bold: true, color: '1B4D3E' }],
-              fontPtHalf
-            );
-            rowAnsCells += `
-              <w:tc>
-                <w:tcPr>
-                  <w:tcW w:w="${colW}" w:type="dxa"/>
-                  <w:vAlign w:val="center"/>
-                </w:tcPr>
-                ${ansParas}
-              </w:tc>
-            `;
-
-            // 第 3 列：直向題目。字直立由上而下，注音也不躺倒。
-            const promptParas = q
-              ? buildUprightPromptParagraphs(q, fontPtHalf, bracketStyle)
-              : buildUprightStackParagraphs([{ text: '' }], fontPtHalf);
-            rowPromptCells += `
-              <w:tc>
-                <w:tcPr>
-                  <w:tcW w:w="${colW}" w:type="dxa"/>
-                  <w:vAlign w:val="top"/>
-                </w:tcPr>
-                ${promptParas}
-              </w:tc>
-            `;
-          }
-
-          secXml += `
-            <w:tbl>
-              <w:tblPr>
-                <w:tblW w:w="${contentW}" w:type="dxa"/>
-                <w:jc w:val="center"/>
-                ${tblBorders}
-                <w:tblCellMar>
-                  <w:top w:w="40" w:type="dxa"/>
-                  <w:left w:w="20" w:type="dxa"/>
-                  <w:bottom w:w="40" w:type="dxa"/>
-                  <w:right w:w="20" w:type="dxa"/>
-                </w:tblCellMar>
-              </w:tblPr>
-              <w:tblGrid>${gridColsXml}</w:tblGrid>
-              <w:tr>
-                <w:trPr><w:trHeight w:val="320" w:hRule="atLeast"/></w:trPr>
-                ${rowNumCells}
-              </w:tr>
-              <w:tr>
-                <w:trPr><w:trHeight w:val="${ansRowH}" w:hRule="atLeast"/></w:trPr>
-                ${rowAnsCells}
-              </w:tr>
-              <w:tr>
-                <w:trPr><w:trHeight w:val="${promptRowH}" w:hRule="atLeast"/></w:trPr>
-                ${rowPromptCells}
-              </w:tr>
-            </w:tbl>
-            <w:p><w:pPr><w:spacing w:before="0" w:after="80"/></w:pPr></w:p>
-          `;
-        }
-      } else {
         // 橫向文字：多欄橫書表格（每題佔 3 格：題號 | 作答格 | 題目詞語）
         const groupsPerRow =
           paperSize === 'A4' && orientation === 'portrait'
@@ -2392,7 +2579,6 @@
           </w:tbl>
           <w:p><w:pPr><w:spacing w:before="0" w:after="100"/></w:pPr></w:p>
         `;
-      }
 
       return secXml;
     };
@@ -2410,15 +2596,13 @@
     }
 
     const { paperSize, orientation, textDir } = state.docx;
-    const paperDims = {
-      A4: { short: 11906, long: 16838 },
-      B4: { short: 14570, long: 20636 },
-      A3: { short: 16838, long: 23811 }
-    };
-    const dim = paperDims[paperSize] || paperDims.A4;
-    const pageW = orientation === 'landscape' ? dim.long : dim.short;
-    const pageH = orientation === 'landscape' ? dim.short : dim.long;
+    const box = getDocxPageBox(paperSize, orientation);
+    const pageW = box.pageW;
+    const pageH = box.pageH;
     const orientAttr = orientation === 'landscape' ? 'w:orient="landscape"' : 'w:orient="portrait"';
+    const marginTwips = textDir === 'vertical' ? VERTICAL_MARGIN_TWIPS : 720;
+    const headerTwips = textDir === 'vertical' ? 0 : 360;
+    const gridPitch = textDir === 'vertical' ? 100 : 360;
 
     let bodyContentXml = '';
     if (exportMode === 'student') {
@@ -2434,8 +2618,8 @@
     const sectPrXml = `
       <w:sectPr>
         <w:pgSz w:w="${pageW}" w:h="${pageH}" ${orientAttr}/>
-        <w:pgMar w:top="720" w:right="720" w:bottom="720" w:left="720" w:header="360" w:footer="360" w:gutter="0"/>
-        <w:docGrid w:linePitch="360"/>
+        <w:pgMar w:top="${marginTwips}" w:right="${marginTwips}" w:bottom="${marginTwips}" w:left="${marginTwips}" w:header="${headerTwips}" w:footer="${headerTwips}" w:gutter="0"/>
+        <w:docGrid w:linePitch="${gridPitch}"/>
       </w:sectPr>
     `;
 
