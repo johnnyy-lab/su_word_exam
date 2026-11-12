@@ -2034,6 +2034,50 @@
     return xml;
   }
 
+  function buildRunPropsXml(fontSizeHalfPt, options) {
+    const opts = options || {};
+    const bold = opts.bold ? '<w:b/>' : '';
+    const underline = opts.underline ? '<w:u w:val="single"/>' : '';
+    const color = opts.color ? `<w:color w:val="${opts.color}"/>` : '';
+    return `<w:rPr><w:rFonts w:ascii="標楷體" w:hAnsi="標楷體" w:eastAsia="標楷體"/>${bold}${underline}${color}<w:sz w:val="${fontSizeHalfPt}"/><w:szCs w:val="${fontSizeHalfPt}"/></w:rPr>`;
+  }
+
+  // 直書不用 Word 的 textDirection。tbRl 會把所有字向右轉 90 度；tbRlV 雖然國字直立，注音仍會躺倒。
+  // 改成一格內由上而下、每個字一段，字面保持直立，與網頁 vertical-rl + text-orientation: upright 相同。
+  function buildUprightStackParagraphs(segments, fontSizeHalfPt) {
+    const lineTwips = fontSizeHalfPt * 10;
+    const pPr = `<w:pPr><w:jc w:val="center"/><w:snapToGrid w:val="0"/><w:spacing w:before="0" w:after="0" w:line="${lineTwips}" w:lineRule="exact"/><w:ind w:left="0" w:right="0" w:firstLine="0"/></w:pPr>`;
+    let xml = '';
+    segments.forEach((seg) => {
+      const rPr = buildRunPropsXml(fontSizeHalfPt, seg);
+      Array.from(String(seg.text || '')).forEach((ch) => {
+        xml += `<w:p>${pPr}<w:r>${rPr}<w:t xml:space="preserve">${escapeXml(ch)}</w:t></w:r></w:p>`;
+      });
+    });
+    if (!xml) {
+      xml = `<w:p>${pPr}<w:r><w:t></w:t></w:r></w:p>`;
+    }
+    return xml;
+  }
+
+  function buildUprightPromptParagraphs(q, fontSizeHalfPt, bracketStyle) {
+    const { before, target, after } = splitQuestionPromptParts(q);
+    if (!target) {
+      return buildUprightStackParagraphs([{ text: before }], fontSizeHalfPt);
+    }
+    const targetOpts = { text: target, bold: true, underline: bracketStyle === 'corner_underline' };
+    return buildUprightStackParagraphs(
+      [
+        { text: before },
+        { text: '「' },
+        targetOpts,
+        { text: '」' },
+        { text: after }
+      ],
+      fontSizeHalfPt
+    );
+  }
+
   function buildDocxSheetBodyXml(questions, isTeacherCopy, includePageBreakBefore) {
     const { paperSize, orientation, textDir, bracketStyle } = state.docx;
     const titleInput = document.getElementById('docx-title-input');
@@ -2114,9 +2158,23 @@
 
         const colW = Math.floor(contentW / colsPerBand);
         const fontPtHalf = colsPerBand >= 25 && paperSize === 'A4' ? 22 : 24;
+        const lineTwips = fontPtHalf * 10;
+        const textLen = (s) => Array.from(String(s || '')).length;
 
         for (let start = 0; start < list.length; start += colsPerBand) {
           const slice = list.slice(start, start + colsPerBand);
+          let maxAnsChars = 1;
+          let maxPromptChars = 1;
+          slice.forEach((q) => {
+            if (!q) return;
+            if (isTeacherCopy) maxAnsChars = Math.max(maxAnsChars, textLen(q.answer));
+            const parts = splitQuestionPromptParts(q);
+            const promptLen = textLen(parts.before) + textLen(parts.target) + textLen(parts.after) + (parts.target ? 2 : 0);
+            maxPromptChars = Math.max(maxPromptChars, Math.max(promptLen, 1));
+          });
+          // 解答與題目都排成同一直行。列高一次放進整段，避免折成旁邊第二行。
+          const ansRowH = Math.max(4, maxAnsChars) * lineTwips + 120;
+          const promptRowH = Math.max(4, maxPromptChars) * lineTwips + 160;
 
           let gridColsXml = '';
           for (let c = 0; c < colsPerBand; c++) {
@@ -2152,38 +2210,33 @@
               </w:tc>
             `;
 
-            // 第 2 列：答案方格（直書 tbRl）
+            // 第 2 列：答案方格。整段解答留在同一格，由上而下排成同一直行。
             const ansText = q && isTeacherCopy ? q.answer : '';
+            const ansParas = buildUprightStackParagraphs(
+              [{ text: ansText, bold: true, color: '1B4D3E' }],
+              fontPtHalf
+            );
             rowAnsCells += `
               <w:tc>
                 <w:tcPr>
                   <w:tcW w:w="${colW}" w:type="dxa"/>
-                  <w:textDirection w:val="tbRl"/>
                   <w:vAlign w:val="center"/>
                 </w:tcPr>
-                <w:p>
-                  <w:pPr><w:jc w:val="center"/><w:spacing w:before="0" w:after="0"/></w:pPr>
-                  <w:r>
-                    <w:rPr><w:rFonts w:ascii="標楷體" w:hAnsi="標楷體" w:eastAsia="標楷體"/><w:b/><w:color w:val="1B4D3E"/><w:sz w:val="${fontPtHalf}"/><w:szCs w:val="${fontPtHalf}"/></w:rPr>
-                    <w:t>${escapeXml(ansText)}</w:t>
-                  </w:r>
-                </w:p>
+                ${ansParas}
               </w:tc>
             `;
 
-            // 第 3 列：直向題目詞語（含「」括號，Word 於 tbRl 儲存格內自動轉為直式引號）
-            const promptRuns = q ? buildOpenXmlPromptRuns(q, fontPtHalf, bracketStyle) : '<w:r><w:t></w:t></w:r>';
+            // 第 3 列：直向題目。字直立由上而下，注音也不躺倒。
+            const promptParas = q
+              ? buildUprightPromptParagraphs(q, fontPtHalf, bracketStyle)
+              : buildUprightStackParagraphs([{ text: '' }], fontPtHalf);
             rowPromptCells += `
               <w:tc>
                 <w:tcPr>
                   <w:tcW w:w="${colW}" w:type="dxa"/>
-                  <w:textDirection w:val="tbRl"/>
-                  <w:vAlign w:val="center"/>
+                  <w:vAlign w:val="top"/>
                 </w:tcPr>
-                <w:p>
-                  <w:pPr><w:jc w:val="center"/><w:spacing w:before="40" w:after="40"/></w:pPr>
-                  ${promptRuns}
-                </w:p>
+                ${promptParas}
               </w:tc>
             `;
           }
@@ -2207,11 +2260,11 @@
                 ${rowNumCells}
               </w:tr>
               <w:tr>
-                <w:trPr><w:trHeight w:val="980" w:hRule="atLeast"/></w:trPr>
+                <w:trPr><w:trHeight w:val="${ansRowH}" w:hRule="atLeast"/></w:trPr>
                 ${rowAnsCells}
               </w:tr>
               <w:tr>
-                <w:trPr><w:trHeight w:val="2200" w:hRule="atLeast"/></w:trPr>
+                <w:trPr><w:trHeight w:val="${promptRowH}" w:hRule="atLeast"/></w:trPr>
                 ${rowPromptCells}
               </w:tr>
             </w:tbl>
@@ -2264,10 +2317,16 @@
               <w:tc>
                 <w:tcPr>
                   <w:tcW w:w="${wAns}" w:type="dxa"/>
+                  <w:noWrap/>
                   <w:vAlign w:val="center"/>
                 </w:tcPr>
                 <w:p>
-                  <w:pPr><w:jc w:val="center"/><w:spacing w:before="0" w:after="0"/></w:pPr>
+                  <w:pPr>
+                    <w:jc w:val="center"/>
+                    <w:snapToGrid w:val="0"/>
+                    <w:wordWrap w:val="off"/>
+                    <w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/>
+                  </w:pPr>
                   <w:r>
                     <w:rPr><w:rFonts w:ascii="標楷體" w:hAnsi="標楷體" w:eastAsia="標楷體"/><w:b/><w:color w:val="1B4D3E"/><w:sz w:val="24"/><w:szCs w:val="24"/></w:rPr>
                     <w:t>${escapeXml(ansText)}</w:t>
@@ -2375,6 +2434,7 @@
   <Default Extension="xml" ContentType="application/xml"/>
   <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
   <Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>
+  <Override PartName="/word/settings.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml"/>
 </Types>`;
 
     const rootRelsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -2385,6 +2445,7 @@
     const docRelsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
   <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
+  <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/settings" Target="settings.xml"/>
 </Relationships>`;
 
     const stylesXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -2406,11 +2467,19 @@
   </w:docDefaults>
 </w:styles>`;
 
+    const settingsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:settings xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:compat>
+    <w:compatSetting w:name="compatibilityMode" w:uri="http://schemas.microsoft.com/office/word" w:val="15"/>
+  </w:compat>
+</w:settings>`;
+
     const blob = createZipBlobFromEntries([
       { path: '[Content_Types].xml', content: contentTypesXml },
       { path: '_rels/.rels', content: rootRelsXml },
       { path: 'word/_rels/document.xml.rels', content: docRelsXml },
       { path: 'word/styles.xml', content: stylesXml },
+      { path: 'word/settings.xml', content: settingsXml },
       { path: 'word/document.xml', content: documentXml }
     ]);
 

@@ -2456,10 +2456,11 @@ button,
 }
 
 .pv-v-ans {
-  height: 68px;
+  min-height: 68px;
   border-bottom: 1px solid #555;
   writing-mode: vertical-rl;
   text-orientation: upright;
+  white-space: nowrap;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2506,6 +2507,7 @@ button,
   width: 90px;
   text-align: center;
   font-size: 1.1rem;
+  white-space: nowrap;
 }
 
 .pv-h-prompt {
