@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>全國語文競賽 國語字音字形（高中組）數位複習與測驗系統</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <!-- 頂部標題與階段導覽列 -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <span class="brand-badge">高中學生組 101–114 年</span>
+        <h1 class="brand-title">全國語文競賽 國語字音字形數位學習系統</h1>
+      </div>
+      <nav class="main-nav" aria-label="功能選單">
+        <button type="button" class="nav-tab active" data-module="review">
+          <span class="nav-step">1</span> 線上複習
+        </button>
+        <button type="button" class="nav-tab" data-module="quiz" title="模擬競賽抽題與自動批改測驗">
+          <span class="nav-step">2</span> 線上測驗
+        </button>
+        <button type="button" class="nav-tab" data-module="docx" title="自訂版面匯出 Word (.docx) 紙本測驗卷與解答卷">
+          <span class="nav-step">3</span> 紙本試卷 (.docx)
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- 主內容區 -->
+  <main class="main-container">
+    <!-- 統計與篩選控制面板 -->
+    <section class="filter-panel" aria-label="題庫篩選與進度統計">
+      <div class="stats-bar">
+        <div class="stat-item">
+          <span class="stat-label">題庫總數</span>
+          <strong class="stat-value" id="stat-total">2,800</strong>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">目前篩選題數</span>
+          <strong class="stat-value highlight" id="stat-filtered">2,800</strong>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">✓ 已熟練</span>
+          <strong class="stat-value success" id="stat-mastered">0</strong>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">✗ 需加強（錯題）</span>
+          <strong class="stat-value danger" id="stat-wrong">0</strong>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">★ 重點收藏</span>
+          <strong class="stat-value warning" id="stat-starred">0</strong>
+        </div>
+        <div class="stat-actions">
+          <button type="button" id="btn-toggle-mobile-filters" class="btn-secondary btn-sm mobile-only-btn" aria-expanded="false">
+            ⚙️ 展開篩選與搜尋 ▾
+          </button>
+          <button type="button" id="btn-reset-progress" class="btn-ghost btn-sm" title="清除本機儲存的熟練度與錯題紀錄">
+            重置紀錄
+          </button>
+        </div>
+      </div>
+
+      <div class="filter-controls mobile-collapsed" id="filter-controls-panel">
+        <!-- 年度篩選（複選，即時組合題庫） -->
+        <div class="filter-group filter-group-years">
+          <div class="year-filter-header">
+            <label>年度選擇（可複選，即時組合：<span id="year-selection-summary" class="year-summary-text">全部 14 個年度・共 2,800 題</span>）</label>
+            <div class="year-quick-actions">
+              <button type="button" class="year-quick-btn" id="btn-year-all">全選</button>
+              <button type="button" class="year-quick-btn" id="btn-year-recent5">近 5 年</button>
+              <button type="button" class="year-quick-btn" id="btn-year-recent3">近 3 年</button>
+              <button type="button" class="year-quick-btn" id="btn-year-clear">清空重選</button>
+            </div>
+          </div>
+          <div class="year-chips-container" id="filter-year-chips" role="group" aria-label="年度複選按鈕組">
+            <!-- 由 JS 動態產生 101～114 年度複選按鈕 -->
+          </div>
+        </div>
+
+        <!-- 題型篩選 -->
+        <div class="filter-group">
+          <label>題型分類</label>
+          <div class="segmented-control" id="filter-type-group">
+            <button type="button" class="seg-btn active" data-type="all">全部 (2800)</button>
+            <button type="button" class="seg-btn" data-type="pronunciation">甲、字音 (1400)</button>
+            <button type="button" class="seg-btn" data-type="character">乙、字形 (1400)</button>
+          </div>
+        </div>
+
+        <!-- 學習狀態篩選 -->
+        <div class="filter-group">
+          <label for="filter-status">複習範圍</label>
+          <select id="filter-status" class="form-select">
+            <option value="all">全部題目</option>
+            <option value="unpracticed">尚未練習</option>
+            <option value="wrong">✗ 需加強（曾答錯）</option>
+            <option value="starred">★ 重點收藏</option>
+            <option value="mastered">✓ 已熟練（曾答對）</option>
+          </select>
+        </div>
+
+        <!-- 關鍵字檢索 -->
+        <div class="filter-group filter-search">
+          <label for="filter-keyword">關鍵字搜尋（詞語 / 測驗字 / 注音 / 題號）</label>
+          <div class="search-input-wrap">
+            <input type="search" id="filter-keyword" class="form-input" placeholder="例如：瘳、ㄔㄡ、引君入、114-yin-001..." />
+            <button type="button" id="btn-clear-search" class="btn-clear-search hidden" aria-label="清除搜尋">✕</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 檢視模式與排序切換列 -->
+      <div class="toolbar-row">
+        <div class="view-mode-tabs">
+          <button type="button" class="mode-btn active" id="btn-mode-card" data-view="card">
+            🎯 互動練習卡<span class="kbd-hint">（注音虛擬鍵盤 / 國字輸入）</span>
+          </button>
+          <button type="button" class="mode-btn" id="btn-mode-list" data-view="list">
+            📋 題庫列表總覽<span class="kbd-hint">（整批檢視 / 遮罩背誦）</span>
+          </button>
+        </div>
+
+        <div class="order-controls">
+          <label class="checkbox-label" title="答對後延遲 0.9 秒自動切換至下一題">
+            <input type="checkbox" id="chk-auto-next" />
+            <span>答對自動下一題</span>
+          </label>
+          <button type="button" id="btn-toggle-shuffle" class="btn-secondary btn-sm">
+            🔀 隨機洗牌順序：關
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 空白狀態提示 -->
+    <section id="empty-state" class="empty-state hidden">
+      <div class="empty-icon">📭</div>
+      <h3>目前篩選條件下沒有符合的題目</h3>
+      <p>請嘗試調整「年度」、「題型分類」、「複習範圍」或清除搜尋關鍵字。</p>
+      <button type="button" id="btn-reset-filters" class="btn-primary">重設所有篩選條件</button>
+    </section>
+
+    <!-- 模式 A：互動練習卡模式 -->
+    <section id="view-card" class="review-card-section" aria-label="單題互動複習區">
+      <div class="card-nav-bar">
+        <button type="button" id="btn-prev-q" class="btn-nav" title="快捷鍵：左方向鍵 (←)">◀ 上一題<span class="kbd-hint"> (←)</span></button>
+        <div class="card-progress-info">
+          <span id="card-index-label">第 1 / 2800 題</span>
+          <select id="select-jump-q" class="jump-select" aria-label="快速跳題"></select>
+        </div>
+        <button type="button" id="btn-next-q" class="btn-nav" title="快捷鍵：右方向鍵 (→)">下一題<span class="kbd-hint"> (→)</span> ▶</button>
+      </div>
+
+      <div class="question-card" id="question-card">
+        <!-- 卡片標頭資訊 -->
+        <div class="q-card-header">
+          <div class="q-meta-badges">
+            <span class="badge badge-year" id="q-badge-year">101 年</span>
+            <span class="badge badge-type" id="q-badge-type">甲、字音</span>
+            <span class="badge badge-num" id="q-badge-num">第 001 題</span>
+            <span class="badge badge-status hidden" id="q-badge-status">尚未練習</span>
+          </div>
+          <div class="q-header-actions">
+            <a id="q-pdf-link" href="topics/101年國語字音字形(高中).pdf" target="_blank" rel="noopener" class="btn-ghost btn-sm" title="開啟該年度原卷 PDF 檔案核對">
+              📄 查看原卷 PDF
+            </a>
+            <button type="button" id="btn-star-q" class="btn-star" title="加入或取消重點收藏 (F2)">
+              ☆ 收藏重點<span class="kbd-hint"> (F2)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 題目主體展示區 -->
+        <div class="q-prompt-area">
+          <div class="q-instruction" id="q-instruction">
+            請用下方注音虛擬鍵盤拼出標示字之「標準注音」：
+          </div>
+          <div class="q-prompt-box" id="q-prompt-display">
+            <!-- 動態渲染題目詞語與標示目標 -->
+          </div>
+          <div class="q-target-hint" id="q-target-hint">
+            測驗目標：<strong id="q-target-text">蜡</strong>
+          </div>
+        </div>
+
+        <!-- 作答區 1：字音題專用（答案方格 + 虛擬注音鍵盤） -->
+        <div id="input-area-pronunciation" class="interaction-zone">
+          <div class="zhuyin-composer-bar">
+            <div class="composer-preview-wrap">
+              <span class="composer-label">您的注音作答：</span>
+              <div class="zhuyin-answer-box" id="zhuyin-answer-box" tabindex="0" aria-label="目前已選擇的注音符號">
+                <span id="zhuyin-composed-text" class="zhuyin-composed-placeholder">請點擊下方注音按鍵</span>
+              </div>
+              <div class="zhuyin-slots-indicator" id="zhuyin-slots-indicator">
+                <span class="slot-pill" id="slot-initial" title="聲母">聲母：-</span>
+                <span class="slot-pill" id="slot-medial" title="介音">介音：-</span>
+                <span class="slot-pill" id="slot-final" title="韻母">韻母：-</span>
+                <span class="slot-pill" id="slot-tone" title="聲調">聲調：一聲(無號)</span>
+              </div>
+            </div>
+
+            <div class="composer-actions">
+              <button type="button" id="btn-zhuyin-backspace" class="btn-secondary" title="刪除最後一個注音槽位 (Backspace)">
+                ⌫ 退格<span class="kbd-hint"> (Backspace)</span>
+              </button>
+              <button type="button" id="btn-zhuyin-clear" class="btn-secondary" title="清空已選注音 (Esc)">
+                清空<span class="kbd-hint"> (Esc)</span>
+              </button>
+              <button type="button" id="btn-check-pronunciation" class="btn-primary btn-lg" title="核對答案 (Enter)">
+                ✓ 核對答案<span class="kbd-hint"> (Enter)</span>
+              </button>
+              <button type="button" id="btn-reveal-pronunciation" class="btn-outline" title="直接顯示答案 (Space)">
+                👁 看答案<span class="kbd-hint"> (Space)</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 虛擬注音鍵盤（四大區塊：聲母、介音、韻母、聲調） -->
+          <div class="virtual-keyboard" aria-label="注音符號虛擬鍵盤">
+            <div class="vk-header">
+              <span class="vk-title">⌨️ 注音符號虛擬鍵盤（分為「聲母、介音、韻母、聲調」四區，點擊直接組合／替換對應槽位，再點同鍵可取消）</span>
+            </div>
+
+            <div class="vk-grid-container">
+              <!-- 第 1 塊：聲母區 -->
+              <div class="vk-section vk-initials">
+                <div class="vk-section-label">1. 聲母（ㄅ～ㄙ）</div>
+                <div class="vk-keys-rows" id="vk-initial-keys">
+                  <!-- 由 JS 產生 21 個聲母鍵 -->
+                </div>
+              </div>
+
+              <!-- 第 2 塊：介音區 -->
+              <div class="vk-section vk-medials">
+                <div class="vk-section-label">2. 介音（ㄧ、ㄨ、ㄩ）</div>
+                <div class="vk-keys-col" id="vk-medial-keys">
+                  <!-- 由 JS 產生 3 個介音鍵 -->
+                </div>
+              </div>
+
+              <!-- 第 3 塊：韻母區 -->
+              <div class="vk-section vk-finals">
+                <div class="vk-section-label">3. 韻母（ㄚ～ㄦ）</div>
+                <div class="vk-keys-rows" id="vk-final-keys">
+                  <!-- 由 JS 產生 13 個韻母鍵 -->
+                </div>
+              </div>
+
+              <!-- 第 4 塊：聲調區 -->
+              <div class="vk-section vk-tones">
+                <div class="vk-section-label">4. 聲調（預設一聲免按）</div>
+                <div class="vk-keys-col" id="vk-tone-keys">
+                  <!-- 由 JS 產生 5 個聲調鍵 -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 作答區 2：字形題專用（國字打字輸入） -->
+        <div id="input-area-character" class="interaction-zone hidden">
+          <div class="character-input-bar">
+            <label for="char-answer-input" class="composer-label">請輸入標準國字：</label>
+            <input
+              type="text"
+              id="char-answer-input"
+              class="char-input-box"
+              maxlength="4"
+              autocomplete="off"
+              placeholder="輸入國字"
+            />
+            <div class="composer-actions">
+              <button type="button" id="btn-char-clear" class="btn-secondary" title="清空輸入框 (Esc)">
+                清空<span class="kbd-hint"> (Esc)</span>
+              </button>
+              <button type="button" id="btn-check-character" class="btn-primary btn-lg" title="核對答案 (Enter)">
+                ✓ 核對答案<span class="kbd-hint"> (Enter)</span>
+              </button>
+              <button type="button" id="btn-reveal-character" class="btn-outline" title="直接顯示答案 (未輸入時按 Space 或按 F1)">
+                👁 看答案<span class="kbd-hint"> (Space)</span>
+              </button>
+            </div>
+          </div>
+          <p class="char-input-tip kbd-hint">
+            💡 提示：直接以鍵盤輸入該注音對應之正確國字後按 <code>Enter</code> 核對答案；按 <code>Esc</code> 可清空重填；未輸入文字時按 <code>Space</code>（或隨時按 <code>F1</code>）可直接看答案。
+          </p>
+        </div>
+
+        <!-- 答題結果與標準答案回饋區 -->
+        <div id="feedback-panel" class="feedback-panel hidden" aria-live="polite">
+          <div class="feedback-main">
+            <div class="feedback-badge" id="feedback-badge">✓ 答對了！</div>
+            <div class="feedback-details">
+              <div class="fb-item">
+                <span class="fb-label">標準答案：</span>
+                <strong class="fb-correct-ans" id="fb-correct-ans">ㄓㄚˋ</strong>
+              </div>
+              <div class="fb-item" id="fb-user-wrap">
+                <span class="fb-label">您的作答：</span>
+                <span class="fb-user-ans" id="fb-user-ans">ㄓㄚˋ</span>
+              </div>
+              <div class="fb-item">
+                <span class="fb-label">完整詞語對照：</span>
+                <span class="fb-full-phrase" id="fb-full-phrase">大蜡（蜡：ㄓㄚˋ）</span>
+              </div>
+            </div>
+          </div>
+          <div class="feedback-actions">
+            <button type="button" id="btn-mark-mastered" class="btn-sm btn-success-outline" title="快捷鍵：數字鍵 1">
+              ✓ 標為已熟練<span class="kbd-hint"> (1)</span>
+            </button>
+            <button type="button" id="btn-mark-wrong" class="btn-sm btn-danger-outline" title="快捷鍵：數字鍵 2">
+              ✗ 加入需加強<span class="kbd-hint"> (2)</span>
+            </button>
+            <button type="button" id="btn-feedback-next" class="btn-sm btn-primary" title="快捷鍵：右方向鍵 (→)">
+              下一題<span class="kbd-hint"> (→)</span> ▶
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 模式 B：題庫列表總覽模式 -->
+    <section id="view-list" class="review-list-section hidden" aria-label="題庫列表總覽區">
+      <div class="list-toolbar">
+        <div class="list-toolbar-left">
+          <button type="button" id="btn-toggle-all-answers" class="btn-secondary">
+            👁 全部遮罩答案（點擊單格可翻開）
+          </button>
+          <span class="list-hint">點擊任一列右側「🎯 練習」可開啟該題虛擬鍵盤或打字練習</span>
+        </div>
+        <div class="list-pagination-controls">
+          <label for="select-page-size">每頁顯示：</label>
+          <select id="select-page-size" class="form-select-sm">
+            <option value="50">50 題</option>
+            <option value="100" selected>100 題</option>
+            <option value="200">200 題</option>
+          </select>
+          <button type="button" id="btn-page-prev" class="btn-secondary btn-sm">上一頁</button>
+          <span id="page-info-label">1 / 28 頁</span>
+          <button type="button" id="btn-page-next" class="btn-secondary btn-sm">下一頁</button>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="questions-table">
+          <thead>
+            <tr>
+              <th class="col-star">收藏</th>
+              <th class="col-year">年度</th>
+              <th class="col-type">題型</th>
+              <th class="col-num">題號</th>
+              <th class="col-prompt">題目詞語 / 提示</th>
+              <th class="col-target">測驗目標</th>
+              <th class="col-answer">標準答案</th>
+              <th class="col-status">練習狀態</th>
+              <th class="col-action">互動練習</th>
+            </tr>
+          </thead>
+          <tbody id="questions-table-body">
+            <!-- 由 JS 動態產生 -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="list-footer-pagination">
+        <button type="button" id="btn-page-prev-bottom" class="btn-secondary btn-sm">◀ 上一頁</button>
+        <span id="page-info-label-bottom">第 1 / 28 頁</span>
+        <button type="button" id="btn-page-next-bottom" class="btn-secondary btn-sm">下一頁 ▶</button>
+      </div>
+    </section>
+
+    <!-- 階段二：線上測驗模組 (MVP) -->
+    <section id="module-quiz" class="quiz-module-section hidden" aria-label="線上測驗系統">
+      <!-- 2-A：測驗設定與出題畫面 -->
+      <div id="quiz-setup-view" class="quiz-setup-card">
+        <div class="quiz-setup-header">
+          <h2>📝 線上模擬測驗設定</h2>
+          <p>自由組合歷屆年度、題型比例與題數，系統將隨機抽題並於交卷後自動批改計分、同步更新錯題紀錄。</p>
+        </div>
+
+        <!-- 1. 年度範圍（複選） -->
+        <div class="quiz-config-block">
+          <div class="year-filter-header">
+            <label class="quiz-config-label">
+              1. 出題年度範圍（<span id="quiz-year-summary" class="year-summary-text">全部 14 個年度・共 2,800 題</span>）
+            </label>
+            <div class="year-quick-actions">
+              <button type="button" class="year-quick-btn" id="btn-quiz-year-all">全選</button>
+              <button type="button" class="year-quick-btn" id="btn-quiz-year-recent5">近 5 年</button>
+              <button type="button" class="year-quick-btn" id="btn-quiz-year-recent3">近 3 年</button>
+              <button type="button" class="year-quick-btn" id="btn-quiz-year-clear">清空重選</button>
+            </div>
+          </div>
+          <div class="year-chips-container" id="quiz-year-chips" role="group" aria-label="測驗年度複選按鈕組"></div>
+        </div>
+
+        <div class="quiz-config-grid">
+          <!-- 2. 題型比例 -->
+          <div class="quiz-config-block">
+            <label class="quiz-config-label">2. 測驗題型配置</label>
+            <div class="quiz-option-pills" id="quiz-opt-type">
+              <button type="button" class="quiz-pill active" data-qtype="balanced">⚖️ 字音＋字形各半</button>
+              <button type="button" class="quiz-pill" data-qtype="pronunciation">甲、僅測字音</button>
+              <button type="button" class="quiz-pill" data-qtype="character">乙、僅測字形</button>
+            </div>
+          </div>
+
+          <!-- 3. 抽題來源 -->
+          <div class="quiz-config-block">
+            <label class="quiz-config-label">3. 抽題來源偏好</label>
+            <div class="quiz-option-pills" id="quiz-opt-source">
+              <button type="button" class="quiz-pill active" data-qsource="all">🎲 全部隨機抽題</button>
+              <button type="button" class="quiz-pill" data-qsource="unpracticed">🆕 優先抽未練習</button>
+              <button type="button" class="quiz-pill" data-qsource="weak">🔥 專測錯題與收藏</button>
+            </div>
+          </div>
+
+          <!-- 4. 測驗題數 -->
+          <div class="quiz-config-block">
+            <label class="quiz-config-label">4. 測驗總題數</label>
+            <div class="quiz-option-pills" id="quiz-opt-count">
+              <button type="button" class="quiz-pill" data-qcount="10">10 題</button>
+              <button type="button" class="quiz-pill active" data-qcount="20">20 題</button>
+              <button type="button" class="quiz-pill" data-qcount="50">50 題</button>
+              <button type="button" class="quiz-pill" data-qcount="100">100 題</button>
+              <button type="button" class="quiz-pill" data-qcount="200">200 題（全真卷）</button>
+            </div>
+          </div>
+
+          <!-- 5. 計時模式 -->
+          <div class="quiz-config-block">
+            <label class="quiz-config-label">5. 作答計時方式</label>
+            <div class="quiz-option-pills" id="quiz-opt-timer">
+              <button type="button" class="quiz-pill active" data-qtimer="timed">⏱ 競賽比例限時（每 20 題 1 分鐘）</button>
+              <button type="button" class="quiz-pill" data-qtimer="untimed">∞ 不限時（正向計時）</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="quiz-setup-footer">
+          <div class="quiz-pool-status" id="quiz-pool-status">
+            符合條件題池：<strong>2,800</strong> 題｜預計抽出：<strong>20</strong> 題（字音 10 題、字形 10 題）｜限時：<strong>01:00</strong>
+          </div>
+          <button type="button" id="btn-start-quiz" class="btn-primary btn-lg quiz-start-btn">
+            🚀 開始線上測驗
+          </button>
+        </div>
+      </div>
+
+      <!-- 2-B：測驗進行中畫面 -->
+      <div id="quiz-runner-view" class="quiz-runner-container hidden">
+        <!-- 頂部測驗控制列 -->
+        <div class="quiz-topbar">
+          <div class="quiz-topbar-left">
+            <span class="quiz-timer-badge" id="quiz-timer-badge">⏱ 01:00</span>
+            <span class="quiz-progress-text" id="quiz-answered-progress">已作答 0 / 20 題</span>
+          </div>
+          <div class="quiz-topbar-right">
+            <button type="button" id="btn-quiz-toggle-palette" class="btn-secondary btn-sm">
+              🔢 題號導覽 ▾
+            </button>
+            <button type="button" id="btn-quiz-submit-top" class="btn-primary btn-sm">
+              📤 交卷結算
+            </button>
+            <button type="button" id="btn-quiz-quit" class="btn-ghost btn-sm">
+              ✕ 放棄
+            </button>
+          </div>
+        </div>
+
+        <!-- 題號快速跳題面板 -->
+        <div id="quiz-palette-panel" class="quiz-palette-panel">
+          <div class="quiz-palette-legend">
+            <span><i class="legend-dot current"></i>目前題目</span>
+            <span><i class="legend-dot answered"></i>已作答</span>
+            <span><i class="legend-dot unanswered"></i>未作答（點擊題號可快速跳題）</span>
+          </div>
+          <div id="quiz-palette-grid" class="quiz-palette-grid"></div>
+        </div>
+
+        <!-- 測驗題目卡 -->
+        <div class="question-card quiz-active-card">
+          <div class="q-card-header">
+            <div class="q-meta-badges">
+              <span class="badge badge-quiz-seq" id="quiz-q-seq">第 1 / 20 題</span>
+              <span class="badge badge-year" id="quiz-q-year">114 年</span>
+              <span class="badge badge-type yin" id="quiz-q-type">甲、字音</span>
+              <span class="badge badge-num" id="quiz-q-num">原卷第 001 題</span>
+            </div>
+            <div class="q-header-actions">
+              <span class="quiz-saved-indicator" id="quiz-saved-indicator">尚未作答</span>
+            </div>
+          </div>
+
+          <div class="q-prompt-area" id="quiz-prompt-area">
+            <div class="q-instruction" id="quiz-q-instruction">
+              請拼出標示字之「標準注音」（點選按鍵即自動填入本題答案）：
+            </div>
+            <div class="q-prompt-box" id="quiz-prompt-display"></div>
+            <div class="q-target-hint" id="quiz-target-hint">
+              測驗字：<strong id="quiz-target-text"></strong>
+            </div>
+          </div>
+
+          <!-- 測驗作答區 1：字音虛擬鍵盤 -->
+          <div id="quiz-input-pronunciation" class="interaction-zone">
+            <div class="zhuyin-composer-bar">
+              <div class="composer-preview-wrap">
+                <span class="composer-label">本題作答：</span>
+                <div class="zhuyin-answer-box" id="quiz-zhuyin-answer-box">
+                  <span id="quiz-zhuyin-composed-text" class="zhuyin-composed-placeholder">請點擊下方注音按鍵</span>
+                </div>
+                <div class="zhuyin-slots-indicator">
+                  <span class="slot-pill" id="quiz-slot-initial">聲母：-</span>
+                  <span class="slot-pill" id="quiz-slot-medial">介音：-</span>
+                  <span class="slot-pill" id="quiz-slot-final">韻母：-</span>
+                  <span class="slot-pill" id="quiz-slot-tone">聲調：一聲(無號)</span>
+                </div>
+              </div>
+              <div class="composer-actions quiz-composer-actions">
+                <button type="button" id="btn-quiz-zhuyin-backspace" class="btn-secondary">
+                  ⌫ 退格<span class="kbd-hint"> (Backspace)</span>
+                </button>
+                <button type="button" id="btn-quiz-zhuyin-clear" class="btn-secondary">
+                  清空<span class="kbd-hint"> (Esc)</span>
+                </button>
+                <button type="button" id="btn-quiz-zhuyin-next" class="btn-primary btn-lg">
+                  確認並下一題<span class="kbd-hint"> (Enter)</span> ▶
+                </button>
+              </div>
+            </div>
+
+            <div class="virtual-keyboard" aria-label="測驗注音符號虛擬鍵盤">
+              <div class="vk-grid-container">
+                <div class="vk-section vk-initials">
+                  <div class="vk-section-label">1. 聲母（ㄅ～ㄙ）</div>
+                  <div class="vk-keys-rows" id="quiz-vk-initial-keys"></div>
+                </div>
+                <div class="vk-section vk-medials">
+                  <div class="vk-section-label">2. 介音（ㄧ、ㄨ、ㄩ）</div>
+                  <div class="vk-keys-col" id="quiz-vk-medial-keys"></div>
+                </div>
+                <div class="vk-section vk-finals">
+                  <div class="vk-section-label">3. 韻母（ㄚ～ㄦ）</div>
+                  <div class="vk-keys-rows" id="quiz-vk-final-keys"></div>
+                </div>
+                <div class="vk-section vk-tones">
+                  <div class="vk-section-label">4. 聲調（預設一聲免按）</div>
+                  <div class="vk-keys-col" id="quiz-vk-tone-keys"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 測驗作答區 2：字形國字輸入 -->
+          <div id="quiz-input-character" class="interaction-zone hidden">
+            <div class="character-input-bar">
+              <label for="quiz-char-answer-input" class="composer-label">本題作答（輸入國字即自動儲存）：</label>
+              <input
+                type="text"
+                id="quiz-char-answer-input"
+                class="char-input-box"
+                maxlength="4"
+                autocomplete="off"
+                placeholder="輸入國字"
+              />
+              <div class="composer-actions">
+                <button type="button" id="btn-quiz-char-clear" class="btn-secondary">
+                  清空<span class="kbd-hint"> (Esc)</span>
+                </button>
+                <button type="button" id="btn-quiz-char-next" class="btn-primary btn-lg">
+                  確認並下一題<span class="kbd-hint"> (Enter)</span> ▶
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 卡片底部換題與交卷列 -->
+          <div class="quiz-card-footer">
+            <button type="button" id="btn-quiz-prev" class="btn-nav">◀ 上一題<span class="kbd-hint"> (←)</span></button>
+            <button type="button" id="btn-quiz-submit-bottom" class="btn-outline">📤 提前交卷結算</button>
+            <button type="button" id="btn-quiz-next" class="btn-nav">下一題<span class="kbd-hint"> (→)</span> ▶</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2-C：測驗批改結果與詳解檢討畫面 -->
+      <div id="quiz-result-view" class="quiz-result-container hidden">
+        <div class="quiz-score-banner">
+          <div class="score-circle-wrap">
+            <div class="score-label">本次測驗得分</div>
+            <div class="score-number" id="quiz-res-score">90</div>
+            <div class="score-sub" id="quiz-res-accuracy">答對 18 / 20 題（90%）</div>
+          </div>
+
+          <div class="score-metrics-grid">
+            <div class="score-metric-box">
+              <span class="metric-title">甲、字音表現</span>
+              <strong class="metric-val" id="quiz-res-yin">9 / 10 題</strong>
+            </div>
+            <div class="score-metric-box">
+              <span class="metric-title">乙、字形表現</span>
+              <strong class="metric-val" id="quiz-res-xing">9 / 10 題</strong>
+            </div>
+            <div class="score-metric-box">
+              <span class="metric-title">作答耗時</span>
+              <strong class="metric-val" id="quiz-res-time">00 分 48 秒</strong>
+            </div>
+            <div class="score-metric-box">
+              <span class="metric-title">學習紀錄連動</span>
+              <strong class="metric-val success" id="quiz-res-sync">已自動更新熟練度與錯題本</strong>
+            </div>
+          </div>
+
+          <div class="quiz-result-actions">
+            <button type="button" id="btn-quiz-retry" class="btn-primary">
+              🔄 再測一次（重新抽題）
+            </button>
+            <button type="button" id="btn-quiz-reconfig" class="btn-secondary">
+              ⚙️ 修改測驗設定
+            </button>
+            <button type="button" id="btn-quiz-review-wrong" class="btn-outline">
+              📖 前往「線上複習」練錯題
+            </button>
+          </div>
+        </div>
+
+        <div class="review-list-section quiz-breakdown-section">
+          <div class="list-toolbar">
+            <div class="list-toolbar-left">
+              <h3 class="breakdown-title">📋 逐題批改與詳解對照</h3>
+              <div class="segmented-control" id="quiz-res-filter-group">
+                <button type="button" class="seg-btn active" data-rfilter="all" id="btn-res-filter-all">全部題目 (20)</button>
+                <button type="button" class="seg-btn" data-rfilter="wrong" id="btn-res-filter-wrong">✗ 僅看答錯與未答 (2)</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="questions-table quiz-result-table">
+              <thead>
+                <tr>
+                  <th class="col-star">收藏</th>
+                  <th class="col-num">題序</th>
+                  <th class="col-year">出處</th>
+                  <th class="col-type">題型</th>
+                  <th class="col-prompt">題目詞語 / 提示</th>
+                  <th class="col-target">測驗目標</th>
+                  <th class="col-user-ans">您的作答</th>
+                  <th class="col-answer">標準答案</th>
+                  <th class="col-status">批改結果</th>
+                  <th class="col-action">原卷核對</th>
+                </tr>
+              </thead>
+              <tbody id="quiz-result-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 階段三：紙本試卷 Word (.docx) 產生器 -->
+    <section id="module-docx" class="docx-module-section hidden" aria-label="紙本試卷 Word 產生器">
+      <div class="quiz-setup-card docx-setup-card">
+        <div class="quiz-setup-header">
+          <h2>🖨️ 紙本試卷 Word (.docx) 排版與匯出系統</h2>
+          <p>
+            支援自選歷屆年度組合、題數篩選，並可自由指定「<strong>A4 / B4 / A3 紙張</strong>」、「<strong>橫向 / 直向紙張</strong>」、「<strong>橫向 / 直向文字</strong>」，自動將測驗字以「<strong>『』括號</strong>」標示，純前端一鍵產生標準 Microsoft Word (.docx) 題目卷與解答卷。
+          </p>
+        </div>
+
+        <!-- 1. 題庫年度範圍（複選） -->
+        <div class="quiz-config-block">
+          <div class="year-filter-header">
+            <label class="quiz-config-label">
+              1. 題庫年度範圍（可複選，即時組合：<span id="docx-year-summary" class="year-summary-text">全部 14 個年度・共 2,800 題</span>）
+            </label>
+            <div class="year-quick-actions">
+              <button type="button" class="year-quick-btn" id="btn-docx-year-all">全選</button>
+              <button type="button" class="year-quick-btn" id="btn-docx-year-recent5">近 5 年</button>
+              <button type="button" class="year-quick-btn" id="btn-docx-year-recent3">近 3 年</button>
+              <button type="button" class="year-quick-btn" id="btn-docx-year-clear">清空重選</button>
+            </div>
+          </div>
+          <div class="year-chips-container" id="docx-year-chips" role="group" aria-label="Word 試卷年度複選按鈕組"></div>
+        </div>
+
+        <!-- 2. 題型、抽題來源與題數設定 -->
+        <div class="quiz-config-grid">
+          <div class="quiz-config-block">
+            <label class="quiz-config-label">2. 試卷題型配置</label>
+            <div class="quiz-option-pills" id="docx-opt-type">
+              <button type="button" class="quiz-pill active" data-dtype="balanced">⚖️ 字音＋字形各半</button>
+              <button type="button" class="quiz-pill" data-dtype="pronunciation">甲、僅出字音</button>
+              <button type="button" class="quiz-pill" data-dtype="character">乙、僅出字形</button>
+            </div>
+          </div>
+
+          <div class="quiz-config-block">
+            <label class="quiz-config-label">3. 抽題來源與排序</label>
+            <div class="quiz-option-pills" id="docx-opt-source">
+              <button type="button" class="quiz-pill active" data-dsource="all">🎲 全部隨機抽題</button>
+              <button type="button" class="quiz-pill" data-dsource="unpracticed">🆕 優先抽未練習</button>
+              <button type="button" class="quiz-pill" data-dsource="weak">🔥 專抽錯題與收藏</button>
+            </div>
+          </div>
+
+          <div class="quiz-config-block">
+            <label class="quiz-config-label">4. 試卷總題數</label>
+            <div class="quiz-option-pills" id="docx-opt-count">
+              <button type="button" class="quiz-pill" data-dcount="20">20 題</button>
+              <button type="button" class="quiz-pill" data-dcount="50">50 題</button>
+              <button type="button" class="quiz-pill active" data-dcount="100">100 題</button>
+              <button type="button" class="quiz-pill" data-dcount="200">200 題（全真卷）</button>
+            </div>
+          </div>
+
+          <div class="quiz-config-block">
+            <label class="quiz-config-label" for="docx-title-input">5. 自訂試卷標題</label>
+            <input
+              type="text"
+              id="docx-title-input"
+              class="form-input"
+              value="全國語文競賽 國語字音字形測驗卷（高中學生組）"
+              placeholder="輸入試卷標題"
+            />
+          </div>
+        </div>
+
+        <!-- 3. 版面、紙張方向、文字方向與括號標示設定 -->
+        <div class="docx-layout-panel">
+          <div class="docx-layout-panel-title">📐 Word 紙本版面與文字排版設定</div>
+          <div class="quiz-config-grid">
+            <!-- 紙張大小：A4 / B4 / A3 -->
+            <div class="quiz-config-block">
+              <label class="quiz-config-label">6. 紙張版面尺寸（A4 / B4 / A3）</label>
+              <div class="quiz-option-pills" id="docx-opt-paper">
+                <button type="button" class="quiz-pill active" data-dpaper="A4">📄 A4 (210×297mm)</button>
+                <button type="button" class="quiz-pill" data-dpaper="B4">📜 B4 (257×364mm 競賽卷)</button>
+                <button type="button" class="quiz-pill" data-dpaper="A3">🗺️ A3 (297×420mm)</button>
+              </div>
+            </div>
+
+            <!-- 紙張方向：橫向 / 直向 -->
+            <div class="quiz-config-block">
+              <label class="quiz-config-label">7. 紙張方向（橫向 / 直向紙張）</label>
+              <div class="quiz-option-pills" id="docx-opt-orient">
+                <button type="button" class="quiz-pill active" data-dorient="landscape">🖼️ 橫向紙張 (Landscape)</button>
+                <button type="button" class="quiz-pill" data-dorient="portrait">📄 直向紙張 (Portrait)</button>
+              </div>
+            </div>
+
+            <!-- 文字方向：橫向 / 直向 -->
+            <div class="quiz-config-block">
+              <label class="quiz-config-label">8. 文字書寫方向（橫向 / 直向文字）</label>
+              <div class="quiz-option-pills" id="docx-opt-textdir">
+                <button type="button" class="quiz-pill active" data-dtextdir="vertical">⬇️ 直向文字（傳統直書・由右至左）</button>
+                <button type="button" class="quiz-pill" data-dtextdir="horizontal">➡️ 橫向文字（現代橫書・由左至右）</button>
+              </div>
+            </div>
+
+            <!-- 測驗字標示樣式 -->
+            <div class="quiz-config-block">
+              <label class="quiz-config-label">9. 測驗目標字括號標示</label>
+              <div class="quiz-option-pills" id="docx-opt-bracket">
+                <button type="button" class="quiz-pill active" data-dbracket="corner_underline">「」括號＋粗體底線（例：大「蜡」）</button>
+                <button type="button" class="quiz-pill" data-dbracket="corner_only">僅加「」括號（例：大「蜡」）</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. 狀態摘要與下載按鈕列 -->
+        <div class="quiz-setup-footer docx-actions-footer">
+          <div class="quiz-pool-status" id="docx-pool-status">
+            目前已抽出：<strong>100</strong> 題（字音 50 題、字形 50 題）｜版面：<strong>A4 橫向紙張・直向文字</strong>
+          </div>
+          <div class="docx-download-btns">
+            <button type="button" id="btn-docx-resample" class="btn-secondary">
+              🎲 重新隨機抽題
+            </button>
+            <button type="button" id="btn-docx-dl-student" class="btn-outline">
+              📄 下載【學生空白卷】(.docx)
+            </button>
+            <button type="button" id="btn-docx-dl-teacher" class="btn-outline">
+              🔑 下載【教師解答卷】(.docx)
+            </button>
+            <button type="button" id="btn-docx-dl-both" class="btn-primary btn-lg">
+              📥 下載【題目＋解答合訂卷】(.docx)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. 線上即時排版預覽區 -->
+      <div class="docx-preview-section">
+        <div class="docx-preview-toolbar">
+          <div class="docx-preview-toolbar-left">
+            <h3 class="breakdown-title">👁️ 試卷排版即時預覽（所見即所得對照）</h3>
+            <span class="list-hint" id="docx-preview-meta-badge">A4 橫向紙張｜直向文字｜「」括號標示</span>
+          </div>
+          <div class="segmented-control" id="docx-preview-mode-group">
+            <button type="button" class="seg-btn active" data-pmode="student">預覽：學生空白卷</button>
+            <button type="button" class="seg-btn" data-pmode="teacher">預覽：教師解答卷</button>
+          </div>
+        </div>
+
+        <div class="docx-paper-stage">
+          <div id="docx-paper-sheet" class="docx-paper-sheet paper-a4 orient-landscape text-vertical">
+            <!-- 由 JS 即時渲染模擬紙張預覽 -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 階段二與階段三預告面板 -->
+    <section id="module-placeholder" class="placeholder-section hidden">
+      <div class="placeholder-card">
+        <h2 id="placeholder-title">功能準備中</h2>
+        <p id="placeholder-desc"></p>
+        <button type="button" id="btn-back-to-review" class="btn-primary">返回「1. 線上複習」</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>
+      資料來源：民國 101～114 年全國語文競賽「國語字音字形（高中學生組）」決賽試題與官方標準答案（全 2,800 題經 300+ DPI 原卷與官方勘誤核實）。
+    </p>
+  </footer>
+
+  <!-- 載入離線/靜態題庫封裝檔，確保 GitHub Pages 與本機直接點開 index.html 皆可 100% 正常運作 -->
+  <script src="data/su_words_bank.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>

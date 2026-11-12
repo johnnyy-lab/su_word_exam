@@ -1,0 +1,13 @@
+# 工作中間檔（截圖、裁切、暫存產物）
+scratch/
+__pycache__/
+*.pyc
+scratch_*.png
+
+# 原始大部頭專輯僅留本機，不上 GitHub
+old/
+
+# 作業系統
+Thumbs.db
+Desktop.ini
+.DS_Store
