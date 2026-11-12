@@ -695,6 +695,21 @@
       badge.textContent = '👁 標準答案';
       userWrap.classList.add('hidden');
     }
+
+    scrollBelowHeader(panel);
+  }
+
+  function scrollBelowHeader(el) {
+    if (!el || window.innerWidth > 768) return;
+    window.requestAnimationFrame(() => {
+      const header = document.getElementById('site-header');
+      const headerH = header ? header.offsetHeight : 0;
+      const rect = el.getBoundingClientRect();
+      const fullyVisible = rect.top >= headerH + 4 && rect.bottom <= window.innerHeight - 8;
+      if (fullyVisible) return;
+      const top = rect.top + window.pageYOffset - headerH - 8;
+      window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+    });
   }
 
   function checkPronunciationAnswer() {
@@ -703,7 +718,7 @@
 
     const userAns = getComposedZhuyin().trim();
     if (!userAns) {
-      alert('請先點擊下方注音符號虛擬鍵盤組合答案，或點擊「👁 看答案」直接檢視解答。');
+      alert('請先用注音虛擬鍵盤組合答案，或點擊「👁 看答案」直接檢視解答。');
       return;
     }
 
@@ -791,6 +806,7 @@
     if (state.currentIndex > 0) {
       state.currentIndex--;
       renderQuestionCard();
+      scrollBelowHeader(document.getElementById('q-prompt-area'));
     }
   }
 
@@ -798,6 +814,7 @@
     if (state.currentIndex < state.filteredQuestions.length - 1) {
       state.currentIndex++;
       renderQuestionCard();
+      scrollBelowHeader(document.getElementById('q-prompt-area'));
     }
   }
 
@@ -1422,6 +1439,7 @@
     if (state.quiz.currentIndex < total - 1) {
       state.quiz.currentIndex++;
       renderQuizRunner();
+      scrollBelowHeader(document.getElementById('quiz-prompt-area'));
     } else {
       requestSubmitQuiz();
     }
@@ -2671,6 +2689,27 @@
       applyFilters();
     });
 
+    // 手機版頂端標頭收合。預設收合，讓題目佔滿畫面；選擇會記在這台裝置。
+    const headerEl = document.getElementById('site-header');
+    const headerToggleBtn = document.getElementById('btn-toggle-header');
+    const headerCollapsedKey = 'suHeaderCollapsed';
+    const applyHeaderCollapsed = (collapsed) => {
+      if (!headerEl || !headerToggleBtn) return;
+      headerEl.classList.toggle('header-collapsed', collapsed);
+      headerToggleBtn.setAttribute('aria-expanded', String(!collapsed));
+      headerToggleBtn.textContent = collapsed ? '國立竹山高中　展開標頭 ▾' : '收合標頭 ▴';
+    };
+    if (headerEl && headerToggleBtn) {
+      const savedHeader = localStorage.getItem(headerCollapsedKey);
+      const collapsedOnPhone = window.innerWidth <= 768 && savedHeader !== '0';
+      applyHeaderCollapsed(collapsedOnPhone);
+      headerToggleBtn.addEventListener('click', () => {
+        const nextCollapsed = !headerEl.classList.contains('header-collapsed');
+        applyHeaderCollapsed(nextCollapsed);
+        localStorage.setItem(headerCollapsedKey, nextCollapsed ? '1' : '0');
+      });
+    }
+
     // 手機版篩選面板展開/收合
     const mobileFilterBtn = document.getElementById('btn-toggle-mobile-filters');
     const filterControlsPanel = document.getElementById('filter-controls-panel');
@@ -2688,6 +2727,7 @@
     document.getElementById('select-jump-q').addEventListener('change', (e) => {
       state.currentIndex = Number(e.target.value) || 0;
       renderQuestionCard();
+      scrollBelowHeader(document.getElementById('q-prompt-area'));
     });
 
     // 手機觸控左右滑動題目區切換上下題
@@ -2982,6 +3022,7 @@
       if (state.quiz.currentIndex > 0) {
         state.quiz.currentIndex--;
         renderQuizRunner();
+        scrollBelowHeader(document.getElementById('quiz-prompt-area'));
       }
     });
 
@@ -2989,6 +3030,7 @@
       if (state.quiz.currentIndex < state.quiz.questions.length - 1) {
         state.quiz.currentIndex++;
         renderQuizRunner();
+        scrollBelowHeader(document.getElementById('quiz-prompt-area'));
       }
     });
 

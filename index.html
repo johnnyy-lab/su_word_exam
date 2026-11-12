@@ -8,8 +8,11 @@
 </head>
 <body>
   <!-- 頂部標題與階段導覽列 -->
-  <header class="site-header">
-    <div class="header-inner">
+  <header class="site-header header-collapsed" id="site-header">
+    <button type="button" id="btn-toggle-header" class="header-toggle" aria-expanded="false" aria-controls="header-collapsible">
+      國立竹山高中　展開標頭 ▾
+    </button>
+    <div class="header-inner" id="header-collapsible">
       <div class="brand">
         <span class="brand-badge">高中學生組 101–114 年</span>
         <h1 class="brand-title">國立竹山高中 國語字音字形數位學習系統</h1>
@@ -174,7 +177,7 @@
         </div>
 
         <!-- 題目主體展示區 -->
-        <div class="q-prompt-area">
+        <div class="q-prompt-area" id="q-prompt-area">
           <div class="q-instruction" id="q-instruction">
             請用下方注音虛擬鍵盤拼出標示字之「標準注音」：
           </div>

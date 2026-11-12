@@ -71,6 +71,10 @@ body {
   z-index: 100;
 }
 
+.header-toggle {
+  display: none;
+}
+
 .header-inner {
   max-width: 1200px;
   margin: 0 auto;
@@ -1348,7 +1352,31 @@ button,
     display: inline-flex;
   }
 
-  /* 頂部導覽列緊湊化 */
+  /* 頂部導覽列可收合，收合後只留一條展開鈕，把畫面留給題目 */
+  .header-toggle {
+    display: flex;
+    width: calc(100% - 1.2rem);
+    margin: 0.4rem auto;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.16);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.38);
+    border-radius: 8px;
+    padding: 0.42rem 0.7rem;
+    font-size: 0.92rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .site-header.header-collapsed .header-inner {
+    display: none;
+  }
+
+  .site-header.header-collapsed .header-toggle {
+    margin: 0.28rem auto;
+  }
+
   .header-inner {
     padding: 0.55rem 0.75rem;
     gap: 0.45rem;
@@ -1603,7 +1631,7 @@ button,
   .composer-actions {
     width: 100%;
     display: grid;
-    grid-template-columns: 1fr 1fr 1.2fr 1.35fr;
+    grid-template-columns: 1fr 1fr;
     gap: 0.38rem;
   }
 
@@ -1611,6 +1639,59 @@ button,
     padding: 0.52rem 0.3rem;
     font-size: 0.85rem;
     width: 100%;
+  }
+
+  /* 注音鍵盤在前，作答預覽與核對鈕接在聲調後面，選完即可往下對答案 */
+  #input-area-pronunciation,
+  #quiz-input-pronunciation {
+    display: flex;
+    flex-direction: column;
+  }
+
+  #input-area-pronunciation .zhuyin-composer-bar,
+  #quiz-input-pronunciation .zhuyin-composer-bar {
+    display: contents;
+  }
+
+  #input-area-pronunciation .virtual-keyboard,
+  #quiz-input-pronunciation .virtual-keyboard {
+    order: 1;
+  }
+
+  #input-area-pronunciation .composer-preview-wrap,
+  #quiz-input-pronunciation .composer-preview-wrap {
+    order: 2;
+    width: 100%;
+    margin-top: 0.65rem;
+    padding: 0.7rem 0.7rem 0.35rem;
+    background: #f2f6f9;
+    border: 1px solid #c9d8e6;
+    border-bottom: none;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+  }
+
+  #input-area-pronunciation .composer-actions,
+  #quiz-input-pronunciation .composer-actions {
+    order: 3;
+    padding: 0.35rem 0.7rem 0.7rem;
+    margin-bottom: 0.35rem;
+    background: #f2f6f9;
+    border: 1px solid #c9d8e6;
+    border-top: none;
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+  }
+
+  #btn-check-pronunciation,
+  #btn-reveal-pronunciation,
+  #btn-quiz-zhuyin-next {
+    grid-column: 1 / -1;
+    min-height: 46px;
+  }
+
+  #q-prompt-area,
+  #quiz-prompt-area,
+  #feedback-panel {
+    scroll-margin-top: 56px;
   }
 
   /* 手機版虛擬注音鍵盤：緊湊好按、不需長距離捲動 */
@@ -2266,7 +2347,7 @@ button,
   }
 
   .quiz-composer-actions {
-    grid-template-columns: 1fr 1fr 1.6fr !important;
+    grid-template-columns: 1fr 1fr;
   }
 
   .quiz-result-actions button {
