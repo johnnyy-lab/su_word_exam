@@ -2690,6 +2690,12 @@ button,
   font-size: 0.78rem;
 }
 
+.pv-v-page .pv-v-ans.char {
+  flex-basis: 24%;
+  font-size: 1.7rem;
+  line-height: 1;
+}
+
 .pv-v-page .pv-v-prompt {
   min-height: 0;
   font-size: var(--pv-q, 10pt);

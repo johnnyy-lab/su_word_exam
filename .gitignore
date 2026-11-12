@@ -7,6 +7,9 @@ scratch_*.png
 # 原始大部頭專輯僅留本機，不上 GitHub
 old/
 
+# 錯誤訊息截圖等臨時檔，不上 GitHub
+err/
+
 # 作業系統
 Thumbs.db
 Desktop.ini

@@ -1815,7 +1815,7 @@
       const plan = buildVerticalPagePlan(sampledQuestions, paperSize, orientation);
       const roleTag = isTeacher ? '【教師標準解答卷】' : '【學生作答卷】';
       const ratio = `${plan.box.pageW} / ${plan.box.pageH}`;
-      const titleText = `${customTitle}　　${roleTag}`;
+      const titleText = toVerticalPunctuation(`${customTitle}　　${roleTag}`);
       const colCount = plan.colsPlan.cols;
 
       const pagesHtml = plan.pages.map((page) => {
@@ -1833,10 +1833,11 @@
               const seqStr = q ? String(band.start + i + 1).padStart(3, '0') : '';
               if (q) {
                 const ansHtml = isTeacher ? `<span class="pv-ans-filled">${escapeHtml(q.answer)}</span>` : '';
+                const ansClass = q.type === 'character' ? 'pv-v-ans char' : 'pv-v-ans';
                 colsHtml += `
                   <div class="pv-v-col">
                     <div class="pv-v-num">${seqStr}</div>
-                    <div class="pv-v-ans">${ansHtml}</div>
+                    <div class="${ansClass}">${ansHtml}</div>
                     <div class="pv-v-prompt">${formatDocxPreviewPromptHtml(q)}</div>
                   </div>`;
               } else {
@@ -2040,7 +2041,7 @@
     const rPrNormal = `<w:rPr><w:rFonts w:ascii="標楷體" w:hAnsi="標楷體" w:eastAsia="標楷體"/><w:sz w:val="${fontSizeHalfPt}"/><w:szCs w:val="${fontSizeHalfPt}"/></w:rPr>`;
     const rPrTarget =
       bracketStyle === 'corner_underline'
-        ? `<w:rPr><w:rFonts w:ascii="標楷體" w:hAnsi="標楷體" w:eastAsia="標楷體"/><w:b/><w:u w:val="single"/><w:sz w:val="${fontSizeHalfPt}"/><w:szCs w:val="${fontSizeHalfPt}"/></w:rPr>`
+        ? `<w:rPr><w:rFonts w:ascii="標楷體" w:hAnsi="標楷體" w:eastAsia="標楷體"/><w:b/><w:sz w:val="${fontSizeHalfPt}"/><w:szCs w:val="${fontSizeHalfPt}"/><w:u w:val="single"/></w:rPr>`
         : `<w:rPr><w:rFonts w:ascii="標楷體" w:hAnsi="標楷體" w:eastAsia="標楷體"/><w:b/><w:sz w:val="${fontSizeHalfPt}"/><w:szCs w:val="${fontSizeHalfPt}"/></w:rPr>`;
 
     if (!target) {
@@ -2062,17 +2063,20 @@
 
   function buildRunPropsXml(fontSizeHalfPt, options) {
     const opts = options || {};
+    const font = opts.font || '標楷體';
+    const hint = opts.hint ? ` w:hint="${opts.hint}"` : '';
     const bold = opts.bold ? '<w:b/>' : '';
-    const underline = opts.underline ? '<w:u w:val="single"/>' : '';
     const color = opts.color ? `<w:color w:val="${opts.color}"/>` : '';
-    return `<w:rPr><w:rFonts w:ascii="標楷體" w:hAnsi="標楷體" w:eastAsia="標楷體"/>${bold}${underline}${color}<w:sz w:val="${fontSizeHalfPt}"/><w:szCs w:val="${fontSizeHalfPt}"/></w:rPr>`;
+    const underline = opts.underline ? '<w:u w:val="single"/>' : '';
+    // rFonts、b、color、sz、szCs、u 必須照這個順序，否則 Word 會判定內容無法讀取。
+    return `<w:rPr><w:rFonts w:ascii="${font}" w:hAnsi="${font}" w:eastAsia="${font}"${hint}/>${bold}${color}<w:sz w:val="${fontSizeHalfPt}"/><w:szCs w:val="${fontSizeHalfPt}"/>${underline}</w:rPr>`;
   }
 
-  // 直書不用 Word 的 textDirection。tbRl 會把所有字向右轉 90 度；tbRlV 雖然國字直立，注音仍會躺倒。
-  // 改成一格內由上而下、每個字一段，字面保持直立，與網頁 vertical-rl + text-orientation: upright 相同。
+  // 題幹與注音仍逐字成段：tbRl 會把國字轉倒，tbRlV 又會讓注音躺平。
+  // 標題與填寫欄沒有注音，改走儲存格 tbRlV，避免每個字後面都是段落標記。
   function buildUprightStackParagraphs(segments, fontSizeHalfPt) {
     const lineTwips = fontSizeHalfPt * 10;
-    const pPr = `<w:pPr><w:jc w:val="center"/><w:snapToGrid w:val="0"/><w:spacing w:before="0" w:after="0" w:line="${lineTwips}" w:lineRule="exact"/><w:ind w:left="0" w:right="0" w:firstLine="0"/></w:pPr>`;
+    const pPr = `<w:pPr><w:snapToGrid w:val="0"/><w:spacing w:before="0" w:after="0" w:line="${lineTwips}" w:lineRule="exact"/><w:ind w:left="0" w:right="0" w:firstLine="0"/><w:jc w:val="center"/></w:pPr>`;
     let xml = '';
     segments.forEach((seg) => {
       const rPr = buildRunPropsXml(fontSizeHalfPt, seg);
@@ -2114,7 +2118,56 @@
   // 直書卷邊界 8mm。底部再留約 5mm 給分節符號，避免滿版表格多出空白頁。
   const VERTICAL_MARGIN_TWIPS = 454;
   const VERTICAL_SECTION_SLACK_TWIPS = 280;
-  const VERTICAL_NAME_TEXT = '班級＿＿＿座號＿＿姓名＿＿＿＿得分＿＿';
+  // 標籤後面留空白供書寫。不加全形冒號，也不用底線字元。
+  const VERTICAL_NAME_TEXT = '班級　　　　座號　　　姓名　　　　　得分　　　';
+  const VERTICAL_PUNCT_MAP = {
+    '（': '︵', '）': '︶', '(': '︵', ')': '︶',
+    '【': '︻', '】': '︼',
+    '「': '﹁', '」': '﹂', '『': '﹃', '』': '﹄',
+    '〔': '︹', '〕': '︺', '［': '﹇', '］': '﹈'
+  };
+
+  function toVerticalPunctuation(text) {
+    return Array.from(String(text || '')).map((ch) => VERTICAL_PUNCT_MAP[ch] || ch).join('');
+  }
+
+  function isVerticalPunctChar(ch) {
+    return '︵︶︻︼﹁﹂﹃﹄︹︺﹇﹈'.includes(ch);
+  }
+
+  // 直書儲存格用 tbRlV：國字直立、由上而下，括號改用直排字形。
+  // 標楷體沒有直排括號，括號改走新細明體。
+  function buildVerticalFlowParagraph(segments, fontSizeHalfPt) {
+    let runs = '';
+    segments.forEach((seg) => {
+      const converted = toVerticalPunctuation(seg.text);
+      let buf = '';
+      let bufPunct = false;
+      const flush = () => {
+        if (!buf) return;
+        const rPr = buildRunPropsXml(fontSizeHalfPt, {
+          bold: seg.bold,
+          color: seg.color,
+          font: bufPunct ? 'PMingLiU' : '標楷體',
+          hint: 'eastAsia'
+        });
+        runs += `<w:r>${rPr}<w:t xml:space="preserve">${escapeXml(buf)}</w:t></w:r>`;
+        buf = '';
+      };
+      Array.from(converted).forEach((ch) => {
+        const punct = isVerticalPunctChar(ch);
+        if (buf && punct !== bufPunct) flush();
+        bufPunct = punct;
+        buf += ch;
+      });
+      flush();
+    });
+    if (!runs) {
+      runs = `<w:r>${buildRunPropsXml(fontSizeHalfPt)}<w:t></w:t></w:r>`;
+    }
+    const pPr = '<w:pPr><w:snapToGrid w:val="0"/><w:spacing w:before="0" w:after="0" w:line="276" w:lineRule="auto"/><w:jc w:val="center"/></w:pPr>';
+    return `<w:p>${pPr}${runs}</w:p>`;
+  }
 
   function getDocxPageBox(paperSize, orientation) {
     const dim = DOCX_PAPER_TWIPS[paperSize] || DOCX_PAPER_TWIPS.A4;
@@ -2173,17 +2226,21 @@
     const chars = Math.max(4, maxPromptChars || 4);
     const numH = 220;
     const ansH = 680;
+    // 巢狀表格後面必須再放一個段落，Word 才不會判定儲存格無法讀取。
+    // 每個題帶列在巢狀表格後還有一個極小段落，列高必須算進去，否則 Word 會判定內容無法讀取。
+    const cellPad = 60;
     for (let sz = 40; sz >= 16; sz -= 2) {
       const line = sz * 10;
       const promptH = chars * line;
       const bandH = numH + ansH + promptH;
-      if (bandH * rows <= usableH) {
-        return { sz, line, numH, ansH, promptH, bandH };
+      if ((bandH + cellPad) * rows <= usableH) {
+        return { sz, line, numH, ansH, promptH, bandH, rowH: bandH + cellPad };
       }
     }
     const line = 160;
     const promptH = chars * line;
-    return { sz: 16, line, numH, ansH, promptH, bandH: numH + ansH + promptH, tight: true };
+    const bandH = numH + ansH + promptH;
+    return { sz: 16, line, numH, ansH, promptH, bandH, rowH: bandH + cellPad, tight: true };
   }
 
   function buildVerticalPagePlan(questions, paperSize, orientation) {
@@ -2222,11 +2279,16 @@
     return { box, margin, contentW, usableH, colsPlan, rowsPerPage, pages };
   }
 
-  function answerHalfPoint(ansText, fit) {
+  function answerHalfPoint(ansText, fit, colW, qType) {
     const n = Math.max(1, uprightUnitCount(ansText));
-    let sz = Math.min(fit.sz, Math.floor(fit.ansH / n / 10) * 2);
-    sz = Math.max(12, sz);
-    while (sz > 12 && n * sz * 10 > fit.ansH) sz -= 2;
+    const widthRoom = Math.max(160, (colW || 600) - 48);
+    const widthCap = Math.floor(widthRoom / 10 / 2) * 2;
+    const heightCap = Math.floor(fit.ansH / n / 10 / 2) * 2;
+    // 字形答案是一個國字，依格子能放下的大小放大，不受題幹字級限制。
+    let sz = Math.min(widthCap, heightCap);
+    if (qType !== 'character') sz = Math.min(sz, fit.sz);
+    sz = Math.max(16, sz);
+    while (sz > 16 && (n * sz * 10 > fit.ansH || sz * 10 > widthRoom)) sz -= 2;
     return sz;
   }
 
@@ -2283,8 +2345,8 @@
 
     plan.pages.forEach((page, pageIndex) => {
       const fit = page.fit;
-      const titleChars = uprightUnitCount(customTitle) + 2 + uprightUnitCount(roleTag);
-      const questionH = Math.max(fit.bandH, page.bands.length * fit.bandH);
+      const titleChars = uprightUnitCount(toVerticalPunctuation(customTitle)) + 2 + uprightUnitCount(toVerticalPunctuation(roleTag));
+      const questionH = Math.max(fit.rowH, page.bands.length * fit.rowH);
       let titleSz = 32;
       while (titleSz > 16 && titleChars * titleSz * 10 > Math.max(questionH, fit.bandH)) titleSz -= 2;
 
@@ -2303,15 +2365,15 @@
           const q = band.items[qOffset];
           const seqStr = q ? String(band.start + qOffset + 1).padStart(3, '0') : '';
           numCells += `<w:tc>
-            <w:tcPr><w:tcW w:w="${colsPlan.colW}" w:type="dxa"/><w:vAlign w:val="center"/><w:shd w:val="clear" w:color="auto" w:fill="F4F4F0"/></w:tcPr>
-            <w:p><w:pPr><w:jc w:val="center"/><w:snapToGrid w:val="0"/><w:spacing w:before="0" w:after="0" w:line="200" w:lineRule="exact"/></w:pPr>
+            <w:tcPr><w:tcW w:w="${colsPlan.colW}" w:type="dxa"/><w:shd w:val="clear" w:color="auto" w:fill="F4F4F0"/><w:vAlign w:val="center"/></w:tcPr>
+            <w:p><w:pPr><w:snapToGrid w:val="0"/><w:spacing w:before="0" w:after="0" w:line="200" w:lineRule="exact"/><w:jc w:val="center"/></w:pPr>
               <w:r><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:eastAsia="標楷體"/><w:b/><w:sz w:val="16"/><w:szCs w:val="16"/></w:rPr><w:t>${escapeXml(seqStr)}</w:t></w:r>
             </w:p>
           </w:tc>`;
           const ansText = q && isTeacherCopy ? q.answer : '';
-          const ansSz = answerHalfPoint(ansText, fit);
+          const ansSz = answerHalfPoint(ansText, fit, colsPlan.colW, q && q.type);
           ansCells += `<w:tc>
-            <w:tcPr><w:tcW w:w="${colsPlan.colW}" w:type="dxa"/><w:vAlign w:val="center"/></w:tcPr>
+            <w:tcPr><w:tcW w:w="${colsPlan.colW}" w:type="dxa"/><w:noWrap/><w:vAlign w:val="center"/></w:tcPr>
             ${buildUprightStackParagraphs([{ text: ansText, bold: true, color: '1B4D3E' }], ansSz)}
           </w:tc>`;
           const promptParas = q
@@ -2323,31 +2385,33 @@
           </w:tc>`;
         }
         const labelParas = mergeRestart
-          ? buildUprightStackParagraphs([{ text: band.label, bold: true }], 24)
-          : '<w:p><w:pPr><w:spacing w:before="0" w:after="0"/></w:pPr></w:p>';
+          ? buildVerticalFlowParagraph([{ text: band.label, bold: true }], 24)
+          : '<w:p><w:pPr><w:snapToGrid w:val="0"/><w:spacing w:before="0" w:after="0" w:line="20" w:lineRule="exact"/><w:rPr><w:sz w:val="2"/><w:szCs w:val="2"/></w:rPr></w:pPr></w:p>';
         const mergeXml = mergeRestart ? '<w:vMerge w:val="restart"/>' : '<w:vMerge/>';
         bandRows += `<w:tr>
-          <w:trPr><w:trHeight w:val="${fit.bandH}" w:hRule="exact"/><w:cantSplit/></w:trPr>
+          <w:trPr><w:cantSplit/><w:trHeight w:val="${fit.rowH}" w:hRule="exact"/></w:trPr>
           <w:tc>
             <w:tcPr><w:tcW w:w="${colsPlan.gridW}" w:type="dxa"/><w:vAlign w:val="top"/></w:tcPr>
             <w:tbl>
               <w:tblPr>
                 <w:tblW w:w="${colsPlan.gridW}" w:type="dxa"/>
-                <w:tblLayout w:type="fixed"/>
                 ${gridBorders}
+                <w:tblLayout w:type="fixed"/>
                 <w:tblCellMar><w:top w:w="0" w:type="dxa"/><w:left w:w="0" w:type="dxa"/><w:bottom w:w="0" w:type="dxa"/><w:right w:w="0" w:type="dxa"/></w:tblCellMar>
               </w:tblPr>
               <w:tblGrid>${gridCols}</w:tblGrid>
-              <w:tr><w:trPr><w:trHeight w:val="${fit.numH}" w:hRule="exact"/><w:cantSplit/></w:trPr>${numCells}</w:tr>
-              <w:tr><w:trPr><w:trHeight w:val="${fit.ansH}" w:hRule="exact"/><w:cantSplit/></w:trPr>${ansCells}</w:tr>
-              <w:tr><w:trPr><w:trHeight w:val="${fit.promptH}" w:hRule="exact"/><w:cantSplit/></w:trPr>${promptCells}</w:tr>
+              <w:tr><w:trPr><w:cantSplit/><w:trHeight w:val="${fit.numH}" w:hRule="exact"/></w:trPr>${numCells}</w:tr>
+              <w:tr><w:trPr><w:cantSplit/><w:trHeight w:val="${fit.ansH}" w:hRule="exact"/></w:trPr>${ansCells}</w:tr>
+              <w:tr><w:trPr><w:cantSplit/><w:trHeight w:val="${fit.promptH}" w:hRule="exact"/></w:trPr>${promptCells}</w:tr>
             </w:tbl>
+            <w:p><w:pPr><w:snapToGrid w:val="0"/><w:spacing w:before="0" w:after="0" w:line="20" w:lineRule="exact"/><w:rPr><w:sz w:val="2"/><w:szCs w:val="2"/></w:rPr></w:pPr></w:p>
           </w:tc>
           <w:tc>
             <w:tcPr>
               <w:tcW w:w="${colsPlan.secColW}" w:type="dxa"/>
               ${mergeXml}
               ${sideBorder}
+              <w:textDirection w:val="tbRlV"/>
               <w:vAlign w:val="center"/>
             </w:tcPr>
             ${labelParas}
@@ -2361,8 +2425,8 @@
         <w:tblPr>
           <w:tblW w:w="${pageW}" w:type="dxa"/>
           <w:jc w:val="center"/>
-          <w:tblLayout w:type="fixed"/>
           ${nilBorders}
+          <w:tblLayout w:type="fixed"/>
           <w:tblCellMar><w:top w:w="0" w:type="dxa"/><w:left w:w="0" w:type="dxa"/><w:bottom w:w="0" w:type="dxa"/><w:right w:w="0" w:type="dxa"/></w:tblCellMar>
         </w:tblPr>
         <w:tblGrid>
@@ -2377,21 +2441,22 @@
             <w:tbl>
               <w:tblPr>
                 <w:tblW w:w="${questionsW}" w:type="dxa"/>
-                <w:tblLayout w:type="fixed"/>
                 ${nilBorders}
+                <w:tblLayout w:type="fixed"/>
                 <w:tblCellMar><w:top w:w="0" w:type="dxa"/><w:left w:w="0" w:type="dxa"/><w:bottom w:w="0" w:type="dxa"/><w:right w:w="0" w:type="dxa"/></w:tblCellMar>
               </w:tblPr>
               <w:tblGrid><w:gridCol w:w="${colsPlan.gridW}"/><w:gridCol w:w="${colsPlan.secColW}"/></w:tblGrid>
               ${bandRows}
             </w:tbl>
+            <w:p><w:pPr><w:snapToGrid w:val="0"/><w:spacing w:before="0" w:after="0" w:line="20" w:lineRule="exact"/><w:rPr><w:sz w:val="2"/><w:szCs w:val="2"/></w:rPr></w:pPr></w:p>
           </w:tc>
           <w:tc>
-            <w:tcPr><w:tcW w:w="${colsPlan.nameColW}" w:type="dxa"/>${sideBorder}<w:vAlign w:val="top"/></w:tcPr>
-            ${buildUprightStackParagraphs([{ text: VERTICAL_NAME_TEXT }], 24)}
+            <w:tcPr><w:tcW w:w="${colsPlan.nameColW}" w:type="dxa"/>${sideBorder}<w:textDirection w:val="tbRlV"/><w:vAlign w:val="top"/></w:tcPr>
+            ${buildVerticalFlowParagraph([{ text: VERTICAL_NAME_TEXT }], 28)}
           </w:tc>
           <w:tc>
-            <w:tcPr><w:tcW w:w="${colsPlan.titleColW}" w:type="dxa"/>${sideBorder}<w:vAlign w:val="top"/></w:tcPr>
-            ${buildUprightStackParagraphs(
+            <w:tcPr><w:tcW w:w="${colsPlan.titleColW}" w:type="dxa"/>${sideBorder}<w:textDirection w:val="tbRlV"/><w:vAlign w:val="top"/></w:tcPr>
+            ${buildVerticalFlowParagraph(
               [{ text: customTitle, bold: true }, { text: '　　' }, { text: roleTag }],
               titleSz
             )}
@@ -2440,14 +2505,14 @@
     // 試卷主標題與學生資料列
     xml += `
       <w:p>
-        <w:pPr><w:jc w:val="center"/><w:spacing w:before="0" w:after="80"/></w:pPr>
+        <w:pPr><w:spacing w:before="0" w:after="80"/><w:jc w:val="center"/></w:pPr>
         <w:r>
           <w:rPr><w:rFonts w:ascii="標楷體" w:hAnsi="標楷體" w:eastAsia="標楷體"/><w:b/><w:sz w:val="32"/><w:szCs w:val="32"/></w:rPr>
           <w:t>${escapeXml(customTitle)} ${escapeXml(roleTag)}</w:t>
         </w:r>
       </w:p>
       <w:p>
-        <w:pPr><w:jc w:val="center"/><w:spacing w:before="0" w:after="140"/></w:pPr>
+        <w:pPr><w:spacing w:before="0" w:after="140"/><w:jc w:val="center"/></w:pPr>
         <w:r>
           <w:rPr><w:rFonts w:ascii="標楷體" w:hAnsi="標楷體" w:eastAsia="標楷體"/><w:sz w:val="21"/><w:szCs w:val="21"/></w:rPr>
           <w:t>${escapeXml(metaSub)}</w:t>
@@ -2510,11 +2575,11 @@
               <w:tc>
                 <w:tcPr>
                   <w:tcW w:w="${wNum}" w:type="dxa"/>
-                  <w:vAlign w:val="center"/>
                   <w:shd w:val="clear" w:color="auto" w:fill="F4F4F0"/>
+                  <w:vAlign w:val="center"/>
                 </w:tcPr>
                 <w:p>
-                  <w:pPr><w:jc w:val="center"/><w:spacing w:before="0" w:after="0"/></w:pPr>
+                  <w:pPr><w:spacing w:before="0" w:after="0"/><w:jc w:val="center"/></w:pPr>
                   <w:r>
                     <w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:eastAsia="標楷體"/><w:b/><w:sz w:val="20"/><w:szCs w:val="20"/></w:rPr>
                     <w:t>${escapeXml(seqStr)}</w:t>
@@ -2529,10 +2594,10 @@
                 </w:tcPr>
                 <w:p>
                   <w:pPr>
-                    <w:jc w:val="center"/>
-                    <w:snapToGrid w:val="0"/>
                     <w:wordWrap w:val="off"/>
+                    <w:snapToGrid w:val="0"/>
                     <w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/>
+                    <w:jc w:val="center"/>
                   </w:pPr>
                   <w:r>
                     <w:rPr><w:rFonts w:ascii="標楷體" w:hAnsi="標楷體" w:eastAsia="標楷體"/><w:b/><w:color w:val="1B4D3E"/><w:sz w:val="24"/><w:szCs w:val="24"/></w:rPr>
@@ -2546,7 +2611,7 @@
                   <w:vAlign w:val="center"/>
                 </w:tcPr>
                 <w:p>
-                  <w:pPr><w:jc w:val="left"/><w:spacing w:before="0" w:after="0"/></w:pPr>
+                  <w:pPr><w:spacing w:before="0" w:after="0"/><w:jc w:val="left"/></w:pPr>
                   ${promptRuns}
                 </w:p>
               </w:tc>
@@ -2665,6 +2730,7 @@
     </w:rPrDefault>
     <w:pPrDefault>
       <w:pPr>
+        <w:snapToGrid w:val="0"/>
         <w:spacing w:after="0" w:line="240" w:lineRule="auto"/>
       </w:pPr>
     </w:pPrDefault>
@@ -2673,7 +2739,9 @@
 
     const settingsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:settings xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:zoom w:percent="100"/>
   <w:compat>
+    <w:doNotUseHTMLParagraphAutoSpacing/>
     <w:compatSetting w:name="compatibilityMode" w:uri="http://schemas.microsoft.com/office/word" w:val="15"/>
   </w:compat>
 </w:settings>`;
