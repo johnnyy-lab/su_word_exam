@@ -1641,11 +1641,75 @@
     return { before: prompt, target: '', after: '' };
   }
 
-  function formatDocxPreviewPromptHtml(q) {
+  function formatDocxPreviewPromptHtml(q, vertical) {
     const { before, target, after } = splitQuestionPromptParts(q);
-    if (!target) return escapeHtml(before);
+    const show = (text) => escapeHtml(vertical ? toVerticalPunctuation(text) : text);
+    if (!target) return show(before);
     const underlineClass = state.docx.bracketStyle === 'corner_underline' ? 'docx-target-ul' : '';
-    return `${escapeHtml(before)}「<span class="docx-target-inner ${underlineClass}">${escapeHtml(target)}</span>」${escapeHtml(after)}`;
+    const open = vertical ? '﹁' : '「';
+    const close = vertical ? '﹂' : '」';
+    return `${show(before)}${open}<span class="docx-target-inner ${underlineClass}">${escapeHtml(target)}</span>${close}${show(after)}`;
+  }
+
+  // 直書預覽依格子的寬高把整串收成單一直欄，避免折到左邊第二欄。
+  // 同一頁題幹用同一個字級，只縮小、不把短題放大成另一欄。
+  function fitVerticalPreviewFlows(root) {
+    const contentBox = (el) => {
+      const cs = getComputedStyle(el);
+      const w = el.clientWidth - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0);
+      const h = el.clientHeight - (parseFloat(cs.paddingTop) || 0) - (parseFloat(cs.paddingBottom) || 0);
+      return { w, h };
+    };
+    const paint = (el, size) => {
+      if (!(size > 0)) return;
+      el.style.fontSize = `${Math.floor(size * 10) / 10}px`;
+      el.style.lineHeight = '1';
+      el.style.letterSpacing = '0';
+      el.style.whiteSpace = 'nowrap';
+    };
+    const pages = root.querySelectorAll('.pv-v-page');
+    (pages.length ? [...pages] : [root]).forEach((page) => {
+      const prompts = [...page.querySelectorAll('.pv-v-prompt')];
+      let promptSize = Infinity;
+      prompts.forEach((el) => {
+        const flow = el.querySelector('.pv-v-upright') || el;
+        const len = Math.max(1, Array.from(flow.textContent || '').length);
+        const { w, h } = contentBox(el);
+        if (!(w > 4) || !(h > 4)) return;
+        const cssCap = parseFloat(getComputedStyle(flow).fontSize) || Infinity;
+        promptSize = Math.min(promptSize, w * 0.94, (h * 0.97) / len, cssCap);
+      });
+      if (promptSize < Infinity) {
+        prompts.forEach((el) => paint(el.querySelector('.pv-v-upright') || el, promptSize));
+      }
+      const answers = [...page.querySelectorAll('.pv-v-ans')].filter((el) => (el.textContent || '').trim());
+      let yinSize = Infinity;
+      answers.forEach((el) => {
+        if (el.classList.contains('char')) return;
+        const len = Math.max(1, Array.from(el.textContent || '').length);
+        const { w, h } = contentBox(el);
+        if (!(w > 4) || !(h > 4)) return;
+        yinSize = Math.min(yinSize, w * 0.92, (h * 0.96) / len);
+      });
+      if (promptSize < Infinity) yinSize = Math.min(yinSize, promptSize);
+      answers.forEach((el) => {
+        const { w, h } = contentBox(el);
+        if (!(w > 4) || !(h > 4)) return;
+        if (el.classList.contains('char')) {
+          const cap = promptSize < Infinity ? promptSize * 2.6 : h;
+          paint(el, Math.min(w * 0.8, h * 0.88, cap));
+        } else if (yinSize < Infinity) {
+          paint(el, yinSize);
+        }
+      });
+    });
+    root.querySelectorAll('.pv-v-name, .pv-v-title, .pv-v-sec-label').forEach((el) => {
+      const len = Math.max(1, Array.from(el.textContent || '').length);
+      const { w, h } = contentBox(el);
+      if (!(w > 4) || !(h > 4)) return;
+      const cssCap = parseFloat(getComputedStyle(el).fontSize) || 16;
+      paint(el, Math.min(cssCap, w * 0.96, (h * 0.94) / len));
+    });
   }
 
   function getDocxCandidatePools() {
@@ -1838,7 +1902,7 @@
                   <div class="pv-v-col">
                     <div class="pv-v-num">${seqStr}</div>
                     <div class="${ansClass}">${ansHtml}</div>
-                    <div class="pv-v-prompt">${formatDocxPreviewPromptHtml(q)}</div>
+                    <div class="pv-v-prompt"><span class="pv-v-upright">${formatDocxPreviewPromptHtml(q, true)}</span></div>
                   </div>`;
               } else {
                 colsHtml += `
@@ -1863,6 +1927,7 @@
       }).join('');
 
       sheetEl.innerHTML = pagesHtml || '<div style="padding:2rem;text-align:center;color:#87908b;">目前未抽出任何題目。</div>';
+      requestAnimationFrame(() => fitVerticalPreviewFlows(sheetEl));
       return;
     }
 
@@ -2068,46 +2133,10 @@
     const bold = opts.bold ? '<w:b/>' : '';
     const color = opts.color ? `<w:color w:val="${opts.color}"/>` : '';
     const underline = opts.underline ? '<w:u w:val="single"/>' : '';
-    // rFonts、b、color、sz、szCs、u 必須照這個順序，否則 Word 會判定內容無法讀取。
-    return `<w:rPr><w:rFonts w:ascii="${font}" w:hAnsi="${font}" w:eastAsia="${font}"${hint}/>${bold}${color}<w:sz w:val="${fontSizeHalfPt}"/><w:szCs w:val="${fontSizeHalfPt}"/>${underline}</w:rPr>`;
-  }
-
-  // 題幹與注音仍逐字成段：tbRl 會把國字轉倒，tbRlV 又會讓注音躺平。
-  // 標題與填寫欄沒有注音，改走儲存格 tbRlV，避免每個字後面都是段落標記。
-  function buildUprightStackParagraphs(segments, fontSizeHalfPt) {
-    const lineTwips = fontSizeHalfPt * 10;
-    const pPr = `<w:pPr><w:snapToGrid w:val="0"/><w:spacing w:before="0" w:after="0" w:line="${lineTwips}" w:lineRule="exact"/><w:ind w:left="0" w:right="0" w:firstLine="0"/><w:jc w:val="center"/></w:pPr>`;
-    let xml = '';
-    segments.forEach((seg) => {
-      const rPr = buildRunPropsXml(fontSizeHalfPt, seg);
-      Array.from(String(seg.text || '')).forEach((ch) => {
-        xml += `<w:p>${pPr}<w:r>${rPr}<w:t xml:space="preserve">${escapeXml(ch)}</w:t></w:r></w:p>`;
-      });
-    });
-    if (!xml) {
-      xml = `<w:p>${pPr}<w:r><w:t></w:t></w:r></w:p>`;
-    }
-    return xml;
-  }
-
-  function buildUprightPromptParagraphs(q, fontSizeHalfPt, bracketStyle) {
-    const { before, target, after } = splitQuestionPromptParts(q);
-    if (!target) {
-      return buildUprightStackParagraphs([{ text: before }], fontSizeHalfPt);
-    }
-    const targetOpts = { text: target, bold: true, underline: bracketStyle === 'corner_underline' };
-    // 網頁直排（vertical-rl）會把「」顯示成直排字形 ﹁﹂，橫筆與國字同寬。
-    // Word 直書是逐字直立，若仍放橫排「」，標楷體筆畫只剩約三分之一寬。
-    return buildUprightStackParagraphs(
-      [
-        { text: before },
-        { text: '﹁' },
-        targetOpts,
-        { text: '﹂' },
-        { text: after }
-      ],
-      fontSizeHalfPt
-    );
+    // 直書 tbRlV 會把聲調轉 90 度。再指定 vert，筆畫才回到教育部的 ˊˇˋ˙。
+    const toneFix = opts.uprightTone ? '<w:eastAsianLayout w:vert="1"/>' : '';
+    // rFonts、b、color、sz、szCs、u、eastAsianLayout 必須照這個順序。
+    return `<w:rPr><w:rFonts w:ascii="${font}" w:hAnsi="${font}" w:eastAsia="${font}"${hint}/>${bold}${color}<w:sz w:val="${fontSizeHalfPt}"/><w:szCs w:val="${fontSizeHalfPt}"/>${underline}${toneFix}</w:rPr>`;
   }
 
   const DOCX_PAPER_TWIPS = {
@@ -2135,29 +2164,35 @@
     return '︵︶︻︼﹁﹂﹃﹄︹︺﹇﹈'.includes(ch);
   }
 
-  // 直書儲存格用 tbRlV：國字直立、由上而下，括號改用直排字形。
+  function isVerticalToneChar(ch) {
+    return ch === 'ˊ' || ch === 'ˇ' || ch === 'ˋ' || ch === '˙';
+  }
+
+  // 直書儲存格用 tbRlV，整題一個段落。括號改直排字形；聲調另外轉正。
   // 標楷體沒有直排括號，括號改走新細明體。
-  function buildVerticalFlowParagraph(segments, fontSizeHalfPt) {
+  function buildVerticalFlowParagraph(segments, fontSizeHalfPt, lineMode) {
     let runs = '';
     segments.forEach((seg) => {
       const converted = toVerticalPunctuation(seg.text);
       let buf = '';
-      let bufPunct = false;
+      let bufKind = '';
       const flush = () => {
         if (!buf) return;
         const rPr = buildRunPropsXml(fontSizeHalfPt, {
           bold: seg.bold,
           color: seg.color,
-          font: bufPunct ? 'PMingLiU' : '標楷體',
-          hint: 'eastAsia'
+          underline: seg.underline,
+          font: bufKind === 'punct' ? 'PMingLiU' : '標楷體',
+          hint: 'eastAsia',
+          uprightTone: bufKind === 'tone'
         });
         runs += `<w:r>${rPr}<w:t xml:space="preserve">${escapeXml(buf)}</w:t></w:r>`;
         buf = '';
       };
       Array.from(converted).forEach((ch) => {
-        const punct = isVerticalPunctChar(ch);
-        if (buf && punct !== bufPunct) flush();
-        bufPunct = punct;
+        const kind = isVerticalPunctChar(ch) ? 'punct' : (isVerticalToneChar(ch) ? 'tone' : 'text');
+        if (buf && kind !== bufKind) flush();
+        bufKind = kind;
         buf += ch;
       });
       flush();
@@ -2165,8 +2200,30 @@
     if (!runs) {
       runs = `<w:r>${buildRunPropsXml(fontSizeHalfPt)}<w:t></w:t></w:r>`;
     }
-    const pPr = '<w:pPr><w:snapToGrid w:val="0"/><w:spacing w:before="0" w:after="0" w:line="276" w:lineRule="auto"/><w:jc w:val="center"/></w:pPr>';
+    const lineTwips = lineMode === 'exact' ? fontSizeHalfPt * 12 : 276;
+    const lineRule = lineMode === 'exact' ? 'exact' : 'auto';
+    // 段落標記改成極小，避免直書段落尾端把精確列高撐破。
+    const mark = lineMode === 'exact' ? '<w:rPr><w:sz w:val="2"/><w:szCs w:val="2"/></w:rPr>' : '';
+    const pPr = `<w:pPr><w:snapToGrid w:val="0"/><w:spacing w:before="0" w:after="0" w:line="${lineTwips}" w:lineRule="${lineRule}"/><w:jc w:val="center"/>${mark}</w:pPr>`;
     return `<w:p>${pPr}${runs}</w:p>`;
+  }
+
+  function buildVerticalPromptParagraph(q, fontSizeHalfPt, bracketStyle) {
+    const { before, target, after } = splitQuestionPromptParts(q);
+    if (!target) {
+      return buildVerticalFlowParagraph([{ text: before }], fontSizeHalfPt, 'exact');
+    }
+    return buildVerticalFlowParagraph(
+      [
+        { text: before },
+        { text: '﹁' },
+        { text: target, bold: true, underline: bracketStyle === 'corner_underline' },
+        { text: '﹂' },
+        { text: after }
+      ],
+      fontSizeHalfPt,
+      'exact'
+    );
   }
 
   function getDocxPageBox(paperSize, orientation) {
@@ -2182,14 +2239,24 @@
     return Array.from(String(text || '')).length;
   }
 
+  function verticalFlowUnits(text) {
+    let units = 0;
+    Array.from(String(text || '')).forEach((ch) => {
+      units += isVerticalToneChar(ch) ? 1.25 : 1;
+    });
+    return units;
+  }
+
   function uprightPromptLength(q) {
     const { before, target, after } = splitQuestionPromptParts(q);
-    return uprightUnitCount(before) + uprightUnitCount(target) + uprightUnitCount(after) + (target ? 2 : 0);
+    const base = verticalFlowUnits(before) + verticalFlowUnits(after);
+    if (!target) return base;
+    return base + verticalFlowUnits(target) + 2;
   }
 
   // 右側固定三直行：試題區、班級座號姓名、直書標題。欄數以 100 題能排成整頁為目標。
   function planVerticalColumns(paperSize, orientation, contentW) {
-    const nameColW = 780;
+    const nameColW = 1120;
     const titleColWBase = 560;
     const secColW = 440;
     let cols;
@@ -2231,14 +2298,15 @@
     const cellPad = 60;
     for (let sz = 40; sz >= 16; sz -= 2) {
       const line = sz * 10;
-      const promptH = chars * line;
+      // 直書是單一段落，高度約為字數×字級。聲調轉正後略高，再留段落尾端餘裕。
+      const promptH = Math.ceil(chars * line + line * 0.45);
       const bandH = numH + ansH + promptH;
       if ((bandH + cellPad) * rows <= usableH) {
         return { sz, line, numH, ansH, promptH, bandH, rowH: bandH + cellPad };
       }
     }
     const line = 160;
-    const promptH = chars * line;
+    const promptH = Math.ceil(chars * line + line * 0.45);
     const bandH = numH + ansH + promptH;
     return { sz: 16, line, numH, ansH, promptH, bandH, rowH: bandH + cellPad, tight: true };
   }
@@ -2284,11 +2352,12 @@
     const widthRoom = Math.max(160, (colW || 600) - 48);
     const widthCap = Math.floor(widthRoom / 10 / 2) * 2;
     const heightCap = Math.floor(fit.ansH / n / 10 / 2) * 2;
-    // 字形答案是一個國字，依格子能放下的大小放大，不受題幹字級限制。
+    // 字形答案是一個國字。紙本上限 28pt（56 half-points），欄寬不夠再縮小。
     let sz = Math.min(widthCap, heightCap);
-    if (qType !== 'character') sz = Math.min(sz, fit.sz);
+    if (qType === 'character') sz = Math.min(sz, 56);
+    else sz = Math.min(sz, fit.sz);
     sz = Math.max(16, sz);
-    while (sz > 16 && (n * sz * 10 > fit.ansH || sz * 10 > widthRoom)) sz -= 2;
+    while (sz > 16 && (verticalFlowUnits(ansText) * sz * 10 > fit.ansH - 40 || sz * 10 > widthRoom)) sz -= 2;
     return sz;
   }
 
@@ -2373,15 +2442,25 @@
           const ansText = q && isTeacherCopy ? q.answer : '';
           const ansSz = answerHalfPoint(ansText, fit, colsPlan.colW, q && q.type);
           ansCells += `<w:tc>
-            <w:tcPr><w:tcW w:w="${colsPlan.colW}" w:type="dxa"/><w:noWrap/><w:vAlign w:val="center"/></w:tcPr>
-            ${buildUprightStackParagraphs([{ text: ansText, bold: true, color: '1B4D3E' }], ansSz)}
+            <w:tcPr>
+              <w:tcW w:w="${colsPlan.colW}" w:type="dxa"/>
+              <w:noWrap/>
+              <w:textDirection w:val="tbRlV"/>
+              <w:vAlign w:val="center"/>
+            </w:tcPr>
+            ${buildVerticalFlowParagraph([{ text: ansText, bold: true, color: '1B4D3E' }], ansSz, 'exact')}
           </w:tc>`;
-          const promptParas = q
-            ? buildUprightPromptParagraphs(q, fit.sz, bracketStyle)
-            : buildUprightStackParagraphs([{ text: '' }], fit.sz);
+          const promptPara = q
+            ? buildVerticalPromptParagraph(q, fit.sz, bracketStyle)
+            : buildVerticalFlowParagraph([{ text: '' }], fit.sz, 'exact');
           promptCells += `<w:tc>
-            <w:tcPr><w:tcW w:w="${colsPlan.colW}" w:type="dxa"/><w:vAlign w:val="top"/></w:tcPr>
-            ${promptParas}
+            <w:tcPr>
+              <w:tcW w:w="${colsPlan.colW}" w:type="dxa"/>
+              <w:noWrap/>
+              <w:textDirection w:val="tbRlV"/>
+              <w:vAlign w:val="top"/>
+            </w:tcPr>
+            ${promptPara}
           </w:tc>`;
         }
         const labelParas = mergeRestart
@@ -2451,7 +2530,18 @@
             <w:p><w:pPr><w:snapToGrid w:val="0"/><w:spacing w:before="0" w:after="0" w:line="20" w:lineRule="exact"/><w:rPr><w:sz w:val="2"/><w:szCs w:val="2"/></w:rPr></w:pPr></w:p>
           </w:tc>
           <w:tc>
-            <w:tcPr><w:tcW w:w="${colsPlan.nameColW}" w:type="dxa"/>${sideBorder}<w:textDirection w:val="tbRlV"/><w:vAlign w:val="top"/></w:tcPr>
+            <w:tcPr>
+              <w:tcW w:w="${colsPlan.nameColW}" w:type="dxa"/>
+              ${sideBorder}
+              <w:tcMar>
+                <w:top w:w="80" w:type="dxa"/>
+                <w:left w:w="80" w:type="dxa"/>
+                <w:bottom w:w="40" w:type="dxa"/>
+                <w:right w:w="400" w:type="dxa"/>
+              </w:tcMar>
+              <w:textDirection w:val="tbRlV"/>
+              <w:vAlign w:val="top"/>
+            </w:tcPr>
             ${buildVerticalFlowParagraph([{ text: VERTICAL_NAME_TEXT }], 28)}
           </w:tc>
           <w:tc>

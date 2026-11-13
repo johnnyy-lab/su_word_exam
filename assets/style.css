@@ -2571,16 +2571,22 @@ button,
   flex: 1 1 auto;
   min-width: 0;
   min-height: 150px;
-  writing-mode: vertical-rl;
-  text-orientation: upright;
+  writing-mode: horizontal-tb;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding: 0.45rem 0.1rem;
-  font-size: 1.1rem;
-  line-height: 1.15;
-  letter-spacing: 0.04em;
+  padding: 0.2rem 0;
   overflow: hidden;
+}
+
+.pv-v-upright {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  white-space: nowrap;
+  line-height: 1;
+  letter-spacing: 0;
+  font-size: var(--pv-q, 1.05rem);
 }
 
 /* 直書卷：標題與填寫欄靠右，題區在左，一頁的高度由紙張比例鎖住 */
@@ -2640,6 +2646,7 @@ button,
   flex: 0 0 4.2%;
   writing-mode: vertical-rl;
   text-orientation: upright;
+  white-space: nowrap;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2649,25 +2656,30 @@ button,
   border-top: 1px solid #333;
   border-bottom: 1px solid #333;
   border-right: 1px solid #333;
+  overflow: hidden;
 }
 
 .pv-v-name,
 .pv-v-title {
   writing-mode: vertical-rl;
   text-orientation: upright;
+  white-space: nowrap;
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
-  line-height: 1.15;
+  line-height: 1;
+  letter-spacing: 0;
   padding: 0.5rem 0.15rem 0.35rem;
   border-left: 1px solid #333;
   overflow: hidden;
 }
 
 .pv-v-name {
-  flex: 0 0 7%;
+  flex: 0 0 8.8%;
   font-size: 0.92rem;
-  letter-spacing: 0.12em;
+  /* 直書從右側起筆。右側內距就是離開標題直線的書寫空位。 */
+  padding-right: 1.2rem;
+  padding-left: 0.4rem;
 }
 
 .pv-v-title {
@@ -2692,15 +2704,13 @@ button,
 
 .pv-v-page .pv-v-ans.char {
   flex-basis: 24%;
-  font-size: 1.7rem;
+  font-size: 1.35rem;
   line-height: 1;
 }
 
 .pv-v-page .pv-v-prompt {
   min-height: 0;
-  font-size: var(--pv-q, 10pt);
-  padding: 0.12rem 0;
-  letter-spacing: 0.02em;
+  padding: 0.06rem 0;
 }
 
 /* 橫向文字預覽表格 */
