@@ -11681,8 +11681,8 @@
           "type_name": "字形",
           "num": 69,
           "num_str": "069",
-          "prompt": "飛 ㄒㄧㄨㄥˊ 入夢",
-          "target": "ㄒㄧㄨㄥˊ",
+          "prompt": "飛 ㄒㄩㄥˊ 入夢",
+          "target": "ㄒㄩㄥˊ",
           "answer": "熊"
         },
         {
@@ -56139,8 +56139,8 @@
       "type_name": "字形",
       "num": 69,
       "num_str": "069",
-      "prompt": "飛 ㄒㄧㄨㄥˊ 入夢",
-      "target": "ㄒㄧㄨㄥˊ",
+      "prompt": "飛 ㄒㄩㄥˊ 入夢",
+      "target": "ㄒㄩㄥˊ",
       "answer": "熊"
     },
     {
