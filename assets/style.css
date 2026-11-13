@@ -2602,6 +2602,8 @@ button,
   margin: 0 auto 1rem;
   overflow: hidden;
   box-sizing: border-box;
+  /* 邊界與 Word 相同。百分比相對寬度，紙張比例正確時上下邊界也對得上。 */
+  padding: calc(var(--pv-margin, 454) / var(--pv-page, 20636) * 100%);
 }
 
 .pv-v-main {
@@ -2610,6 +2612,10 @@ button,
   display: flex;
   flex-direction: column;
   padding: 0.4rem 0 0.4rem 0.35rem;
+}
+
+.pv-v-page .pv-v-main {
+  padding: 0;
 }
 
 .pv-v-sec {
@@ -2659,6 +2665,12 @@ button,
   overflow: hidden;
 }
 
+.pv-v-page .pv-v-sec-label {
+  flex: 0 0 calc(var(--pv-sec) / var(--pv-main) * 100%);
+  font-size: calc(var(--pv-sec-sz) * var(--pv-em));
+  letter-spacing: 0;
+}
+
 .pv-v-name,
 .pv-v-title {
   writing-mode: vertical-rl;
@@ -2682,6 +2694,13 @@ button,
   padding-left: 0.4rem;
 }
 
+.pv-v-page .pv-v-name {
+  flex: 0 0 calc(var(--pv-name) / var(--pv-inner) * 100%);
+  font-size: calc(var(--pv-name-sz) * var(--pv-em));
+  /* 400 twips 右距，與 Word 填寫欄 tcMar 相同。直書從右側起筆，右邊就是離開標題線的空位。 */
+  padding: calc(var(--pv-em) * 8) calc(var(--pv-em) * 40) calc(var(--pv-em) * 4) calc(var(--pv-em) * 8);
+}
+
 .pv-v-title {
   flex: 0 0 6.4%;
   font-weight: 700;
@@ -2689,28 +2708,36 @@ button,
   letter-spacing: 0.1em;
 }
 
+.pv-v-page .pv-v-title {
+  flex: 0 0 calc(var(--pv-title) / var(--pv-inner) * 100%);
+  font-size: calc(var(--pv-title-sz) * var(--pv-em));
+  letter-spacing: 0;
+  padding: calc(var(--pv-em) * 6) calc(var(--pv-em) * 4);
+}
+
 .pv-v-page .pv-v-num {
-  height: 1.1rem;
-  flex: 0 0 1.1rem;
-  font-size: 0.62rem;
-}
-
-.pv-v-page .pv-v-ans {
   height: auto;
-  flex: 0 0 18%;
-  min-height: 0;
-  font-size: 0.78rem;
+  flex: var(--pv-num) 0 0;
+  font-size: calc(16 * var(--pv-em));
 }
 
+.pv-v-page .pv-v-ans,
 .pv-v-page .pv-v-ans.char {
-  flex-basis: 24%;
-  font-size: 1.35rem;
+  height: auto;
+  flex: var(--pv-ans) 0 0;
+  min-height: 0;
+  font-size: calc(var(--pv-ans-sz, var(--pv-q)) * var(--pv-em));
   line-height: 1;
 }
 
 .pv-v-page .pv-v-prompt {
+  flex: var(--pv-prompt) 0 0;
   min-height: 0;
-  padding: 0.06rem 0;
+  padding: 0;
+}
+
+.pv-v-page .pv-v-upright {
+  font-size: calc(var(--pv-q) * var(--pv-em));
 }
 
 /* 橫向文字預覽表格 */

@@ -1651,64 +1651,29 @@
     return `${show(before)}${open}<span class="docx-target-inner ${underlineClass}">${escapeHtml(target)}</span>${close}${show(after)}`;
   }
 
-  // 直書預覽依格子的寬高把整串收成單一直欄，避免折到左邊第二欄。
-  // 同一頁題幹用同一個字級，只縮小、不把短題放大成另一欄。
+  // 預覽字級與 Word 同一套 half-point。這裡只依實際紙寬換算，並在側欄塞不下時縮小。
   function fitVerticalPreviewFlows(root) {
-    const contentBox = (el) => {
-      const cs = getComputedStyle(el);
-      const w = el.clientWidth - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0);
-      const h = el.clientHeight - (parseFloat(cs.paddingTop) || 0) - (parseFloat(cs.paddingBottom) || 0);
-      return { w, h };
-    };
-    const paint = (el, size) => {
-      if (!(size > 0)) return;
-      el.style.fontSize = `${Math.floor(size * 10) / 10}px`;
-      el.style.lineHeight = '1';
-      el.style.letterSpacing = '0';
-      el.style.whiteSpace = 'nowrap';
-    };
-    const pages = root.querySelectorAll('.pv-v-page');
-    (pages.length ? [...pages] : [root]).forEach((page) => {
-      const prompts = [...page.querySelectorAll('.pv-v-prompt')];
-      let promptSize = Infinity;
-      prompts.forEach((el) => {
-        const flow = el.querySelector('.pv-v-upright') || el;
-        const len = Math.max(1, Array.from(flow.textContent || '').length);
-        const { w, h } = contentBox(el);
-        if (!(w > 4) || !(h > 4)) return;
-        const cssCap = parseFloat(getComputedStyle(flow).fontSize) || Infinity;
-        promptSize = Math.min(promptSize, w * 0.94, (h * 0.97) / len, cssCap);
-      });
-      if (promptSize < Infinity) {
-        prompts.forEach((el) => paint(el.querySelector('.pv-v-upright') || el, promptSize));
+    root.querySelectorAll('.pv-v-page').forEach((page) => {
+      const pageTwips = Number(page.dataset.pageTwips);
+      const width = page.getBoundingClientRect().width;
+      if (pageTwips > 0 && width > 0) {
+        page.style.setProperty('--pv-em', `${(width / pageTwips) * 10}px`);
       }
-      const answers = [...page.querySelectorAll('.pv-v-ans')].filter((el) => (el.textContent || '').trim());
-      let yinSize = Infinity;
-      answers.forEach((el) => {
-        if (el.classList.contains('char')) return;
-        const len = Math.max(1, Array.from(el.textContent || '').length);
-        const { w, h } = contentBox(el);
-        if (!(w > 4) || !(h > 4)) return;
-        yinSize = Math.min(yinSize, w * 0.92, (h * 0.96) / len);
-      });
-      if (promptSize < Infinity) yinSize = Math.min(yinSize, promptSize);
-      answers.forEach((el) => {
-        const { w, h } = contentBox(el);
-        if (!(w > 4) || !(h > 4)) return;
-        if (el.classList.contains('char')) {
-          const cap = promptSize < Infinity ? promptSize * 2.6 : h;
-          paint(el, Math.min(w * 0.8, h * 0.88, cap));
-        } else if (yinSize < Infinity) {
-          paint(el, yinSize);
-        }
-      });
     });
     root.querySelectorAll('.pv-v-name, .pv-v-title, .pv-v-sec-label').forEach((el) => {
       const len = Math.max(1, Array.from(el.textContent || '').length);
-      const { w, h } = contentBox(el);
+      const cs = getComputedStyle(el);
+      const w = el.clientWidth - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0);
+      const h = el.clientHeight - (parseFloat(cs.paddingTop) || 0) - (parseFloat(cs.paddingBottom) || 0);
       if (!(w > 4) || !(h > 4)) return;
-      const cssCap = parseFloat(getComputedStyle(el).fontSize) || 16;
-      paint(el, Math.min(cssCap, w * 0.96, (h * 0.94) / len));
+      const cssCap = parseFloat(cs.fontSize) || 16;
+      const size = Math.min(cssCap, w * 0.96, (h * 0.94) / len);
+      if (size < cssCap - 0.4) {
+        el.style.fontSize = `${Math.floor(size * 10) / 10}px`;
+        el.style.lineHeight = '1';
+        el.style.letterSpacing = '0';
+        el.style.whiteSpace = 'nowrap';
+      }
     });
   }
 
@@ -1889,6 +1854,7 @@
           if (!last || last.label !== band.label) groups.push({ label: band.label, bands: [band] });
           else last.bands.push(band);
         });
+        const fit = page.fit;
         const sectionsHtml = groups.map((group) => {
           const bandsHtml = group.bands.map((band) => {
             let colsHtml = '';
@@ -1898,10 +1864,11 @@
               if (q) {
                 const ansHtml = isTeacher ? `<span class="pv-ans-filled">${escapeHtml(q.answer)}</span>` : '';
                 const ansClass = q.type === 'character' ? 'pv-v-ans char' : 'pv-v-ans';
+                const ansSz = isTeacher ? answerHalfPoint(q.answer, fit, plan.colsPlan.colW, q.type) : fit.sz;
                 colsHtml += `
                   <div class="pv-v-col">
                     <div class="pv-v-num">${seqStr}</div>
-                    <div class="${ansClass}">${ansHtml}</div>
+                    <div class="${ansClass}" style="--pv-ans-sz:${ansSz}">${ansHtml}</div>
                     <div class="pv-v-prompt"><span class="pv-v-upright">${formatDocxPreviewPromptHtml(q, true)}</span></div>
                   </div>`;
               } else {
@@ -1915,12 +1882,16 @@
             }
             return `<div class="pv-v-band">${colsHtml}</div>`;
           }).join('');
-          return `<div class="pv-v-sec" style="flex:${group.bands.length} 1 0"><div class="pv-v-bands">${bandsHtml}</div><div class="pv-v-sec-label">${escapeHtml(group.label)}</div></div>`;
+          return `<div class="pv-v-sec" style="flex:${group.bands.length * fit.rowH} 1 0"><div class="pv-v-bands">${bandsHtml}</div><div class="pv-v-sec-label">${escapeHtml(group.label)}</div></div>`;
         }).join('');
-        const qPt = page.fit.sz / 2;
+        const usedH = page.bands.length * fit.rowH;
+        const slackH = Math.max(0, plan.contentH - usedH);
+        const titleSz = verticalTitleHalfPoint(customTitle, roleTag, usedH);
+        const mainW = plan.colsPlan.gridW + plan.colsPlan.secColW;
+        const em = ((sheetEl.clientWidth || plan.box.pageW) / plan.box.pageW) * 10;
         return `
-          <div class="pv-v-page" style="aspect-ratio:${ratio};--pv-q:${qPt}pt">
-            <div class="pv-v-main">${sectionsHtml}</div>
+          <div class="pv-v-page" data-page-twips="${plan.box.pageW}" style="aspect-ratio:${ratio};--pv-page:${plan.box.pageW};--pv-margin:${plan.margin};--pv-inner:${plan.contentW};--pv-main:${mainW};--pv-name:${plan.colsPlan.nameColW};--pv-title:${plan.colsPlan.titleColW};--pv-sec:${plan.colsPlan.secColW};--pv-num:${fit.numH};--pv-ans:${fit.ansH};--pv-prompt:${fit.promptH};--pv-q:${fit.sz};--pv-name-sz:28;--pv-title-sz:${titleSz};--pv-sec-sz:24;--pv-em:${em}px">
+            <div class="pv-v-main">${sectionsHtml}<div class="pv-v-slack" style="flex:${slackH} 1 0"></div></div>
             <div class="pv-v-name">${escapeHtml(VERTICAL_NAME_TEXT)}</div>
             <div class="pv-v-title">${escapeHtml(titleText)}</div>
           </div>`;
@@ -2200,9 +2171,11 @@
     if (!runs) {
       runs = `<w:r>${buildRunPropsXml(fontSizeHalfPt)}<w:t></w:t></w:r>`;
     }
-    const lineTwips = lineMode === 'exact' ? fontSizeHalfPt * 12 : 276;
-    const lineRule = lineMode === 'exact' ? 'exact' : 'auto';
-    // 段落標記改成極小，避免直書段落尾端把精確列高撐破。
+    // 直書精確行距會把行寬拉到接近欄寬，Word 因而把字往左推，左半邊被欄線裁掉。
+    // 題幹與答案改走單行行距，字才落在格子裡。列高仍由表格的精確列高控制。
+    const lineTwips = lineMode === 'exact' ? 240 : 276;
+    const lineRule = 'auto';
+    // 段落標記改成極小，避免直書段落尾端把列高撐破。
     const mark = lineMode === 'exact' ? '<w:rPr><w:sz w:val="2"/><w:szCs w:val="2"/></w:rPr>' : '';
     const pPr = `<w:pPr><w:snapToGrid w:val="0"/><w:spacing w:before="0" w:after="0" w:line="${lineTwips}" w:lineRule="${lineRule}"/><w:jc w:val="center"/>${mark}</w:pPr>`;
     return `<w:p>${pPr}${runs}</w:p>`;
@@ -2296,19 +2269,36 @@
     // 巢狀表格後面必須再放一個段落，Word 才不會判定儲存格無法讀取。
     // 每個題帶列在巢狀表格後還有一個極小段落，列高必須算進去，否則 Word 會判定內容無法讀取。
     const cellPad = 60;
+    const rowCount = Math.max(1, rows);
+    let chosen = null;
     for (let sz = 40; sz >= 16; sz -= 2) {
       const line = sz * 10;
       // 直書是單一段落，高度約為字數×字級。聲調轉正後略高，再留段落尾端餘裕。
       const promptH = Math.ceil(chars * line + line * 0.45);
       const bandH = numH + ansH + promptH;
-      if ((bandH + cellPad) * rows <= usableH) {
-        return { sz, line, numH, ansH, promptH, bandH, rowH: bandH + cellPad };
+      if ((bandH + cellPad) * rowCount <= usableH) {
+        chosen = { sz, line, numH, ansH, promptH, bandH, rowH: bandH + cellPad };
+        break;
       }
     }
-    const line = 160;
-    const promptH = Math.ceil(chars * line + line * 0.45);
-    const bandH = numH + ansH + promptH;
-    return { sz: 16, line, numH, ansH, promptH, bandH, rowH: bandH + cellPad, tight: true };
+    if (!chosen) {
+      const line = 160;
+      const promptH = Math.ceil(chars * line + line * 0.45);
+      const bandH = numH + ansH + promptH;
+      chosen = { sz: 16, line, numH, ansH, promptH, bandH, rowH: bandH + cellPad, tight: true };
+    }
+    // 字級維持剛好塞進最長題幹。多出來的高度放進題幹格，讓 100 題貼滿紙面。
+    // 底部仍留約 3.5mm，否則 Word 會把文末段落擠到下一張空白頁。
+    if (!chosen.tight) {
+      const budget = usableH - 200;
+      const extra = Math.floor((budget - chosen.rowH * rowCount) / rowCount);
+      if (extra > 0) {
+        chosen.promptH += extra;
+        chosen.bandH += extra;
+        chosen.rowH += extra;
+      }
+    }
+    return chosen;
   }
 
   function buildVerticalPagePlan(questions, paperSize, orientation) {
@@ -2340,24 +2330,35 @@
       });
       pages.push({
         bands: slice,
-        fit: fitVerticalBand(usableH, Math.max(1, slice.length), maxPrompt),
+        // 以滿頁列數計算，短頁沿用同一列高，避免半頁把字形放大。
+        fit: fitVerticalBand(usableH, rowsPerPage, maxPrompt),
         maxPrompt
       });
     }
-    return { box, margin, contentW, usableH, colsPlan, rowsPerPage, pages };
+    return { box, margin, contentW, contentH, usableH, colsPlan, rowsPerPage, pages };
+  }
+
+  function verticalTitleHalfPoint(title, roleTag, textHeight) {
+    const titleChars = uprightUnitCount(toVerticalPunctuation(title)) + 2 + uprightUnitCount(toVerticalPunctuation(roleTag));
+    let titleSz = 32;
+    while (titleSz > 16 && titleChars * titleSz * 10 > Math.max(textHeight, 1)) titleSz -= 2;
+    return titleSz;
   }
 
   function answerHalfPoint(ansText, fit, colW, qType) {
-    const n = Math.max(1, uprightUnitCount(ansText));
-    const widthRoom = Math.max(160, (colW || 600) - 48);
-    const widthCap = Math.floor(widthRoom / 10 / 2) * 2;
-    const heightCap = Math.floor(fit.ansH / n / 10 / 2) * 2;
-    // 字形答案是一個國字。紙本上限 28pt（56 half-points），欄寬不夠再縮小。
-    let sz = Math.min(widthCap, heightCap);
-    if (qType === 'character') sz = Math.min(sz, 56);
-    else sz = Math.min(sz, fit.sz);
+    const units = Math.max(1, verticalFlowUnits(ansText));
+    const widthRoom = Math.max(160, (colW || 600) - 160);
+    const heightRoom = Math.max(160, (fit.ansH || 680) - 100);
+    let sz = Math.floor(Math.min(widthRoom, heightRoom / units) / 10 / 2) * 2;
+    if (qType === 'character') {
+      // 單一字留出欄寬左右空白。B4 二十五欄約 22pt，再寬的紙最多 24pt。
+      const visualCap = Math.floor(((colW || 600) * 0.64) / 10 / 2) * 2;
+      sz = Math.min(sz, 48, visualCap);
+    } else {
+      sz = Math.min(sz, fit.sz || 48);
+    }
     sz = Math.max(16, sz);
-    while (sz > 16 && (verticalFlowUnits(ansText) * sz * 10 > fit.ansH - 40 || sz * 10 > widthRoom)) sz -= 2;
+    while (sz > 16 && (units * sz * 10 > heightRoom || sz * 10 > widthRoom)) sz -= 2;
     return sz;
   }
 
@@ -2414,10 +2415,8 @@
 
     plan.pages.forEach((page, pageIndex) => {
       const fit = page.fit;
-      const titleChars = uprightUnitCount(toVerticalPunctuation(customTitle)) + 2 + uprightUnitCount(toVerticalPunctuation(roleTag));
-      const questionH = Math.max(fit.rowH, page.bands.length * fit.rowH);
-      let titleSz = 32;
-      while (titleSz > 16 && titleChars * titleSz * 10 > Math.max(questionH, fit.bandH)) titleSz -= 2;
+      const questionH = page.bands.length * fit.rowH;
+      const titleSz = verticalTitleHalfPoint(customTitle, roleTag, questionH);
 
       let bandRows = '';
       let prevLabel = '';
