@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <style>
+    @font-face {
+      font-family: "BopomofoRuby1909-v1";
+      src: url("font/BopomofoRuby1909-v1-Regular.ttf") format("truetype");
+    }
+    body { margin: 20px; background: white; }
+    .v {
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      font-family: "BopomofoRuby1909-v1", serif;
+      font-size: 80px;
+      line-height: 1;
+      display: inline-block;
+      border: 1px solid #bbb;
+      margin: 12px;
+      vertical-align: top;
+    }
+    .vert { font-feature-settings: "vert" 1; }
+    .cap { font-family: PMingLiU, serif; font-size: 14px; display: block; }
+  </style>
+</head>
+<body>
+  <div class="cap">直排，沒開 vert</div><div id="plain" class="v">ㄊㄧㄠˋ</div>
+  <div class="cap">直排，開 vert：ㄊㄧㄠˋ</div><div id="vert" class="v vert">ㄊㄧㄠˋ</div>
+  <div class="cap">直排，開 vert：ㄧㄡˋ</div><div id="vert2" class="v vert">ㄧㄡˋ</div>
+  <div class="cap">直排，開 vert：ㄕˊ</div><div id="vert3" class="v vert">ㄕˊ</div>
+  <div class="cap">直排，開 vert：˙ㄉㄜ</div><div id="vert4" class="v vert">˙ㄉㄜ</div>
+  <div class="cap">直排，開 vert：只有ㄊㄧㄠ</div><div id="letters" class="v vert">ㄊㄧㄠ</div>
+</body>
+</html>
