@@ -68,7 +68,7 @@ years = ['101', '102', '103', '104', '105', '106', '107', '108', '109', '110', '
 # 驗證字音
 print("\n[檢查項 3: 甲、字音部分 逐年驗證]")
 for y in years:
-    pattern = rf'^\|\s*{y}\s*\|\s*(\d{{3}})\s*\|\s*([^|]+)\s*\|\s*([^|]+)\s*\|\s*([^|]+)\s*\|$'
+    pattern = rf'^\|\s*{y}\s*\|\s*(\d{{3}})\s*\|\s*([^|]+)\s*\|\s*([^|]+)\s*\|\s*([^|]+)\s*\|(?:\s*([^|]+)\s*)?\|$'
     rows = []
     for line in yin_text.splitlines():
         m = re.match(pattern, line.strip())
@@ -78,20 +78,22 @@ for y in years:
     print(f"  年度 {y}: 抓取到 {len(rows)} 題")
     assert len(rows) == 100, f"年度 {y} 字音題數不為 100: {len(rows)}"
     
-    for i, (num_str, q, test_char, ans) in enumerate(rows, 1):
+    for i, (num_str, q, test_char, ans, recheck) in enumerate(rows, 1):
         num = int(num_str)
         assert num == i, f"年度 {y} 字音題號不連續: 預期 {i:03d}, 實際 {num_str}"
         assert len(q.strip()) > 0, f"年度 {y} 字音第 {i} 題題目為空"
         assert len(test_char.strip()) > 0, f"年度 {y} 字音第 {i} 題測驗字為空"
         assert len(ans.strip()) > 0, f"年度 {y} 字音第 {i} 題答案為空"
         assert '?' not in q and '□' not in q and '?' not in ans, f"年度 {y} 字音第 {i} 題含有問號或佔位符"
+        if recheck:
+            assert recheck.strip() in ('N', 'Q', 'X', 'Y', 'E', 'M'), f"年度 {y} 字音第 {i} 題複檢狀態異常: {recheck}"
 
 print("  -> 字音部分所有年度連續性、完整性檢驗全部 PASS！")
 
 # 驗證字形
 print("\n[檢查項 4: 乙、字形部分 逐年驗證]")
 for y in years:
-    pattern = rf'^\|\s*{y}\s*\|\s*(\d{{3}})\s*\|\s*([^|]+)\s*\|\s*([^|]+)\s*\|\s*([^|]+)\s*\|$'
+    pattern = rf'^\|\s*{y}\s*\|\s*(\d{{3}})\s*\|\s*([^|]+)\s*\|\s*([^|]+)\s*\|\s*([^|]+)\s*\|(?:\s*([^|]+)\s*)?\|$'
     rows = []
     for line in xing_text.splitlines():
         m = re.match(pattern, line.strip())
@@ -101,13 +103,15 @@ for y in years:
     print(f"  年度 {y}: 抓取到 {len(rows)} 題")
     assert len(rows) == 100, f"年度 {y} 字形題數不為 100: {len(rows)}"
     
-    for i, (num_str, q, test_zhuyin, ans) in enumerate(rows, 1):
+    for i, (num_str, q, test_zhuyin, ans, recheck) in enumerate(rows, 1):
         num = int(num_str)
         assert num == i, f"年度 {y} 字形題號不連續: 預期 {i:03d}, 實際 {num_str}"
         assert len(q.strip()) > 0, f"年度 {y} 字形第 {i} 題題目為空"
         assert len(test_zhuyin.strip()) > 0, f"年度 {y} 字形第 {i} 題測驗注音為空"
         assert len(ans.strip()) > 0, f"年度 {y} 字形第 {i} 題答案為空"
         assert '?' not in q and '□' not in q and '?' not in ans, f"年度 {y} 字形第 {i} 題含有問號或佔位符"
+        if recheck:
+            assert recheck.strip() in ('N', 'Q', 'X', 'Y', 'E', 'M'), f"年度 {y} 字形第 {i} 題複檢狀態異常: {recheck}"
 
 print("  -> 字形部分所有年度連續性、完整性檢驗全部 PASS！")
 
@@ -184,7 +188,7 @@ print("  111 年評審總講評關鍵題目 15 項: 全部 PASS")
 assert '| 112 | 009 | 襒席 | **襒** | ㄅㄧㄝˊ |' in full_content, '112 音 009 襒席 未正確收錄'
 assert '| 112 | 013 | 佷戾 | **佷** | ㄏㄣˇ |' in full_content, '112 音 013 佷戾 未正確收錄'
 assert '| 112 | 044 | 眾怒難任 | **任** | ㄖㄣˋ |' in full_content, '112 音 044 眾怒難任 未正確收錄'
-assert '| 112 | 056 | 謾天昧地 | **謾** | ㄇㄢˋ |' in full_content, '112 音 056 謾天昧地 未正確收錄'
+assert '| 112 | 056 | 謾天昧地 | **謾** | ㄇㄢˊ |' in full_content, '112 音 056 謾天昧地 未正確收錄'
 assert '| 112 | 063 | 獶為獮猴 | **獮** | ㄒㄧㄢˇ |' in full_content, '112 音 063 獶為獮猴 未正確收錄'
 assert '| 112 | 078 | 香港紅磡 | **磡** | ㄎㄢˋ |' in full_content, '112 音 078 香港紅磡 未正確收錄'
 assert '| 112 | 081 | 牛羊之湩 | **湩** | ㄉㄨㄥˋ |' in full_content, '112 音 081 牛羊之湩 未正確收錄'
@@ -207,7 +211,7 @@ assert '| 113 | 077 | 輮以為輪 | **輮** | ㄖㄡˊ |' in full_content, '113
 assert '| 113 | 079 | 左右僕射 | **射** | ㄧㄝˋ |' in full_content, '113 音 079 左右僕射 未正確收錄'
 assert '| 113 | 082 | 癯而實肥 | **癯** | ㄑㄩˊ |' in full_content, '113 音 082 癯而實肥 未正確收錄'
 assert '| 113 | 090 | 霡霂霏霏 | **霡** | ㄇㄞˋ |' in full_content, '113 音 090 霡霂霏霏 未正確收錄'
-assert '| 113 | 092 | 錚錚鏦鏦 | **鏦** | ㄔㄨㄥ |' in full_content, '113 音 092 錚錚鏦鏦 未正確收錄'
+assert '| 113 | 092 | 錚錚鏦鏦 | **鏦** | ㄘㄨㄥ |' in full_content, '113 音 092 錚錚鏦鏦 未正確收錄'
 assert '| 113 | 001 | 從中 ㄨㄛˋ 旋 | ㄨㄛˋ | **斡** |' in full_content, '113 形 001 從中斡旋 未正確收錄'
 assert '| 113 | 002 | 伯喈倒 ㄒㄧˇ | ㄒㄧˇ | **屣** |' in full_content, '113 形 002 伯喈倒屣 未正確收錄'
 assert '| 113 | 015 | 鳩工 ㄆㄧˇ 材 | ㄆㄧˇ | **庀** |' in full_content, '113 形 015 鳩工庀材 未正確收錄'

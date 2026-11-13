@@ -13,6 +13,10 @@ err/
 # 注音字型試樣只留本機，不上 GitHub
 test/
 
+# 辭典複檢快取與自動備份，不入 GitHub
+data/.dict_cache.json
+data/*.md.bak
+
 # 作業系統
 Thumbs.db
 Desktop.ini

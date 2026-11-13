@@ -4,7 +4,7 @@
     "description": "收錄民國 101 至 114 年全國語文競賽高中學生組決賽試題與標準答案，全題經 300+ DPI 原卷影像考證與官方勘誤核實。",
     "source_file": "國語字音字形-高中統整.md",
     "version": "1.0.0",
-    "created_at": "2026-11-11T16:08:58.147751",
+    "created_at": "2026-11-14T07:45:07.896031",
     "total_questions": 2800,
     "total_years": 14,
     "years": [
@@ -1061,7 +1061,7 @@
           "num_str": "086",
           "prompt": "亢龍有悔",
           "target": "亢",
-          "answer": "ㄍㄤ"
+          "answer": "ㄎㄤˋ"
         },
         {
           "id": "101-yin-087",
@@ -2591,7 +2591,7 @@
           "num_str": "013",
           "prompt": "鏹水",
           "target": "鏹",
-          "answer": "ㄑㄧㄤˇ"
+          "answer": "ㄑㄧㄤ"
         },
         {
           "id": "102-yin-014",
@@ -2711,7 +2711,7 @@
           "num_str": "023",
           "prompt": "括約肌",
           "target": "括",
-          "answer": "ㄍㄨㄚ"
+          "answer": "ㄎㄨㄛˋ"
         },
         {
           "id": "102-yin-024",
@@ -2891,7 +2891,7 @@
           "num_str": "038",
           "prompt": "漁陽摻撾",
           "target": "摻",
-          "answer": "ㄘㄢ"
+          "answer": "ㄘㄢˋ"
         },
         {
           "id": "102-yin-039",
@@ -3791,8 +3791,8 @@
           "type_name": "字形",
           "num": 13,
           "num_str": "013",
-          "prompt": "ㄅㄧˋ 官野史",
-          "target": "ㄅㄧˋ",
+          "prompt": "ㄅㄞˋ 官野史",
+          "target": "ㄅㄞˋ",
           "answer": "稗"
         },
         {
@@ -4115,8 +4115,8 @@
           "type_name": "字形",
           "num": 40,
           "num_str": "040",
-          "prompt": "蜂 ㄩㄥ 而上",
-          "target": "ㄩㄥ",
+          "prompt": "蜂 ㄩㄥˇ 而上",
+          "target": "ㄩㄥˇ",
           "answer": "擁"
         },
         {
@@ -6305,8 +6305,8 @@
           "type_name": "字形",
           "num": 22,
           "num_str": "022",
-          "prompt": "以 ㄌㄧˇ 測海",
-          "target": "ㄌㄧˇ",
+          "prompt": "以 ㄌㄧˊ 測海",
+          "target": "ㄌㄧˊ",
           "answer": "蠡"
         },
         {
@@ -7097,8 +7097,8 @@
           "type_name": "字形",
           "num": 88,
           "num_str": "088",
-          "prompt": "ㄆㄛˋ 肌分理",
-          "target": "ㄆㄛˋ",
+          "prompt": "ㄅㄛˋ 肌分理",
+          "target": "ㄅㄛˋ",
           "answer": "擘"
         },
         {
@@ -7283,7 +7283,7 @@
           "num_str": "003",
           "prompt": "傀偉",
           "target": "傀",
-          "answer": "ㄍㄨㄟˇ"
+          "answer": "ㄍㄨㄟ"
         },
         {
           "id": "104-yin-004",
@@ -8027,7 +8027,7 @@
           "num_str": "065",
           "prompt": "湮沒無聞",
           "target": "湮",
-          "answer": "ㄧㄢ"
+          "answer": "ㄧㄣ"
         },
         {
           "id": "104-yin-066",
@@ -8255,7 +8255,7 @@
           "num_str": "084",
           "prompt": "憂心如惔",
           "target": "惔",
-          "answer": "ㄉㄢˋ"
+          "answer": "ㄊㄢˊ"
         },
         {
           "id": "104-yin-085",
@@ -8663,8 +8663,8 @@
           "type_name": "字形",
           "num": 18,
           "num_str": "018",
-          "prompt": "ㄔㄢ 弱",
-          "target": "ㄔㄢ",
+          "prompt": "ㄔㄢˊ 弱",
+          "target": "ㄔㄢˊ",
           "answer": "孱"
         },
         {
@@ -8795,8 +8795,8 @@
           "type_name": "字形",
           "num": 29,
           "num_str": "029",
-          "prompt": "ㄍㄨㄟˇ 藏",
-          "target": "ㄍㄨㄟˇ",
+          "prompt": "ㄐㄧˇ 藏",
+          "target": "ㄐㄧˇ",
           "answer": "庋"
         },
         {
@@ -8819,8 +8819,8 @@
           "type_name": "字形",
           "num": 31,
           "num_str": "031",
-          "prompt": "郵 ㄔㄨㄛˋ",
-          "target": "ㄔㄨㄛˋ",
+          "prompt": "郵 ㄔㄨㄛ",
+          "target": "ㄔㄨㄛ",
           "answer": "戳"
         },
         {
@@ -8987,8 +8987,8 @@
           "type_name": "字形",
           "num": 45,
           "num_str": "045",
-          "prompt": "海 ㄊㄚˇ",
-          "target": "ㄊㄚˇ",
+          "prompt": "海 ㄊㄚˋ",
+          "target": "ㄊㄚˋ",
           "answer": "獺"
         },
         {
@@ -9083,8 +9083,8 @@
           "type_name": "字形",
           "num": 53,
           "num_str": "053",
-          "prompt": "ㄌㄨㄛ 虎鬚",
-          "target": "ㄌㄨㄛ",
+          "prompt": "ㄌㄜˋ 虎鬚",
+          "target": "ㄌㄜˋ",
           "answer": "捋"
         },
         {
@@ -9347,8 +9347,8 @@
           "type_name": "字形",
           "num": 75,
           "num_str": "075",
-          "prompt": "管窺 ㄌㄧˇ 測",
-          "target": "ㄌㄧˇ",
+          "prompt": "管窺 ㄌㄧˊ 測",
+          "target": "ㄌㄧˊ",
           "answer": "蠡"
         },
         {
@@ -9407,8 +9407,8 @@
           "type_name": "字形",
           "num": 80,
           "num_str": "080",
-          "prompt": "ㄎㄜˋ 頭燒香",
-          "target": "ㄎㄜˋ",
+          "prompt": "ㄎㄜ 頭燒香",
+          "target": "ㄎㄜ",
           "answer": "磕"
         },
         {
@@ -9467,8 +9467,8 @@
           "type_name": "字形",
           "num": 85,
           "num_str": "085",
-          "prompt": "ㄔㄚ 脂抹粉",
-          "target": "ㄔㄚ",
+          "prompt": "ㄔㄚˊ 脂抹粉",
+          "target": "ㄔㄚˊ",
           "answer": "搽"
         },
         {
@@ -9737,7 +9737,7 @@
           "num_str": "007",
           "prompt": "掄拳",
           "target": "掄",
-          "answer": "ㄌㄨㄣˊ"
+          "answer": "ㄌㄨㄣ"
         },
         {
           "id": "105-yin-008",
@@ -10157,7 +10157,7 @@
           "num_str": "042",
           "prompt": "搜章擿句",
           "target": "擿",
-          "answer": "ㄓˋ"
+          "answer": "ㄊㄧˋ"
         },
         {
           "id": "105-yin-043",
@@ -10265,7 +10265,7 @@
           "num_str": "051",
           "prompt": "頂禮膜拜",
           "target": "膜",
-          "answer": "ㄇㄛˋ"
+          "answer": "ㄇㄛˊ"
         },
         {
           "id": "105-yin-052",
@@ -10721,7 +10721,7 @@
           "num_str": "089",
           "prompt": "抽丁拔楔",
           "target": "楔",
-          "answer": "ㄒㄧㄝ"
+          "answer": "ㄒㄧㄝˋ"
         },
         {
           "id": "105-yin-090",
@@ -10781,7 +10781,7 @@
           "num_str": "094",
           "prompt": "踅來踅去",
           "target": "踅",
-          "answer": "ㄒㄧㄝˊ"
+          "answer": "ㄒㄩㄝˊ"
         },
         {
           "id": "105-yin-095",
@@ -12053,8 +12053,8 @@
           "type_name": "字形",
           "num": 100,
           "num_str": "100",
-          "prompt": "ㄧㄣ 吃卯糧",
-          "target": "ㄧㄣ",
+          "prompt": "ㄧㄣˊ 吃卯糧",
+          "target": "ㄧㄣˊ",
           "answer": "寅"
         }
       ]
@@ -14291,8 +14291,8 @@
           "type_name": "字形",
           "num": 86,
           "num_str": "086",
-          "prompt": "富 ㄌㄧㄝˋ 陶白",
-          "target": "ㄌㄧㄝˋ",
+          "prompt": "富 ㄌㄜˋ 陶白",
+          "target": "ㄌㄜˋ",
           "answer": "埒"
         },
         {
@@ -14657,7 +14657,7 @@
           "num_str": "016",
           "prompt": "順口溜",
           "target": "溜",
-          "answer": "ㄌㄧㄡˋ"
+          "answer": "ㄌㄧㄡ"
         },
         {
           "id": "107-yin-017",
@@ -14717,7 +14717,7 @@
           "num_str": "021",
           "prompt": "括約肌",
           "target": "括",
-          "answer": "ㄍㄨㄚ"
+          "answer": "ㄎㄨㄛˋ"
         },
         {
           "id": "107-yin-022",
@@ -14849,7 +14849,7 @@
           "num_str": "032",
           "prompt": "槁項黃馘",
           "target": "馘",
-          "answer": "ㄍㄨㄛˊ"
+          "answer": "ㄒㄩˋ"
         },
         {
           "id": "107-yin-033",
@@ -15533,7 +15533,7 @@
           "num_str": "089",
           "prompt": "聽憑尊便",
           "target": "聽",
-          "answer": "ㄊㄧㄥ"
+          "answer": "ㄊㄧㄥˋ"
         },
         {
           "id": "107-yin-090",
@@ -15701,8 +15701,8 @@
           "type_name": "字形",
           "num": 3,
           "num_str": "003",
-          "prompt": "龍 ㄒㄧㄤˊ 香",
-          "target": "ㄒㄧㄤˊ",
+          "prompt": "龍 ㄒㄧㄢˊ 香",
+          "target": "ㄒㄧㄢˊ",
           "answer": "涎"
         },
         {
@@ -15725,8 +15725,8 @@
           "type_name": "字形",
           "num": 5,
           "num_str": "005",
-          "prompt": "金 ㄍㄨˋ 棒",
-          "target": "ㄍㄨˋ",
+          "prompt": "金 ㄍㄨ 棒",
+          "target": "ㄍㄨ",
           "answer": "箍"
         },
         {
@@ -15761,8 +15761,8 @@
           "type_name": "字形",
           "num": 8,
           "num_str": "008",
-          "prompt": "收 ㄔˋ 聯",
-          "target": "ㄔˋ",
+          "prompt": "收 ㄓˊ 聯",
+          "target": "ㄓˊ",
           "answer": "執"
         },
         {
@@ -15773,8 +15773,8 @@
           "type_name": "字形",
           "num": 9,
           "num_str": "009",
-          "prompt": "草 ㄑㄧㄢ 人命",
-          "target": "ㄑㄧㄢ",
+          "prompt": "草 ㄐㄧㄢ 人命",
+          "target": "ㄐㄧㄢ",
           "answer": "菅"
         },
         {
@@ -15797,8 +15797,8 @@
           "type_name": "字形",
           "num": 11,
           "num_str": "011",
-          "prompt": "守株 ㄉㄞˋ 兔",
-          "target": "ㄉㄞˋ",
+          "prompt": "守株 ㄙˋ 兔",
+          "target": "ㄙˋ",
           "answer": "伺"
         },
         {
@@ -15929,8 +15929,8 @@
           "type_name": "字形",
           "num": 22,
           "num_str": "022",
-          "prompt": "民生凋 ㄅㄧˇ",
-          "target": "ㄅㄧˇ",
+          "prompt": "民生凋 ㄅㄧˋ",
+          "target": "ㄅㄧˋ",
           "answer": "敝"
         },
         {
@@ -16001,8 +16001,8 @@
           "type_name": "字形",
           "num": 28,
           "num_str": "028",
-          "prompt": "曲學 ㄚ 世",
-          "target": "ㄚ",
+          "prompt": "曲學 ㄜ 世",
+          "target": "ㄜ",
           "answer": "阿"
         },
         {
@@ -16037,8 +16037,8 @@
           "type_name": "字形",
           "num": 31,
           "num_str": "031",
-          "prompt": "胼手 ㄓˇ 足",
-          "target": "ㄓˇ",
+          "prompt": "胼手 ㄓ 足",
+          "target": "ㄓ",
           "answer": "胝"
         },
         {
@@ -16169,8 +16169,8 @@
           "type_name": "字形",
           "num": 42,
           "num_str": "042",
-          "prompt": "根深 ㄉㄧˋ 固",
-          "target": "ㄉㄧˋ",
+          "prompt": "根深 ㄉㄧˇ 固",
+          "target": "ㄉㄧˇ",
           "answer": "柢"
         },
         {
@@ -16217,8 +16217,8 @@
           "type_name": "字形",
           "num": 46,
           "num_str": "046",
-          "prompt": "宵衣 ㄍㄢˇ 食",
-          "target": "ㄍㄢˇ",
+          "prompt": "宵衣 ㄍㄢˋ 食",
+          "target": "ㄍㄢˋ",
           "answer": "旰"
         },
         {
@@ -16373,8 +16373,8 @@
           "type_name": "字形",
           "num": 59,
           "num_str": "059",
-          "prompt": "破 ㄍㄨㄟ 為圓",
-          "target": "ㄍㄨㄟ",
+          "prompt": "破 ㄍㄨ 為圓",
+          "target": "ㄍㄨ",
           "answer": "觚"
         },
         {
@@ -16421,8 +16421,8 @@
           "type_name": "字形",
           "num": 63,
           "num_str": "063",
-          "prompt": "狼 ㄊㄢ 虎嚥",
-          "target": "ㄊㄢ",
+          "prompt": "狼 ㄙㄨㄣ 虎嚥",
+          "target": "ㄙㄨㄣ",
           "answer": "飧"
         },
         {
@@ -16433,8 +16433,8 @@
           "type_name": "字形",
           "num": 64,
           "num_str": "064",
-          "prompt": "ㄩˇ 成其事",
-          "target": "ㄩˇ",
+          "prompt": "ㄩˋ 成其事",
+          "target": "ㄩˋ",
           "answer": "玉"
         },
         {
@@ -16613,8 +16613,8 @@
           "type_name": "字形",
           "num": 79,
           "num_str": "079",
-          "prompt": "諂 ㄩˇ 取容",
-          "target": "ㄩˇ",
+          "prompt": "諂 ㄩˊ 取容",
+          "target": "ㄩˊ",
           "answer": "諛"
         },
         {
@@ -16637,8 +16637,8 @@
           "type_name": "字形",
           "num": 81,
           "num_str": "081",
-          "prompt": "千絲萬 ㄌㄡˇ",
-          "target": "ㄌㄡˇ",
+          "prompt": "千絲萬 ㄌㄩˇ",
+          "target": "ㄌㄩˇ",
           "answer": "縷"
         },
         {
@@ -16709,8 +16709,8 @@
           "type_name": "字形",
           "num": 87,
           "num_str": "087",
-          "prompt": "方趾圓 ㄌㄨㄢˊ",
-          "target": "ㄌㄨㄢˊ",
+          "prompt": "方趾圓 ㄌㄨˊ",
+          "target": "ㄌㄨˊ",
           "answer": "顱"
         },
         {
@@ -16733,8 +16733,8 @@
           "type_name": "字形",
           "num": 89,
           "num_str": "089",
-          "prompt": "麟角鳳 ㄗㄨㄟˇ",
-          "target": "ㄗㄨㄟˇ",
+          "prompt": "麟角鳳 ㄐㄩˋ",
+          "target": "ㄐㄩˋ",
           "answer": "距"
         },
         {
@@ -16805,8 +16805,8 @@
           "type_name": "字形",
           "num": 95,
           "num_str": "095",
-          "prompt": "食玉 ㄘㄨㄢˋ 桂",
-          "target": "ㄘㄨㄢˋ",
+          "prompt": "食玉 ㄔㄨㄟ 桂",
+          "target": "ㄔㄨㄟ",
           "answer": "炊"
         },
         {
@@ -17015,7 +17015,7 @@
           "num_str": "012",
           "prompt": "荷爾蒙",
           "target": "荷",
-          "answer": "ㄏㄜˋ"
+          "answer": "ㄏㄜˊ"
         },
         {
           "id": "108-yin-013",
@@ -18155,8 +18155,8 @@
           "type_name": "字形",
           "num": 7,
           "num_str": "007",
-          "prompt": "鏤彩 ㄧˋ 文",
-          "target": "ㄧˋ",
+          "prompt": "鏤彩 ㄔ 文",
+          "target": "ㄔ",
           "answer": "摛"
         },
         {
@@ -18179,8 +18179,8 @@
           "type_name": "字形",
           "num": 9,
           "num_str": "009",
-          "prompt": "以鄰為 ㄏㄜˋ",
-          "target": "ㄏㄜˋ",
+          "prompt": "以鄰為 ㄏㄨㄛˋ",
+          "target": "ㄏㄨㄛˋ",
           "answer": "壑"
         },
         {
@@ -18227,8 +18227,8 @@
           "type_name": "字形",
           "num": 13,
           "num_str": "013",
-          "prompt": "呼 ㄏㄠˊ 喝雉",
-          "target": "ㄏㄠˊ",
+          "prompt": "呼 ㄌㄨˊ 喝雉",
+          "target": "ㄌㄨˊ",
           "answer": "盧"
         },
         {
@@ -18335,8 +18335,8 @@
           "type_name": "字形",
           "num": 22,
           "num_str": "022",
-          "prompt": "彰善 ㄉㄢˇ 惡",
-          "target": "ㄉㄢˇ",
+          "prompt": "彰善 ㄉㄢˋ 惡",
+          "target": "ㄉㄢˋ",
           "answer": "癉"
         },
         {
@@ -18527,8 +18527,8 @@
           "type_name": "字形",
           "num": 38,
           "num_str": "038",
-          "prompt": "地 ㄔㄞˋ 天崩",
-          "target": "ㄔㄞˋ",
+          "prompt": "地 ㄔㄜˋ 天崩",
+          "target": "ㄔㄜˋ",
           "answer": "坼"
         },
         {
@@ -18719,8 +18719,8 @@
           "type_name": "字形",
           "num": 54,
           "num_str": "054",
-          "prompt": "洞中肯 ㄑㄧㄢˋ",
-          "target": "ㄑㄧㄢˋ",
+          "prompt": "洞中肯 ㄑㄧㄥˋ",
+          "target": "ㄑㄧㄥˋ",
           "answer": "綮"
         },
         {
@@ -18779,8 +18779,8 @@
           "type_name": "字形",
           "num": 59,
           "num_str": "059",
-          "prompt": "冬溫夏 ㄑㄧㄥˋ",
-          "target": "ㄑㄧㄥˋ",
+          "prompt": "冬溫夏 ㄐㄧㄥˋ",
+          "target": "ㄐㄧㄥˋ",
           "answer": "凊"
         },
         {
@@ -19385,7 +19385,7 @@
           "num_str": "009",
           "prompt": "藏掖",
           "target": "掖",
-          "answer": "ㄧㄝˋ"
+          "answer": "ㄧㄝ"
         },
         {
           "id": "109-yin-010",
@@ -19397,7 +19397,7 @@
           "num_str": "010",
           "prompt": "泥潦",
           "target": "潦",
-          "answer": "ㄌㄠˇ"
+          "answer": "ㄌㄠˋ"
         },
         {
           "id": "109-yin-011",
@@ -20261,7 +20261,7 @@
           "num_str": "082",
           "prompt": "道殣相望",
           "target": "殣",
-          "answer": "ㄐㄧㄣˋ"
+          "answer": "ㄐㄧㄣˇ"
         },
         {
           "id": "109-yin-083",
@@ -20465,7 +20465,7 @@
           "num_str": "099",
           "prompt": "絣扒吊拷",
           "target": "絣",
-          "answer": "ㄆㄧㄥ"
+          "answer": "ㄅㄥ"
         },
         {
           "id": "109-yin-100",
@@ -20525,8 +20525,8 @@
           "type_name": "字形",
           "num": 4,
           "num_str": "004",
-          "prompt": "利益均 ㄓㄢˋ",
-          "target": "ㄓㄢˋ",
+          "prompt": "利益均 ㄓㄢ",
+          "target": "ㄓㄢ",
           "answer": "霑"
         },
         {
@@ -20549,8 +20549,8 @@
           "type_name": "字形",
           "num": 6,
           "num_str": "006",
-          "prompt": "泰來 ㄈㄡˇ 往",
-          "target": "ㄈㄡˇ",
+          "prompt": "泰來 ㄆㄧˇ 往",
+          "target": "ㄆㄧˇ",
           "answer": "否"
         },
         {
@@ -20597,8 +20597,8 @@
           "type_name": "字形",
           "num": 10,
           "num_str": "010",
-          "prompt": "ㄊㄧˋ 袍之賜",
-          "target": "ㄊㄧˋ",
+          "prompt": "ㄊㄧˊ 袍之賜",
+          "target": "ㄊㄧˊ",
           "answer": "綈"
         },
         {
@@ -20705,8 +20705,8 @@
           "type_name": "字形",
           "num": 19,
           "num_str": "019",
-          "prompt": "發姦 ㄓˋ 伏",
-          "target": "ㄓˋ",
+          "prompt": "發姦 ㄊㄧˋ 伏",
+          "target": "ㄊㄧˋ",
           "answer": "擿"
         },
         {
@@ -20717,8 +20717,8 @@
           "type_name": "字形",
           "num": 20,
           "num_str": "020",
-          "prompt": "ㄔㄥˊ 意妄為",
-          "target": "ㄔㄥˊ",
+          "prompt": "ㄔㄥˇ 意妄為",
+          "target": "ㄔㄥˇ",
           "answer": "逞"
         },
         {
@@ -20765,8 +20765,8 @@
           "type_name": "字形",
           "num": 24,
           "num_str": "024",
-          "prompt": "ㄅㄠˇ 善貶惡",
-          "target": "ㄅㄠˇ",
+          "prompt": "ㄅㄠ 善貶惡",
+          "target": "ㄅㄠ",
           "answer": "褒"
         },
         {
@@ -20945,8 +20945,8 @@
           "type_name": "字形",
           "num": 39,
           "num_str": "039",
-          "prompt": "ㄖㄨˋ 泣吞悲",
-          "target": "ㄖㄨˋ",
+          "prompt": "ㄖㄨˊ 泣吞悲",
+          "target": "ㄖㄨˊ",
           "answer": "茹"
         },
         {
@@ -20957,8 +20957,8 @@
           "type_name": "字形",
           "num": 40,
           "num_str": "040",
-          "prompt": "牝雞 ㄇㄡˇ 鳴",
-          "target": "ㄇㄡˇ",
+          "prompt": "牝雞 ㄇㄨˇ 鳴",
+          "target": "ㄇㄨˇ",
           "answer": "牡"
         },
         {
@@ -21173,8 +21173,8 @@
           "type_name": "字形",
           "num": 58,
           "num_str": "058",
-          "prompt": "怙惡不 ㄐㄩㄣˋ",
-          "target": "ㄐㄩㄣˋ",
+          "prompt": "怙惡不 ㄑㄩㄢ",
+          "target": "ㄑㄩㄢ",
           "answer": "悛"
         },
         {
@@ -21257,8 +21257,8 @@
           "type_name": "字形",
           "num": 65,
           "num_str": "065",
-          "prompt": "名實相 ㄎㄨㄟˋ",
-          "target": "ㄎㄨㄟˋ",
+          "prompt": "名實相 ㄎㄜˋ",
+          "target": "ㄎㄜˋ",
           "answer": "課"
         },
         {
@@ -21341,8 +21341,8 @@
           "type_name": "字形",
           "num": 72,
           "num_str": "072",
-          "prompt": "童牛 ㄐㄧㄠˇ 馬",
-          "target": "ㄐㄧㄠˇ",
+          "prompt": "童牛 ㄐㄩㄝˊ 馬",
+          "target": "ㄐㄩㄝˊ",
           "answer": "角"
         },
         {
@@ -21401,8 +21401,8 @@
           "type_name": "字形",
           "num": 77,
           "num_str": "077",
-          "prompt": "蠅利 ㄍㄨㄚˇ 名",
-          "target": "ㄍㄨㄚˇ",
+          "prompt": "蠅利 ㄍㄨㄚ 名",
+          "target": "ㄍㄨㄚ",
           "answer": "蝸"
         },
         {
@@ -21413,8 +21413,8 @@
           "type_name": "字形",
           "num": 78,
           "num_str": "078",
-          "prompt": "ㄌㄧㄢˇ 聲屏氣",
-          "target": "ㄌㄧㄢˇ",
+          "prompt": "ㄌㄧㄢˋ 聲屏氣",
+          "target": "ㄌㄧㄢˋ",
           "answer": "斂"
         },
         {
@@ -21581,8 +21581,8 @@
           "type_name": "字形",
           "num": 92,
           "num_str": "092",
-          "prompt": "深文巧 ㄎㄜˋ",
-          "target": "ㄎㄜˋ",
+          "prompt": "深文巧 ㄏㄜˊ",
+          "target": "ㄏㄜˊ",
           "answer": "劾"
         },
         {
@@ -21665,8 +21665,8 @@
           "type_name": "字形",
           "num": 99,
           "num_str": "099",
-          "prompt": "轅門射 ㄐㄧˊ",
-          "target": "ㄐㄧˊ",
+          "prompt": "轅門射 ㄐㄧˇ",
+          "target": "ㄐㄧˇ",
           "answer": "戟"
         },
         {
@@ -22979,8 +22979,8 @@
           "type_name": "字形",
           "num": 8,
           "num_str": "008",
-          "prompt": "ㄉㄧˋ 孫承重",
-          "target": "ㄉㄧˋ",
+          "prompt": "ㄉㄧˊ 孫承重",
+          "target": "ㄉㄧˊ",
           "answer": "嫡"
         },
         {
@@ -23039,8 +23039,8 @@
           "type_name": "字形",
           "num": 13,
           "num_str": "013",
-          "prompt": "掣襟 ㄓㄡˋ 見",
-          "target": "ㄓㄡˋ",
+          "prompt": "掣襟 ㄓㄡˇ 見",
+          "target": "ㄓㄡˇ",
           "answer": "肘"
         },
         {
@@ -23483,8 +23483,8 @@
           "type_name": "字形",
           "num": 50,
           "num_str": "050",
-          "prompt": "獨 ㄓㄢˋ 勝場",
-          "target": "ㄓㄢˋ",
+          "prompt": "獨 ㄕㄢˋ 勝場",
+          "target": "ㄕㄢˋ",
           "answer": "擅"
         },
         {
@@ -24111,8 +24111,8 @@
           "type_name": "字音",
           "num": 2,
           "num_str": "002",
-          "prompt": "澆薄",
-          "target": "澆",
+          "prompt": "磽薄",
+          "target": "磽",
           "answer": "ㄑㄧㄠ"
         },
         {
@@ -25325,8 +25325,8 @@
           "type_name": "字形",
           "num": 3,
           "num_str": "003",
-          "prompt": "昭王墜 ㄩˇ",
-          "target": "ㄩˇ",
+          "prompt": "昭王墜 ㄐㄩˋ",
+          "target": "ㄐㄩˋ",
           "answer": "屨"
         },
         {
@@ -25397,8 +25397,8 @@
           "type_name": "字形",
           "num": 9,
           "num_str": "009",
-          "prompt": "富 ㄎㄜˇ 陶白",
-          "target": "ㄎㄜˇ",
+          "prompt": "富 ㄌㄜˋ 陶白",
+          "target": "ㄌㄜˋ",
           "answer": "埒"
         },
         {
@@ -25481,8 +25481,8 @@
           "type_name": "字形",
           "num": 16,
           "num_str": "016",
-          "prompt": "傾筐倒 ㄑㄧㄝˋ",
-          "target": "ㄑㄧㄝˋ",
+          "prompt": "傾筐倒 ㄐㄧˇ",
+          "target": "ㄐㄧˇ",
           "answer": "庋"
         },
         {
@@ -25565,8 +25565,8 @@
           "type_name": "字形",
           "num": 23,
           "num_str": "023",
-          "prompt": "穿 ㄩˇ 之盜",
-          "target": "ㄩˇ",
+          "prompt": "穿 ㄩˊ 之盜",
+          "target": "ㄩˊ",
           "answer": "窬"
         },
         {
@@ -25757,8 +25757,8 @@
           "type_name": "字形",
           "num": 39,
           "num_str": "039",
-          "prompt": "眉 ㄔㄨˊ 春山",
-          "target": "ㄔㄨˊ",
+          "prompt": "眉 ㄘㄨˋ 春山",
+          "target": "ㄘㄨˋ",
           "answer": "蹙"
         },
         {
@@ -25853,8 +25853,8 @@
           "type_name": "字形",
           "num": 47,
           "num_str": "047",
-          "prompt": "命 ㄑㄧㄢˇ 時乖",
-          "target": "ㄑㄧㄢˇ",
+          "prompt": "命 ㄐㄧㄢˇ 時乖",
+          "target": "ㄐㄧㄢˇ",
           "answer": "蹇"
         },
         {
@@ -26021,8 +26021,8 @@
           "type_name": "字形",
           "num": 61,
           "num_str": "061",
-          "prompt": "罪無可 ㄒㄧㄢˇ",
-          "target": "ㄒㄧㄢˇ",
+          "prompt": "罪無可 ㄏㄨㄢˋ",
+          "target": "ㄏㄨㄢˋ",
           "answer": "逭"
         },
         {
@@ -26093,8 +26093,8 @@
           "type_name": "字形",
           "num": 67,
           "num_str": "067",
-          "prompt": "ㄕㄚ 血為盟",
-          "target": "ㄕㄚ",
+          "prompt": "ㄕㄚˋ 血為盟",
+          "target": "ㄕㄚˋ",
           "answer": "歃"
         },
         {
@@ -26309,8 +26309,8 @@
           "type_name": "字形",
           "num": 85,
           "num_str": "085",
-          "prompt": "飛觥走 ㄒㄧㄚˇ",
-          "target": "ㄒㄧㄚˇ",
+          "prompt": "飛觥走 ㄐㄧㄚˇ",
+          "target": "ㄐㄧㄚˇ",
           "answer": "斝"
         },
         {
@@ -26441,8 +26441,8 @@
           "type_name": "字形",
           "num": 96,
           "num_str": "096",
-          "prompt": "退 ㄊㄧˋ 三舍",
-          "target": "ㄊㄧˋ",
+          "prompt": "退 ㄒㄧˇ 三舍",
+          "target": "ㄒㄧˇ",
           "answer": "徙"
         },
         {
@@ -26489,8 +26489,8 @@
           "type_name": "字形",
           "num": 100,
           "num_str": "100",
-          "prompt": "五花度 ㄍㄚˋ",
-          "target": "ㄍㄚˋ",
+          "prompt": "五花度 ㄉㄧㄝˊ",
+          "target": "ㄉㄧㄝˊ",
           "answer": "牒"
         }
       ]
@@ -27167,7 +27167,7 @@
           "num_str": "056",
           "prompt": "謾天昧地",
           "target": "謾",
-          "answer": "ㄇㄢˋ"
+          "answer": "ㄇㄢˊ"
         },
         {
           "id": "112-yin-057",
@@ -29021,7 +29021,7 @@
           "num_str": "010",
           "prompt": "禰衡",
           "target": "禰",
-          "answer": "ㄋㄧˊ"
+          "answer": "ㄇㄧˊ"
         },
         {
           "id": "113-yin-011",
@@ -29153,7 +29153,7 @@
           "num_str": "021",
           "prompt": "軋戲",
           "target": "軋",
-          "answer": "ㄧㄚˋ"
+          "answer": "ㄍㄚˊ"
         },
         {
           "id": "113-yin-022",
@@ -30005,7 +30005,7 @@
           "num_str": "092",
           "prompt": "錚錚鏦鏦",
           "target": "鏦",
-          "answer": "ㄔㄨㄥ"
+          "answer": "ㄘㄨㄥ"
         },
         {
           "id": "113-yin-093",
@@ -33299,8 +33299,8 @@
           "type_name": "字形",
           "num": 66,
           "num_str": "066",
-          "prompt": "過江之 ㄐㄧˊ",
-          "target": "ㄐㄧˊ",
+          "prompt": "過江之 ㄐㄧˋ",
+          "target": "ㄐㄧˋ",
           "answer": "鯽"
         },
         {
@@ -34745,7 +34745,7 @@
       "num_str": "086",
       "prompt": "亢龍有悔",
       "target": "亢",
-      "answer": "ㄍㄤ"
+      "answer": "ㄎㄤˋ"
     },
     {
       "id": "101-yin-087",
@@ -35069,7 +35069,7 @@
       "num_str": "013",
       "prompt": "鏹水",
       "target": "鏹",
-      "answer": "ㄑㄧㄤˇ"
+      "answer": "ㄑㄧㄤ"
     },
     {
       "id": "102-yin-014",
@@ -35189,7 +35189,7 @@
       "num_str": "023",
       "prompt": "括約肌",
       "target": "括",
-      "answer": "ㄍㄨㄚ"
+      "answer": "ㄎㄨㄛˋ"
     },
     {
       "id": "102-yin-024",
@@ -35369,7 +35369,7 @@
       "num_str": "038",
       "prompt": "漁陽摻撾",
       "target": "摻",
-      "answer": "ㄘㄢ"
+      "answer": "ㄘㄢˋ"
     },
     {
       "id": "102-yin-039",
@@ -37349,7 +37349,7 @@
       "num_str": "003",
       "prompt": "傀偉",
       "target": "傀",
-      "answer": "ㄍㄨㄟˇ"
+      "answer": "ㄍㄨㄟ"
     },
     {
       "id": "104-yin-004",
@@ -38093,7 +38093,7 @@
       "num_str": "065",
       "prompt": "湮沒無聞",
       "target": "湮",
-      "answer": "ㄧㄢ"
+      "answer": "ㄧㄣ"
     },
     {
       "id": "104-yin-066",
@@ -38321,7 +38321,7 @@
       "num_str": "084",
       "prompt": "憂心如惔",
       "target": "惔",
-      "answer": "ㄉㄢˋ"
+      "answer": "ㄊㄢˊ"
     },
     {
       "id": "104-yin-085",
@@ -38597,7 +38597,7 @@
       "num_str": "007",
       "prompt": "掄拳",
       "target": "掄",
-      "answer": "ㄌㄨㄣˊ"
+      "answer": "ㄌㄨㄣ"
     },
     {
       "id": "105-yin-008",
@@ -39017,7 +39017,7 @@
       "num_str": "042",
       "prompt": "搜章擿句",
       "target": "擿",
-      "answer": "ㄓˋ"
+      "answer": "ㄊㄧˋ"
     },
     {
       "id": "105-yin-043",
@@ -39125,7 +39125,7 @@
       "num_str": "051",
       "prompt": "頂禮膜拜",
       "target": "膜",
-      "answer": "ㄇㄛˋ"
+      "answer": "ㄇㄛˊ"
     },
     {
       "id": "105-yin-052",
@@ -39581,7 +39581,7 @@
       "num_str": "089",
       "prompt": "抽丁拔楔",
       "target": "楔",
-      "answer": "ㄒㄧㄝ"
+      "answer": "ㄒㄧㄝˋ"
     },
     {
       "id": "105-yin-090",
@@ -39641,7 +39641,7 @@
       "num_str": "094",
       "prompt": "踅來踅去",
       "target": "踅",
-      "answer": "ㄒㄧㄝˊ"
+      "answer": "ㄒㄩㄝˊ"
     },
     {
       "id": "105-yin-095",
@@ -41105,7 +41105,7 @@
       "num_str": "016",
       "prompt": "順口溜",
       "target": "溜",
-      "answer": "ㄌㄧㄡˋ"
+      "answer": "ㄌㄧㄡ"
     },
     {
       "id": "107-yin-017",
@@ -41165,7 +41165,7 @@
       "num_str": "021",
       "prompt": "括約肌",
       "target": "括",
-      "answer": "ㄍㄨㄚ"
+      "answer": "ㄎㄨㄛˋ"
     },
     {
       "id": "107-yin-022",
@@ -41297,7 +41297,7 @@
       "num_str": "032",
       "prompt": "槁項黃馘",
       "target": "馘",
-      "answer": "ㄍㄨㄛˊ"
+      "answer": "ㄒㄩˋ"
     },
     {
       "id": "107-yin-033",
@@ -41981,7 +41981,7 @@
       "num_str": "089",
       "prompt": "聽憑尊便",
       "target": "聽",
-      "answer": "ㄊㄧㄥ"
+      "answer": "ㄊㄧㄥˋ"
     },
     {
       "id": "107-yin-090",
@@ -42257,7 +42257,7 @@
       "num_str": "012",
       "prompt": "荷爾蒙",
       "target": "荷",
-      "answer": "ㄏㄜˋ"
+      "answer": "ㄏㄜˊ"
     },
     {
       "id": "108-yin-013",
@@ -43421,7 +43421,7 @@
       "num_str": "009",
       "prompt": "藏掖",
       "target": "掖",
-      "answer": "ㄧㄝˋ"
+      "answer": "ㄧㄝ"
     },
     {
       "id": "109-yin-010",
@@ -43433,7 +43433,7 @@
       "num_str": "010",
       "prompt": "泥潦",
       "target": "潦",
-      "answer": "ㄌㄠˇ"
+      "answer": "ㄌㄠˋ"
     },
     {
       "id": "109-yin-011",
@@ -44297,7 +44297,7 @@
       "num_str": "082",
       "prompt": "道殣相望",
       "target": "殣",
-      "answer": "ㄐㄧㄣˋ"
+      "answer": "ㄐㄧㄣˇ"
     },
     {
       "id": "109-yin-083",
@@ -44501,7 +44501,7 @@
       "num_str": "099",
       "prompt": "絣扒吊拷",
       "target": "絣",
-      "answer": "ㄆㄧㄥ"
+      "answer": "ㄅㄥ"
     },
     {
       "id": "109-yin-100",
@@ -45735,8 +45735,8 @@
       "type_name": "字音",
       "num": 2,
       "num_str": "002",
-      "prompt": "澆薄",
-      "target": "澆",
+      "prompt": "磽薄",
+      "target": "磽",
       "answer": "ㄑㄧㄠ"
     },
     {
@@ -47585,7 +47585,7 @@
       "num_str": "056",
       "prompt": "謾天昧地",
       "target": "謾",
-      "answer": "ㄇㄢˋ"
+      "answer": "ㄇㄢˊ"
     },
     {
       "id": "112-yin-057",
@@ -48233,7 +48233,7 @@
       "num_str": "010",
       "prompt": "禰衡",
       "target": "禰",
-      "answer": "ㄋㄧˊ"
+      "answer": "ㄇㄧˊ"
     },
     {
       "id": "113-yin-011",
@@ -48365,7 +48365,7 @@
       "num_str": "021",
       "prompt": "軋戲",
       "target": "軋",
-      "answer": "ㄧㄚˋ"
+      "answer": "ㄍㄚˊ"
     },
     {
       "id": "113-yin-022",
@@ -49217,7 +49217,7 @@
       "num_str": "092",
       "prompt": "錚錚鏦鏦",
       "target": "鏦",
-      "answer": "ㄔㄨㄥ"
+      "answer": "ㄘㄨㄥ"
     },
     {
       "id": "113-yin-093",
@@ -51867,8 +51867,8 @@
       "type_name": "字形",
       "num": 13,
       "num_str": "013",
-      "prompt": "ㄅㄧˋ 官野史",
-      "target": "ㄅㄧˋ",
+      "prompt": "ㄅㄞˋ 官野史",
+      "target": "ㄅㄞˋ",
       "answer": "稗"
     },
     {
@@ -52191,8 +52191,8 @@
       "type_name": "字形",
       "num": 40,
       "num_str": "040",
-      "prompt": "蜂 ㄩㄥ 而上",
-      "target": "ㄩㄥ",
+      "prompt": "蜂 ㄩㄥˇ 而上",
+      "target": "ㄩㄥˇ",
       "answer": "擁"
     },
     {
@@ -53175,8 +53175,8 @@
       "type_name": "字形",
       "num": 22,
       "num_str": "022",
-      "prompt": "以 ㄌㄧˇ 測海",
-      "target": "ㄌㄧˇ",
+      "prompt": "以 ㄌㄧˊ 測海",
+      "target": "ㄌㄧˊ",
       "answer": "蠡"
     },
     {
@@ -53967,8 +53967,8 @@
       "type_name": "字形",
       "num": 88,
       "num_str": "088",
-      "prompt": "ㄆㄛˋ 肌分理",
-      "target": "ㄆㄛˋ",
+      "prompt": "ㄅㄛˋ 肌分理",
+      "target": "ㄅㄛˋ",
       "answer": "擘"
     },
     {
@@ -54327,8 +54327,8 @@
       "type_name": "字形",
       "num": 18,
       "num_str": "018",
-      "prompt": "ㄔㄢ 弱",
-      "target": "ㄔㄢ",
+      "prompt": "ㄔㄢˊ 弱",
+      "target": "ㄔㄢˊ",
       "answer": "孱"
     },
     {
@@ -54459,8 +54459,8 @@
       "type_name": "字形",
       "num": 29,
       "num_str": "029",
-      "prompt": "ㄍㄨㄟˇ 藏",
-      "target": "ㄍㄨㄟˇ",
+      "prompt": "ㄐㄧˇ 藏",
+      "target": "ㄐㄧˇ",
       "answer": "庋"
     },
     {
@@ -54483,8 +54483,8 @@
       "type_name": "字形",
       "num": 31,
       "num_str": "031",
-      "prompt": "郵 ㄔㄨㄛˋ",
-      "target": "ㄔㄨㄛˋ",
+      "prompt": "郵 ㄔㄨㄛ",
+      "target": "ㄔㄨㄛ",
       "answer": "戳"
     },
     {
@@ -54651,8 +54651,8 @@
       "type_name": "字形",
       "num": 45,
       "num_str": "045",
-      "prompt": "海 ㄊㄚˇ",
-      "target": "ㄊㄚˇ",
+      "prompt": "海 ㄊㄚˋ",
+      "target": "ㄊㄚˋ",
       "answer": "獺"
     },
     {
@@ -54747,8 +54747,8 @@
       "type_name": "字形",
       "num": 53,
       "num_str": "053",
-      "prompt": "ㄌㄨㄛ 虎鬚",
-      "target": "ㄌㄨㄛ",
+      "prompt": "ㄌㄜˋ 虎鬚",
+      "target": "ㄌㄜˋ",
       "answer": "捋"
     },
     {
@@ -55011,8 +55011,8 @@
       "type_name": "字形",
       "num": 75,
       "num_str": "075",
-      "prompt": "管窺 ㄌㄧˇ 測",
-      "target": "ㄌㄧˇ",
+      "prompt": "管窺 ㄌㄧˊ 測",
+      "target": "ㄌㄧˊ",
       "answer": "蠡"
     },
     {
@@ -55071,8 +55071,8 @@
       "type_name": "字形",
       "num": 80,
       "num_str": "080",
-      "prompt": "ㄎㄜˋ 頭燒香",
-      "target": "ㄎㄜˋ",
+      "prompt": "ㄎㄜ 頭燒香",
+      "target": "ㄎㄜ",
       "answer": "磕"
     },
     {
@@ -55131,8 +55131,8 @@
       "type_name": "字形",
       "num": 85,
       "num_str": "085",
-      "prompt": "ㄔㄚ 脂抹粉",
-      "target": "ㄔㄚ",
+      "prompt": "ㄔㄚˊ 脂抹粉",
+      "target": "ㄔㄚˊ",
       "answer": "搽"
     },
     {
@@ -56511,8 +56511,8 @@
       "type_name": "字形",
       "num": 100,
       "num_str": "100",
-      "prompt": "ㄧㄣ 吃卯糧",
-      "target": "ㄧㄣ",
+      "prompt": "ㄧㄣˊ 吃卯糧",
+      "target": "ㄧㄣˊ",
       "answer": "寅"
     },
     {
@@ -57543,8 +57543,8 @@
       "type_name": "字形",
       "num": 86,
       "num_str": "086",
-      "prompt": "富 ㄌㄧㄝˋ 陶白",
-      "target": "ㄌㄧㄝˋ",
+      "prompt": "富 ㄌㄜˋ 陶白",
+      "target": "ㄌㄜˋ",
       "answer": "埒"
     },
     {
@@ -57747,8 +57747,8 @@
       "type_name": "字形",
       "num": 3,
       "num_str": "003",
-      "prompt": "龍 ㄒㄧㄤˊ 香",
-      "target": "ㄒㄧㄤˊ",
+      "prompt": "龍 ㄒㄧㄢˊ 香",
+      "target": "ㄒㄧㄢˊ",
       "answer": "涎"
     },
     {
@@ -57771,8 +57771,8 @@
       "type_name": "字形",
       "num": 5,
       "num_str": "005",
-      "prompt": "金 ㄍㄨˋ 棒",
-      "target": "ㄍㄨˋ",
+      "prompt": "金 ㄍㄨ 棒",
+      "target": "ㄍㄨ",
       "answer": "箍"
     },
     {
@@ -57807,8 +57807,8 @@
       "type_name": "字形",
       "num": 8,
       "num_str": "008",
-      "prompt": "收 ㄔˋ 聯",
-      "target": "ㄔˋ",
+      "prompt": "收 ㄓˊ 聯",
+      "target": "ㄓˊ",
       "answer": "執"
     },
     {
@@ -57819,8 +57819,8 @@
       "type_name": "字形",
       "num": 9,
       "num_str": "009",
-      "prompt": "草 ㄑㄧㄢ 人命",
-      "target": "ㄑㄧㄢ",
+      "prompt": "草 ㄐㄧㄢ 人命",
+      "target": "ㄐㄧㄢ",
       "answer": "菅"
     },
     {
@@ -57843,8 +57843,8 @@
       "type_name": "字形",
       "num": 11,
       "num_str": "011",
-      "prompt": "守株 ㄉㄞˋ 兔",
-      "target": "ㄉㄞˋ",
+      "prompt": "守株 ㄙˋ 兔",
+      "target": "ㄙˋ",
       "answer": "伺"
     },
     {
@@ -57975,8 +57975,8 @@
       "type_name": "字形",
       "num": 22,
       "num_str": "022",
-      "prompt": "民生凋 ㄅㄧˇ",
-      "target": "ㄅㄧˇ",
+      "prompt": "民生凋 ㄅㄧˋ",
+      "target": "ㄅㄧˋ",
       "answer": "敝"
     },
     {
@@ -58047,8 +58047,8 @@
       "type_name": "字形",
       "num": 28,
       "num_str": "028",
-      "prompt": "曲學 ㄚ 世",
-      "target": "ㄚ",
+      "prompt": "曲學 ㄜ 世",
+      "target": "ㄜ",
       "answer": "阿"
     },
     {
@@ -58083,8 +58083,8 @@
       "type_name": "字形",
       "num": 31,
       "num_str": "031",
-      "prompt": "胼手 ㄓˇ 足",
-      "target": "ㄓˇ",
+      "prompt": "胼手 ㄓ 足",
+      "target": "ㄓ",
       "answer": "胝"
     },
     {
@@ -58215,8 +58215,8 @@
       "type_name": "字形",
       "num": 42,
       "num_str": "042",
-      "prompt": "根深 ㄉㄧˋ 固",
-      "target": "ㄉㄧˋ",
+      "prompt": "根深 ㄉㄧˇ 固",
+      "target": "ㄉㄧˇ",
       "answer": "柢"
     },
     {
@@ -58263,8 +58263,8 @@
       "type_name": "字形",
       "num": 46,
       "num_str": "046",
-      "prompt": "宵衣 ㄍㄢˇ 食",
-      "target": "ㄍㄢˇ",
+      "prompt": "宵衣 ㄍㄢˋ 食",
+      "target": "ㄍㄢˋ",
       "answer": "旰"
     },
     {
@@ -58419,8 +58419,8 @@
       "type_name": "字形",
       "num": 59,
       "num_str": "059",
-      "prompt": "破 ㄍㄨㄟ 為圓",
-      "target": "ㄍㄨㄟ",
+      "prompt": "破 ㄍㄨ 為圓",
+      "target": "ㄍㄨ",
       "answer": "觚"
     },
     {
@@ -58467,8 +58467,8 @@
       "type_name": "字形",
       "num": 63,
       "num_str": "063",
-      "prompt": "狼 ㄊㄢ 虎嚥",
-      "target": "ㄊㄢ",
+      "prompt": "狼 ㄙㄨㄣ 虎嚥",
+      "target": "ㄙㄨㄣ",
       "answer": "飧"
     },
     {
@@ -58479,8 +58479,8 @@
       "type_name": "字形",
       "num": 64,
       "num_str": "064",
-      "prompt": "ㄩˇ 成其事",
-      "target": "ㄩˇ",
+      "prompt": "ㄩˋ 成其事",
+      "target": "ㄩˋ",
       "answer": "玉"
     },
     {
@@ -58659,8 +58659,8 @@
       "type_name": "字形",
       "num": 79,
       "num_str": "079",
-      "prompt": "諂 ㄩˇ 取容",
-      "target": "ㄩˇ",
+      "prompt": "諂 ㄩˊ 取容",
+      "target": "ㄩˊ",
       "answer": "諛"
     },
     {
@@ -58683,8 +58683,8 @@
       "type_name": "字形",
       "num": 81,
       "num_str": "081",
-      "prompt": "千絲萬 ㄌㄡˇ",
-      "target": "ㄌㄡˇ",
+      "prompt": "千絲萬 ㄌㄩˇ",
+      "target": "ㄌㄩˇ",
       "answer": "縷"
     },
     {
@@ -58755,8 +58755,8 @@
       "type_name": "字形",
       "num": 87,
       "num_str": "087",
-      "prompt": "方趾圓 ㄌㄨㄢˊ",
-      "target": "ㄌㄨㄢˊ",
+      "prompt": "方趾圓 ㄌㄨˊ",
+      "target": "ㄌㄨˊ",
       "answer": "顱"
     },
     {
@@ -58779,8 +58779,8 @@
       "type_name": "字形",
       "num": 89,
       "num_str": "089",
-      "prompt": "麟角鳳 ㄗㄨㄟˇ",
-      "target": "ㄗㄨㄟˇ",
+      "prompt": "麟角鳳 ㄐㄩˋ",
+      "target": "ㄐㄩˋ",
       "answer": "距"
     },
     {
@@ -58851,8 +58851,8 @@
       "type_name": "字形",
       "num": 95,
       "num_str": "095",
-      "prompt": "食玉 ㄘㄨㄢˋ 桂",
-      "target": "ㄘㄨㄢˋ",
+      "prompt": "食玉 ㄔㄨㄟ 桂",
+      "target": "ㄔㄨㄟ",
       "answer": "炊"
     },
     {
@@ -58995,8 +58995,8 @@
       "type_name": "字形",
       "num": 7,
       "num_str": "007",
-      "prompt": "鏤彩 ㄧˋ 文",
-      "target": "ㄧˋ",
+      "prompt": "鏤彩 ㄔ 文",
+      "target": "ㄔ",
       "answer": "摛"
     },
     {
@@ -59019,8 +59019,8 @@
       "type_name": "字形",
       "num": 9,
       "num_str": "009",
-      "prompt": "以鄰為 ㄏㄜˋ",
-      "target": "ㄏㄜˋ",
+      "prompt": "以鄰為 ㄏㄨㄛˋ",
+      "target": "ㄏㄨㄛˋ",
       "answer": "壑"
     },
     {
@@ -59067,8 +59067,8 @@
       "type_name": "字形",
       "num": 13,
       "num_str": "013",
-      "prompt": "呼 ㄏㄠˊ 喝雉",
-      "target": "ㄏㄠˊ",
+      "prompt": "呼 ㄌㄨˊ 喝雉",
+      "target": "ㄌㄨˊ",
       "answer": "盧"
     },
     {
@@ -59175,8 +59175,8 @@
       "type_name": "字形",
       "num": 22,
       "num_str": "022",
-      "prompt": "彰善 ㄉㄢˇ 惡",
-      "target": "ㄉㄢˇ",
+      "prompt": "彰善 ㄉㄢˋ 惡",
+      "target": "ㄉㄢˋ",
       "answer": "癉"
     },
     {
@@ -59367,8 +59367,8 @@
       "type_name": "字形",
       "num": 38,
       "num_str": "038",
-      "prompt": "地 ㄔㄞˋ 天崩",
-      "target": "ㄔㄞˋ",
+      "prompt": "地 ㄔㄜˋ 天崩",
+      "target": "ㄔㄜˋ",
       "answer": "坼"
     },
     {
@@ -59559,8 +59559,8 @@
       "type_name": "字形",
       "num": 54,
       "num_str": "054",
-      "prompt": "洞中肯 ㄑㄧㄢˋ",
-      "target": "ㄑㄧㄢˋ",
+      "prompt": "洞中肯 ㄑㄧㄥˋ",
+      "target": "ㄑㄧㄥˋ",
       "answer": "綮"
     },
     {
@@ -59619,8 +59619,8 @@
       "type_name": "字形",
       "num": 59,
       "num_str": "059",
-      "prompt": "冬溫夏 ㄑㄧㄥˋ",
-      "target": "ㄑㄧㄥˋ",
+      "prompt": "冬溫夏 ㄐㄧㄥˋ",
+      "target": "ㄐㄧㄥˋ",
       "answer": "凊"
     },
     {
@@ -60159,8 +60159,8 @@
       "type_name": "字形",
       "num": 4,
       "num_str": "004",
-      "prompt": "利益均 ㄓㄢˋ",
-      "target": "ㄓㄢˋ",
+      "prompt": "利益均 ㄓㄢ",
+      "target": "ㄓㄢ",
       "answer": "霑"
     },
     {
@@ -60183,8 +60183,8 @@
       "type_name": "字形",
       "num": 6,
       "num_str": "006",
-      "prompt": "泰來 ㄈㄡˇ 往",
-      "target": "ㄈㄡˇ",
+      "prompt": "泰來 ㄆㄧˇ 往",
+      "target": "ㄆㄧˇ",
       "answer": "否"
     },
     {
@@ -60231,8 +60231,8 @@
       "type_name": "字形",
       "num": 10,
       "num_str": "010",
-      "prompt": "ㄊㄧˋ 袍之賜",
-      "target": "ㄊㄧˋ",
+      "prompt": "ㄊㄧˊ 袍之賜",
+      "target": "ㄊㄧˊ",
       "answer": "綈"
     },
     {
@@ -60339,8 +60339,8 @@
       "type_name": "字形",
       "num": 19,
       "num_str": "019",
-      "prompt": "發姦 ㄓˋ 伏",
-      "target": "ㄓˋ",
+      "prompt": "發姦 ㄊㄧˋ 伏",
+      "target": "ㄊㄧˋ",
       "answer": "擿"
     },
     {
@@ -60351,8 +60351,8 @@
       "type_name": "字形",
       "num": 20,
       "num_str": "020",
-      "prompt": "ㄔㄥˊ 意妄為",
-      "target": "ㄔㄥˊ",
+      "prompt": "ㄔㄥˇ 意妄為",
+      "target": "ㄔㄥˇ",
       "answer": "逞"
     },
     {
@@ -60399,8 +60399,8 @@
       "type_name": "字形",
       "num": 24,
       "num_str": "024",
-      "prompt": "ㄅㄠˇ 善貶惡",
-      "target": "ㄅㄠˇ",
+      "prompt": "ㄅㄠ 善貶惡",
+      "target": "ㄅㄠ",
       "answer": "褒"
     },
     {
@@ -60579,8 +60579,8 @@
       "type_name": "字形",
       "num": 39,
       "num_str": "039",
-      "prompt": "ㄖㄨˋ 泣吞悲",
-      "target": "ㄖㄨˋ",
+      "prompt": "ㄖㄨˊ 泣吞悲",
+      "target": "ㄖㄨˊ",
       "answer": "茹"
     },
     {
@@ -60591,8 +60591,8 @@
       "type_name": "字形",
       "num": 40,
       "num_str": "040",
-      "prompt": "牝雞 ㄇㄡˇ 鳴",
-      "target": "ㄇㄡˇ",
+      "prompt": "牝雞 ㄇㄨˇ 鳴",
+      "target": "ㄇㄨˇ",
       "answer": "牡"
     },
     {
@@ -60807,8 +60807,8 @@
       "type_name": "字形",
       "num": 58,
       "num_str": "058",
-      "prompt": "怙惡不 ㄐㄩㄣˋ",
-      "target": "ㄐㄩㄣˋ",
+      "prompt": "怙惡不 ㄑㄩㄢ",
+      "target": "ㄑㄩㄢ",
       "answer": "悛"
     },
     {
@@ -60891,8 +60891,8 @@
       "type_name": "字形",
       "num": 65,
       "num_str": "065",
-      "prompt": "名實相 ㄎㄨㄟˋ",
-      "target": "ㄎㄨㄟˋ",
+      "prompt": "名實相 ㄎㄜˋ",
+      "target": "ㄎㄜˋ",
       "answer": "課"
     },
     {
@@ -60975,8 +60975,8 @@
       "type_name": "字形",
       "num": 72,
       "num_str": "072",
-      "prompt": "童牛 ㄐㄧㄠˇ 馬",
-      "target": "ㄐㄧㄠˇ",
+      "prompt": "童牛 ㄐㄩㄝˊ 馬",
+      "target": "ㄐㄩㄝˊ",
       "answer": "角"
     },
     {
@@ -61035,8 +61035,8 @@
       "type_name": "字形",
       "num": 77,
       "num_str": "077",
-      "prompt": "蠅利 ㄍㄨㄚˇ 名",
-      "target": "ㄍㄨㄚˇ",
+      "prompt": "蠅利 ㄍㄨㄚ 名",
+      "target": "ㄍㄨㄚ",
       "answer": "蝸"
     },
     {
@@ -61047,8 +61047,8 @@
       "type_name": "字形",
       "num": 78,
       "num_str": "078",
-      "prompt": "ㄌㄧㄢˇ 聲屏氣",
-      "target": "ㄌㄧㄢˇ",
+      "prompt": "ㄌㄧㄢˋ 聲屏氣",
+      "target": "ㄌㄧㄢˋ",
       "answer": "斂"
     },
     {
@@ -61215,8 +61215,8 @@
       "type_name": "字形",
       "num": 92,
       "num_str": "092",
-      "prompt": "深文巧 ㄎㄜˋ",
-      "target": "ㄎㄜˋ",
+      "prompt": "深文巧 ㄏㄜˊ",
+      "target": "ㄏㄜˊ",
       "answer": "劾"
     },
     {
@@ -61299,8 +61299,8 @@
       "type_name": "字形",
       "num": 99,
       "num_str": "099",
-      "prompt": "轅門射 ㄐㄧˊ",
-      "target": "ㄐㄧˊ",
+      "prompt": "轅門射 ㄐㄧˇ",
+      "target": "ㄐㄧˇ",
       "answer": "戟"
     },
     {
@@ -61407,8 +61407,8 @@
       "type_name": "字形",
       "num": 8,
       "num_str": "008",
-      "prompt": "ㄉㄧˋ 孫承重",
-      "target": "ㄉㄧˋ",
+      "prompt": "ㄉㄧˊ 孫承重",
+      "target": "ㄉㄧˊ",
       "answer": "嫡"
     },
     {
@@ -61467,8 +61467,8 @@
       "type_name": "字形",
       "num": 13,
       "num_str": "013",
-      "prompt": "掣襟 ㄓㄡˋ 見",
-      "target": "ㄓㄡˋ",
+      "prompt": "掣襟 ㄓㄡˇ 見",
+      "target": "ㄓㄡˇ",
       "answer": "肘"
     },
     {
@@ -61911,8 +61911,8 @@
       "type_name": "字形",
       "num": 50,
       "num_str": "050",
-      "prompt": "獨 ㄓㄢˋ 勝場",
-      "target": "ㄓㄢˋ",
+      "prompt": "獨 ㄕㄢˋ 勝場",
+      "target": "ㄕㄢˋ",
       "answer": "擅"
     },
     {
@@ -62547,8 +62547,8 @@
       "type_name": "字形",
       "num": 3,
       "num_str": "003",
-      "prompt": "昭王墜 ㄩˇ",
-      "target": "ㄩˇ",
+      "prompt": "昭王墜 ㄐㄩˋ",
+      "target": "ㄐㄩˋ",
       "answer": "屨"
     },
     {
@@ -62619,8 +62619,8 @@
       "type_name": "字形",
       "num": 9,
       "num_str": "009",
-      "prompt": "富 ㄎㄜˇ 陶白",
-      "target": "ㄎㄜˇ",
+      "prompt": "富 ㄌㄜˋ 陶白",
+      "target": "ㄌㄜˋ",
       "answer": "埒"
     },
     {
@@ -62703,8 +62703,8 @@
       "type_name": "字形",
       "num": 16,
       "num_str": "016",
-      "prompt": "傾筐倒 ㄑㄧㄝˋ",
-      "target": "ㄑㄧㄝˋ",
+      "prompt": "傾筐倒 ㄐㄧˇ",
+      "target": "ㄐㄧˇ",
       "answer": "庋"
     },
     {
@@ -62787,8 +62787,8 @@
       "type_name": "字形",
       "num": 23,
       "num_str": "023",
-      "prompt": "穿 ㄩˇ 之盜",
-      "target": "ㄩˇ",
+      "prompt": "穿 ㄩˊ 之盜",
+      "target": "ㄩˊ",
       "answer": "窬"
     },
     {
@@ -62979,8 +62979,8 @@
       "type_name": "字形",
       "num": 39,
       "num_str": "039",
-      "prompt": "眉 ㄔㄨˊ 春山",
-      "target": "ㄔㄨˊ",
+      "prompt": "眉 ㄘㄨˋ 春山",
+      "target": "ㄘㄨˋ",
       "answer": "蹙"
     },
     {
@@ -63075,8 +63075,8 @@
       "type_name": "字形",
       "num": 47,
       "num_str": "047",
-      "prompt": "命 ㄑㄧㄢˇ 時乖",
-      "target": "ㄑㄧㄢˇ",
+      "prompt": "命 ㄐㄧㄢˇ 時乖",
+      "target": "ㄐㄧㄢˇ",
       "answer": "蹇"
     },
     {
@@ -63243,8 +63243,8 @@
       "type_name": "字形",
       "num": 61,
       "num_str": "061",
-      "prompt": "罪無可 ㄒㄧㄢˇ",
-      "target": "ㄒㄧㄢˇ",
+      "prompt": "罪無可 ㄏㄨㄢˋ",
+      "target": "ㄏㄨㄢˋ",
       "answer": "逭"
     },
     {
@@ -63315,8 +63315,8 @@
       "type_name": "字形",
       "num": 67,
       "num_str": "067",
-      "prompt": "ㄕㄚ 血為盟",
-      "target": "ㄕㄚ",
+      "prompt": "ㄕㄚˋ 血為盟",
+      "target": "ㄕㄚˋ",
       "answer": "歃"
     },
     {
@@ -63531,8 +63531,8 @@
       "type_name": "字形",
       "num": 85,
       "num_str": "085",
-      "prompt": "飛觥走 ㄒㄧㄚˇ",
-      "target": "ㄒㄧㄚˇ",
+      "prompt": "飛觥走 ㄐㄧㄚˇ",
+      "target": "ㄐㄧㄚˇ",
       "answer": "斝"
     },
     {
@@ -63663,8 +63663,8 @@
       "type_name": "字形",
       "num": 96,
       "num_str": "096",
-      "prompt": "退 ㄊㄧˋ 三舍",
-      "target": "ㄊㄧˋ",
+      "prompt": "退 ㄒㄧˇ 三舍",
+      "target": "ㄒㄧˇ",
       "answer": "徙"
     },
     {
@@ -63711,8 +63711,8 @@
       "type_name": "字形",
       "num": 100,
       "num_str": "100",
-      "prompt": "五花度 ㄍㄚˋ",
-      "target": "ㄍㄚˋ",
+      "prompt": "五花度 ㄉㄧㄝˊ",
+      "target": "ㄉㄧㄝˊ",
       "answer": "牒"
     },
     {
@@ -66903,8 +66903,8 @@
       "type_name": "字形",
       "num": 66,
       "num_str": "066",
-      "prompt": "過江之 ㄐㄧˊ",
-      "target": "ㄐㄧˊ",
+      "prompt": "過江之 ㄐㄧˋ",
+      "target": "ㄐㄧˋ",
       "answer": "鯽"
     },
     {
