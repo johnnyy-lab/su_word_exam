@@ -1953,9 +1953,11 @@
           else last.bands.push(band);
         });
         const fit = page.fit;
+        const bandFitOf = (band) => band.fit || fit;
         const yinAnsSz = pronunciationAnswerHalfPoint(fit.ansH, plan.colsPlan.colW, sampledQuestions);
         const sectionsHtml = groups.map((group) => {
           const bandsHtml = group.bands.map((band) => {
+            const bandFit = bandFitOf(band);
             let colsHtml = '';
             for (let i = 0; i < colCount; i++) {
               const q = band.items[i];
@@ -1964,10 +1966,12 @@
                 const ansHtml = isTeacher ? `<span class="pv-ans-filled">${escapeHtml(q.answer)}</span>` : '';
                 const ansClass = q.type === 'character' ? 'pv-v-ans char' : 'pv-v-ans';
                 const ansSz = !isTeacher
-                  ? fit.sz
-                  : q.type === 'pronunciation'
-                    ? yinAnsSz
-                    : answerHalfPoint(q.answer, fit, plan.colsPlan.colW, q.type);
+                  ? bandFit.sz
+                  : bandFit.ansSz
+                    ? bandFit.ansSz
+                    : q.type === 'pronunciation'
+                      ? yinAnsSz
+                      : answerHalfPoint(q.answer, bandFit, plan.colsPlan.colW, q.type);
                 colsHtml += `
                   <div class="pv-v-col">
                     <div class="pv-v-num">${seqStr}</div>
@@ -1983,11 +1987,12 @@
                   </div>`;
               }
             }
-            return `<div class="pv-v-band">${colsHtml}</div>`;
+            return `<div class="pv-v-band" style="flex:${bandFit.rowH} 1 0;--pv-ans:${bandFit.ansH};--pv-prompt:${bandFit.promptH};--pv-q:${bandFit.sz}">${colsHtml}</div>`;
           }).join('');
-          return `<div class="pv-v-sec" style="flex:${group.bands.length * fit.rowH} 1 0"><div class="pv-v-bands">${bandsHtml}</div><div class="pv-v-sec-label"><span class="pv-v-flow">${escapeHtml(group.label)}</span></div></div>`;
+          const secH = group.bands.reduce((sum, band) => sum + bandFitOf(band).rowH, 0);
+          return `<div class="pv-v-sec" style="flex:${secH} 1 0"><div class="pv-v-bands">${bandsHtml}</div><div class="pv-v-sec-label"><span class="pv-v-flow">${escapeHtml(group.label)}</span></div></div>`;
         }).join('');
-        const usedH = page.bands.length * fit.rowH;
+        const usedH = page.bands.reduce((sum, band) => sum + bandFitOf(band).rowH, 0);
         const slackH = Math.max(0, plan.contentH - usedH);
         const titleSz = verticalTitleHalfPoint(customTitle, roleTag, usedH);
         const mainW = plan.colsPlan.gridW + plan.colsPlan.secColW;
@@ -2407,6 +2412,64 @@
     return chosen;
   }
 
+  // B4 橫式直書字級固定。60 twips 是 Word 實測的單行餘裕：
+  // 字音 15pt 六字要 1860，字形 12pt 最長 10.25 單位要 2520。
+  // 字音解答 10pt 的格子要 900，字形解答 20pt 的格子要 480。四列合計 13520，仍是一頁。
+  function fitB4LandscapeBand(kind, maxUnits) {
+    const numH = 320;
+    const cellPad = 60;
+    const units = Math.max(1, maxUnits || 1);
+    const pronunciation = kind === 'pronunciation';
+    const promptSz = pronunciation ? 30 : 24;
+    const ansH = pronunciation ? 900 : 480;
+    const line = promptSz * 10;
+    const promptH = Math.ceil(units * line + 60);
+    const bandH = numH + ansH + promptH;
+    return {
+      sz: promptSz,
+      line,
+      numH,
+      ansH,
+      promptH,
+      bandH,
+      rowH: bandH + cellPad,
+      ansSz: pronunciation ? 20 : 40,
+      ansCenter: !pronunciation
+    };
+  }
+
+  function applyB4LandscapeBandHeights(bands, rowsPerPage, usableH) {
+    const budget = usableH - 200;
+    const grow = (band, extra) => {
+      if (extra <= 0) return;
+      band.fit = {
+        ...band.fit,
+        promptH: band.fit.promptH + extra,
+        bandH: band.fit.bandH + extra,
+        rowH: band.fit.rowH + extra
+      };
+    };
+    bands.forEach((band) => {
+      let maxUnits = 1;
+      band.items.forEach((q) => {
+        maxUnits = Math.max(maxUnits, uprightPromptLength(q));
+      });
+      band.fit = fitB4LandscapeBand(band.kind, maxUnits);
+    });
+    if (bands.length === rowsPerPage) {
+      const used = bands.reduce((sum, band) => sum + band.fit.rowH, 0);
+      if (used < budget) {
+        const extra = Math.floor((budget - used) / bands.length);
+        bands.forEach((band) => grow(band, extra));
+      }
+    } else {
+      bands.forEach((band) => {
+        const full = band.fit.rowH * rowsPerPage;
+        if (full < budget) grow(band, Math.floor((budget - full) / rowsPerPage));
+      });
+    }
+  }
+
   function buildVerticalPagePlan(questions, paperSize, orientation) {
     const box = getDocxPageBox(paperSize, orientation);
     const margin = VERTICAL_MARGIN_TWIPS;
@@ -2417,14 +2480,15 @@
     const rowsPerPage = verticalRowsPerPage(usableH, colsPlan.cols);
     const bands = [];
 
-    const pushBands = (list, label) => {
+    const pushBands = (list, label, kind) => {
       for (let i = 0; i < list.length; i += colsPlan.cols) {
-        bands.push({ label, items: list.slice(i, i + colsPlan.cols), start: i });
+        bands.push({ label, kind, items: list.slice(i, i + colsPlan.cols), start: i });
       }
     };
-    pushBands(questions.filter((q) => q.type === 'pronunciation'), '甲、字音');
-    pushBands(questions.filter((q) => q.type === 'character'), '乙、字形');
+    pushBands(questions.filter((q) => q.type === 'pronunciation'), '甲、字音', 'pronunciation');
+    pushBands(questions.filter((q) => q.type === 'character'), '乙、字形', 'character');
 
+    const b4Landscape = paperSize === 'B4' && orientation === 'landscape';
     const pages = [];
     for (let i = 0; i < bands.length; i += rowsPerPage) {
       const slice = bands.slice(i, i + rowsPerPage);
@@ -2434,10 +2498,11 @@
           maxPrompt = Math.max(maxPrompt, uprightPromptLength(q));
         });
       });
+      if (b4Landscape) applyB4LandscapeBandHeights(slice, rowsPerPage, usableH);
       pages.push({
         bands: slice,
         // 以滿頁列數計算，短頁沿用同一列高，避免半頁把字形放大。
-        fit: fitVerticalBand(usableH, rowsPerPage, maxPrompt),
+        fit: b4Landscape ? slice[0].fit : fitVerticalBand(usableH, rowsPerPage, maxPrompt),
         maxPrompt
       });
     }
@@ -2543,13 +2608,13 @@
     }
 
     plan.pages.forEach((page, pageIndex) => {
-      const fit = page.fit;
-      const questionH = page.bands.length * fit.rowH;
+      const questionH = page.bands.reduce((sum, band) => sum + (band.fit || page.fit).rowH, 0);
       const titleSz = verticalTitleHalfPoint(customTitle, roleTag, questionH);
 
       let bandRows = '';
       let prevLabel = '';
       page.bands.forEach((band) => {
+        const fit = band.fit || page.fit;
         const mergeRestart = band.label !== prevLabel;
         prevLabel = band.label;
         let gridCols = '';
@@ -2568,9 +2633,12 @@
             </w:p>
           </w:tc>`;
           const ansText = q && isTeacherCopy ? q.answer : '';
-          const ansSz = q && q.type === 'pronunciation'
-            ? yinAnsSz
-            : answerHalfPoint(ansText, fit, colsPlan.colW, q && q.type);
+          const ansSz = fit.ansSz
+            ? fit.ansSz
+            : q && q.type === 'pronunciation'
+              ? yinAnsSz
+              : answerHalfPoint(ansText, fit, colsPlan.colW, q && q.type);
+          const ansJc = fit.ansCenter ? 'center' : flowJc;
           ansCells += `<w:tc>
             <w:tcPr>
               <w:tcW w:w="${colsPlan.colW}" w:type="dxa"/>
@@ -2578,7 +2646,7 @@
               <w:textDirection w:val="tbRlV"/>
               <w:vAlign w:val="center"/>
             </w:tcPr>
-            ${buildVerticalFlowParagraph([{ text: ansText, bold: true, color: '1B4D3E' }], ansSz, 'exact', flowJc)}
+            ${buildVerticalFlowParagraph([{ text: ansText, bold: true, color: '1B4D3E' }], ansSz, 'exact', ansJc)}
           </w:tc>`;
           const promptPara = q
             ? buildVerticalPromptParagraph(q, fit.sz, bracketStyle, flowJc)

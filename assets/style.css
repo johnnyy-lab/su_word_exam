@@ -2818,6 +2818,12 @@ button,
   justify-content: center;
 }
 
+/* B4 橫式直書的字形解答要上下左右置中，字音解答仍中央靠上。 */
+.docx-paper-sheet.paper-b4.orient-landscape.text-vertical .pv-v-page .pv-v-ans.char {
+  align-items: center;
+  justify-content: center;
+}
+
 /* 直式橫書：題目與解答靠左置中 */
 .docx-paper-sheet.orient-portrait.text-horizontal .pv-h-prompt,
 .docx-paper-sheet.orient-portrait.text-horizontal .pv-h-ans {
