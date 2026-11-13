@@ -2575,17 +2575,24 @@ button,
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   padding: 0.2rem 0;
   overflow: hidden;
 }
 
-.pv-v-upright {
+.pv-v-upright,
+.pv-v-flow {
   writing-mode: vertical-rl;
   text-orientation: upright;
   white-space: nowrap;
   line-height: 1;
   letter-spacing: 0;
+  width: 1.2em;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.pv-v-upright {
   font-size: var(--pv-q, 1.05rem);
 }
 
@@ -2667,6 +2674,9 @@ button,
 
 .pv-v-page .pv-v-sec-label {
   flex: 0 0 calc(var(--pv-sec) / var(--pv-main) * 100%);
+  writing-mode: horizontal-tb;
+  align-items: center;
+  justify-content: center;
   font-size: calc(var(--pv-sec-sz) * var(--pv-em));
   letter-spacing: 0;
 }
@@ -2696,6 +2706,9 @@ button,
 
 .pv-v-page .pv-v-name {
   flex: 0 0 calc(var(--pv-name) / var(--pv-inner) * 100%);
+  writing-mode: horizontal-tb;
+  align-items: center;
+  justify-content: center;
   font-size: calc(var(--pv-name-sz) * var(--pv-em));
   /* 400 twips 右距，與 Word 填寫欄 tcMar 相同。直書從右側起筆，右邊就是離開標題線的空位。 */
   padding: calc(var(--pv-em) * 8) calc(var(--pv-em) * 40) calc(var(--pv-em) * 4) calc(var(--pv-em) * 8);
@@ -2710,6 +2723,9 @@ button,
 
 .pv-v-page .pv-v-title {
   flex: 0 0 calc(var(--pv-title) / var(--pv-inner) * 100%);
+  writing-mode: horizontal-tb;
+  align-items: center;
+  justify-content: center;
   font-size: calc(var(--pv-title-sz) * var(--pv-em));
   letter-spacing: 0;
   padding: calc(var(--pv-em) * 6) calc(var(--pv-em) * 4);
@@ -2718,7 +2734,7 @@ button,
 .pv-v-page .pv-v-num {
   height: auto;
   flex: var(--pv-num) 0 0;
-  font-size: calc(16 * var(--pv-em));
+  font-size: calc(24 * var(--pv-em));
 }
 
 .pv-v-page .pv-v-ans,
@@ -2726,8 +2742,21 @@ button,
   height: auto;
   flex: var(--pv-ans) 0 0;
   min-height: 0;
+  writing-mode: horizontal-tb;
+  align-items: center;
+  justify-content: center;
   font-size: calc(var(--pv-ans-sz, var(--pv-q)) * var(--pv-em));
   line-height: 1;
+}
+
+.pv-v-page .pv-v-ans .pv-ans-filled {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  line-height: 1;
+  white-space: nowrap;
+  width: 1.2em;
+  max-width: 100%;
+  max-height: 100%;
 }
 
 .pv-v-page .pv-v-prompt {
@@ -2775,6 +2804,7 @@ button,
 .pv-h-prompt {
   font-size: 1.15rem;
   letter-spacing: 0.04em;
+  text-align: center;
 }
 
 @media (max-width: 768px) {

@@ -96,7 +96,7 @@
       paperSize: 'A4', // 'A4' | 'B4' | 'A3'
       orientation: 'landscape', // 'landscape' | 'portrait'
       textDir: 'vertical', // 'vertical' | 'horizontal'
-      bracketStyle: 'corner_underline', // 'corner_underline' | 'corner_only'
+      bracketStyle: 'corner_only', // 'corner_underline' | 'corner_only'
       previewMode: 'student', // 'student' | 'teacher'
       sampledQuestions: []
     }
@@ -1882,7 +1882,7 @@
             }
             return `<div class="pv-v-band">${colsHtml}</div>`;
           }).join('');
-          return `<div class="pv-v-sec" style="flex:${group.bands.length * fit.rowH} 1 0"><div class="pv-v-bands">${bandsHtml}</div><div class="pv-v-sec-label">${escapeHtml(group.label)}</div></div>`;
+          return `<div class="pv-v-sec" style="flex:${group.bands.length * fit.rowH} 1 0"><div class="pv-v-bands">${bandsHtml}</div><div class="pv-v-sec-label"><span class="pv-v-flow">${escapeHtml(group.label)}</span></div></div>`;
         }).join('');
         const usedH = page.bands.length * fit.rowH;
         const slackH = Math.max(0, plan.contentH - usedH);
@@ -1892,8 +1892,8 @@
         return `
           <div class="pv-v-page" data-page-twips="${plan.box.pageW}" style="aspect-ratio:${ratio};--pv-page:${plan.box.pageW};--pv-margin:${plan.margin};--pv-inner:${plan.contentW};--pv-main:${mainW};--pv-name:${plan.colsPlan.nameColW};--pv-title:${plan.colsPlan.titleColW};--pv-sec:${plan.colsPlan.secColW};--pv-num:${fit.numH};--pv-ans:${fit.ansH};--pv-prompt:${fit.promptH};--pv-q:${fit.sz};--pv-name-sz:28;--pv-title-sz:${titleSz};--pv-sec-sz:24;--pv-em:${em}px">
             <div class="pv-v-main">${sectionsHtml}<div class="pv-v-slack" style="flex:${slackH} 1 0"></div></div>
-            <div class="pv-v-name">${escapeHtml(VERTICAL_NAME_TEXT)}</div>
-            <div class="pv-v-title">${escapeHtml(titleText)}</div>
+            <div class="pv-v-name"><span class="pv-v-flow">${escapeHtml(VERTICAL_NAME_TEXT)}</span></div>
+            <div class="pv-v-title"><span class="pv-v-flow">${escapeHtml(titleText)}</span></div>
           </div>`;
       }).join('');
 
@@ -2119,7 +2119,8 @@
   const VERTICAL_MARGIN_TWIPS = 454;
   const VERTICAL_SECTION_SLACK_TWIPS = 280;
   // 標籤後面留空白供書寫。不加全形冒號，也不用底線字元。
-  const VERTICAL_NAME_TEXT = '班級　　　　座號　　　姓名　　　　　得分　　　';
+  // 姓名與得分之間再空四個字，方便書寫。
+  const VERTICAL_NAME_TEXT = '班級　　　　座號　　　姓名　　　　　　　　　得分　　　';
   const VERTICAL_PUNCT_MAP = {
     '（': '︵', '）': '︶', '(': '︵', ')': '︶',
     '【': '︻', '】': '︼',
@@ -2252,8 +2253,8 @@
 
   // 100 題常分成字音、字形兩段，各段最後一列可能排不滿。列數要容得下這兩段，而不只是 100/欄數。
   function verticalRowsPerPage(usableH, cols) {
-    const readableBand = 220 + 680 + 12 * 200;
-    const minBand = 220 + 680 + 12 * 160;
+    const readableBand = 320 + 680 + 12 * 200;
+    const minBand = 320 + 680 + 12 * 160;
     const readableRows = Math.max(1, Math.floor(usableH / readableBand));
     const maxRows = Math.max(1, Math.floor(usableH / minBand));
     const want = Math.max(Math.ceil(100 / cols), Math.ceil(50 / cols) * 2);
@@ -2264,7 +2265,7 @@
 
   function fitVerticalBand(usableH, rows, maxPromptChars) {
     const chars = Math.max(4, maxPromptChars || 4);
-    const numH = 220;
+    const numH = 320; // 題號 12pt，列高留出置中餘裕
     const ansH = 680;
     // 巢狀表格後面必須再放一個段落，Word 才不會判定儲存格無法讀取。
     // 每個題帶列在巢狀表格後還有一個極小段落，列高必須算進去，否則 Word 會判定內容無法讀取。
@@ -2434,8 +2435,8 @@
           const seqStr = q ? String(band.start + qOffset + 1).padStart(3, '0') : '';
           numCells += `<w:tc>
             <w:tcPr><w:tcW w:w="${colsPlan.colW}" w:type="dxa"/><w:shd w:val="clear" w:color="auto" w:fill="F4F4F0"/><w:vAlign w:val="center"/></w:tcPr>
-            <w:p><w:pPr><w:snapToGrid w:val="0"/><w:spacing w:before="0" w:after="0" w:line="200" w:lineRule="exact"/><w:jc w:val="center"/></w:pPr>
-              <w:r><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:eastAsia="標楷體"/><w:b/><w:sz w:val="16"/><w:szCs w:val="16"/></w:rPr><w:t>${escapeXml(seqStr)}</w:t></w:r>
+            <w:p><w:pPr><w:snapToGrid w:val="0"/><w:spacing w:before="0" w:after="0" w:line="280" w:lineRule="exact"/><w:jc w:val="center"/></w:pPr>
+              <w:r><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:eastAsia="標楷體"/><w:b/><w:sz w:val="24"/><w:szCs w:val="24"/></w:rPr><w:t>${escapeXml(seqStr)}</w:t></w:r>
             </w:p>
           </w:tc>`;
           const ansText = q && isTeacherCopy ? q.answer : '';
@@ -2457,7 +2458,7 @@
               <w:tcW w:w="${colsPlan.colW}" w:type="dxa"/>
               <w:noWrap/>
               <w:textDirection w:val="tbRlV"/>
-              <w:vAlign w:val="top"/>
+              <w:vAlign w:val="center"/>
             </w:tcPr>
             ${promptPara}
           </w:tc>`;
@@ -2539,12 +2540,12 @@
                 <w:right w:w="400" w:type="dxa"/>
               </w:tcMar>
               <w:textDirection w:val="tbRlV"/>
-              <w:vAlign w:val="top"/>
+              <w:vAlign w:val="center"/>
             </w:tcPr>
             ${buildVerticalFlowParagraph([{ text: VERTICAL_NAME_TEXT }], 28)}
           </w:tc>
           <w:tc>
-            <w:tcPr><w:tcW w:w="${colsPlan.titleColW}" w:type="dxa"/>${sideBorder}<w:textDirection w:val="tbRlV"/><w:vAlign w:val="top"/></w:tcPr>
+            <w:tcPr><w:tcW w:w="${colsPlan.titleColW}" w:type="dxa"/>${sideBorder}<w:textDirection w:val="tbRlV"/><w:vAlign w:val="center"/></w:tcPr>
             ${buildVerticalFlowParagraph(
               [{ text: customTitle, bold: true }, { text: '　　' }, { text: roleTag }],
               titleSz
@@ -2700,7 +2701,7 @@
                   <w:vAlign w:val="center"/>
                 </w:tcPr>
                 <w:p>
-                  <w:pPr><w:spacing w:before="0" w:after="0"/><w:jc w:val="left"/></w:pPr>
+                  <w:pPr><w:spacing w:before="0" w:after="0"/><w:jc w:val="center"/></w:pPr>
                   ${promptRuns}
                 </w:p>
               </w:tc>
