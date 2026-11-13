@@ -10,6 +10,9 @@ old/
 # 錯誤訊息截圖等臨時檔，不上 GitHub
 err/
 
+# 注音字型試樣只留本機，不上 GitHub
+test/
+
 # 作業系統
 Thumbs.db
 Desktop.ini
