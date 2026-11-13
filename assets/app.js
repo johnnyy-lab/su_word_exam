@@ -91,7 +91,7 @@
       selectedYears: new Set([101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114]),
       qType: 'balanced', // 'balanced' | 'pronunciation' | 'character'
       qSource: 'all', // 'all' | 'unpracticed' | 'weak'
-      qCount: 100,
+      qCount: 200,
       title: '國立竹山高中 國語字音字形測驗卷（高中學生組）',
       paperSize: 'A4', // 'A4' | 'B4' | 'A3'
       orientation: 'landscape', // 'landscape' | 'portrait'
@@ -122,6 +122,103 @@
     } catch (err) {
       console.warn('無法讀取本機學習紀錄：', err);
     }
+  }
+
+  const DOCX_PREFS_COOKIE = 'su_docx_prefs';
+
+  function docxCookiePath() {
+    const path = window.location.pathname || '/';
+    const dir = path.endsWith('/') ? path : path.replace(/[^/]*$/, '');
+    return dir || '/';
+  }
+
+  function readCookie(name) {
+    const parts = String(document.cookie || '').split(';');
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i];
+      const idx = part.indexOf('=');
+      if (idx < 0) continue;
+      if (part.slice(0, idx).trim() === name) {
+        try {
+          return decodeURIComponent(part.slice(idx + 1));
+        } catch (err) {
+          return '';
+        }
+      }
+    }
+    return '';
+  }
+
+  function writeCookie(name, value) {
+    document.cookie = `${name}=${encodeURIComponent(value)}; path=${docxCookiePath()}; max-age=31536000; SameSite=Lax`;
+  }
+
+  function loadDocxPrefs() {
+    try {
+      const raw = readCookie(DOCX_PREFS_COOKIE);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === 'object' ? parsed : null;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  function saveDocxPrefs() {
+    const prefs = {
+      qType: state.docx.qType,
+      qSource: state.docx.qSource,
+      qCount: state.docx.qCount,
+      title: state.docx.title,
+      paperSize: state.docx.paperSize,
+      orientation: state.docx.orientation,
+      textDir: state.docx.textDir,
+      bracketStyle: state.docx.bracketStyle,
+      years: Array.from(state.docx.selectedYears)
+    };
+    try {
+      writeCookie(DOCX_PREFS_COOKIE, JSON.stringify(prefs));
+    } catch (err) {
+      console.warn('無法儲存試卷預設：', err);
+    }
+  }
+
+  function applyDocxPrefs(prefs) {
+    if (!prefs) return;
+    const allow = (list, value) => list.includes(value);
+    if (allow(['balanced', 'pronunciation', 'character'], prefs.qType)) state.docx.qType = prefs.qType;
+    if (allow(['all', 'unpracticed', 'weak'], prefs.qSource)) state.docx.qSource = prefs.qSource;
+    if (allow([20, 50, 100, 200], Number(prefs.qCount))) state.docx.qCount = Number(prefs.qCount);
+    if (allow(['A4', 'B4', 'A3'], prefs.paperSize)) state.docx.paperSize = prefs.paperSize;
+    if (allow(['landscape', 'portrait'], prefs.orientation)) state.docx.orientation = prefs.orientation;
+    if (allow(['vertical', 'horizontal'], prefs.textDir)) state.docx.textDir = prefs.textDir;
+    if (allow(['corner_underline', 'corner_only'], prefs.bracketStyle)) state.docx.bracketStyle = prefs.bracketStyle;
+    if (typeof prefs.title === 'string' && prefs.title.trim()) state.docx.title = prefs.title.trim();
+    if (Array.isArray(prefs.years)) {
+      const known = new Set(state.years.map(Number));
+      state.docx.selectedYears = new Set(prefs.years.map(Number).filter((year) => known.has(year)));
+    }
+  }
+
+  function syncDocxPrefControls() {
+    const pairs = [
+      ['docx-opt-type', 'dtype', state.docx.qType],
+      ['docx-opt-source', 'dsource', state.docx.qSource],
+      ['docx-opt-count', 'dcount', String(state.docx.qCount)],
+      ['docx-opt-paper', 'dpaper', state.docx.paperSize],
+      ['docx-opt-orient', 'dorient', state.docx.orientation],
+      ['docx-opt-textdir', 'dtextdir', state.docx.textDir],
+      ['docx-opt-bracket', 'dbracket', state.docx.bracketStyle]
+    ];
+    pairs.forEach(([id, key, value]) => {
+      const container = document.getElementById(id);
+      if (!container) return;
+      container.querySelectorAll('.quiz-pill').forEach((btn) => {
+        btn.classList.toggle('active', btn.dataset[key] === value);
+      });
+    });
+    const titleInput = document.getElementById('docx-title-input');
+    if (titleInput) titleInput.value = state.docx.title;
   }
 
   function saveLocalStorage() {
@@ -1608,6 +1705,7 @@
         } else {
           state.docx.selectedYears.add(yearNum);
         }
+        saveDocxPrefs();
         resampleDocxQuestions();
       });
       container.appendChild(btn);
@@ -1855,6 +1953,7 @@
           else last.bands.push(band);
         });
         const fit = page.fit;
+        const yinAnsSz = pronunciationAnswerHalfPoint(fit.ansH, plan.colsPlan.colW, sampledQuestions);
         const sectionsHtml = groups.map((group) => {
           const bandsHtml = group.bands.map((band) => {
             let colsHtml = '';
@@ -1864,7 +1963,11 @@
               if (q) {
                 const ansHtml = isTeacher ? `<span class="pv-ans-filled">${escapeHtml(q.answer)}</span>` : '';
                 const ansClass = q.type === 'character' ? 'pv-v-ans char' : 'pv-v-ans';
-                const ansSz = isTeacher ? answerHalfPoint(q.answer, fit, plan.colsPlan.colW, q.type) : fit.sz;
+                const ansSz = !isTeacher
+                  ? fit.sz
+                  : q.type === 'pronunciation'
+                    ? yinAnsSz
+                    : answerHalfPoint(q.answer, fit, plan.colsPlan.colW, q.type);
                 colsHtml += `
                   <div class="pv-v-col">
                     <div class="pv-v-num">${seqStr}</div>
@@ -2142,7 +2245,7 @@
 
   // 直書儲存格用 tbRlV，整題一個段落。括號改直排字形；聲調另外轉正。
   // 標楷體沒有直排括號，括號改走新細明體。
-  function buildVerticalFlowParagraph(segments, fontSizeHalfPt, lineMode) {
+  function buildVerticalFlowParagraph(segments, fontSizeHalfPt, lineMode, jcVal) {
     let runs = '';
     segments.forEach((seg) => {
       const converted = toVerticalPunctuation(seg.text);
@@ -2178,14 +2281,15 @@
     const lineRule = 'auto';
     // 段落標記改成極小，避免直書段落尾端把列高撐破。
     const mark = lineMode === 'exact' ? '<w:rPr><w:sz w:val="2"/><w:szCs w:val="2"/></w:rPr>' : '';
-    const pPr = `<w:pPr><w:snapToGrid w:val="0"/><w:spacing w:before="0" w:after="0" w:line="${lineTwips}" w:lineRule="${lineRule}"/><w:jc w:val="center"/>${mark}</w:pPr>`;
+    const jc = jcVal || 'center';
+    const pPr = `<w:pPr><w:snapToGrid w:val="0"/><w:spacing w:before="0" w:after="0" w:line="${lineTwips}" w:lineRule="${lineRule}"/><w:jc w:val="${jc}"/>${mark}</w:pPr>`;
     return `<w:p>${pPr}${runs}</w:p>`;
   }
 
-  function buildVerticalPromptParagraph(q, fontSizeHalfPt, bracketStyle) {
+  function buildVerticalPromptParagraph(q, fontSizeHalfPt, bracketStyle, jcVal) {
     const { before, target, after } = splitQuestionPromptParts(q);
     if (!target) {
-      return buildVerticalFlowParagraph([{ text: before }], fontSizeHalfPt, 'exact');
+      return buildVerticalFlowParagraph([{ text: before }], fontSizeHalfPt, 'exact', jcVal);
     }
     return buildVerticalFlowParagraph(
       [
@@ -2196,7 +2300,8 @@
         { text: after }
       ],
       fontSizeHalfPt,
-      'exact'
+      'exact',
+      jcVal
     );
   }
 
@@ -2346,6 +2451,22 @@
     return titleSz;
   }
 
+  // 字音解答全卷同一字級。字級跟最長注音走，才不會有的折成兩行、有的特別大。
+  function pronunciationAnswerHalfPoint(ansH, colW, questions) {
+    let maxUnits = 1;
+    (questions || []).forEach((q) => {
+      if (q && q.type === 'pronunciation' && q.answer) {
+        maxUnits = Math.max(maxUnits, verticalFlowUnits(q.answer));
+      }
+    });
+    const heightRoom = Math.max(100, (ansH || 680) - 40);
+    const widthRoom = Math.max(100, (colW || 600) - 80);
+    let sz = Math.floor(Math.min(widthRoom, heightRoom / maxUnits) / 10 / 2) * 2;
+    sz = Math.min(28, Math.max(8, sz));
+    while (sz > 8 && (maxUnits * sz * 10 > heightRoom || sz * 10 > widthRoom)) sz -= 2;
+    return sz;
+  }
+
   function answerHalfPoint(ansText, fit, colW, qType) {
     const units = Math.max(1, verticalFlowUnits(ansText));
     const widthRoom = Math.max(160, (colW || 600) - 160);
@@ -2389,6 +2510,13 @@
     const plan = buildVerticalPagePlan(questions, paperSize, orientation);
     const { box, margin, colsPlan } = plan;
     const orientAttr = orientation === 'landscape' ? 'w:orient="landscape"' : 'w:orient="portrait"';
+    // 橫式直書：題目與解答中央靠上。直書段落靠左就是靠上，左右仍由儲存格垂直置中。
+    const flowJc = orientation === 'landscape' ? 'left' : 'center';
+    const yinAnsSz = pronunciationAnswerHalfPoint(
+      plan.pages[0] ? plan.pages[0].fit.ansH : 680,
+      colsPlan.colW,
+      questions
+    );
     const nilBorders = `
       <w:tblBorders>
         <w:top w:val="nil"/><w:left w:val="nil"/><w:bottom w:val="nil"/><w:right w:val="nil"/>
@@ -2440,7 +2568,9 @@
             </w:p>
           </w:tc>`;
           const ansText = q && isTeacherCopy ? q.answer : '';
-          const ansSz = answerHalfPoint(ansText, fit, colsPlan.colW, q && q.type);
+          const ansSz = q && q.type === 'pronunciation'
+            ? yinAnsSz
+            : answerHalfPoint(ansText, fit, colsPlan.colW, q && q.type);
           ansCells += `<w:tc>
             <w:tcPr>
               <w:tcW w:w="${colsPlan.colW}" w:type="dxa"/>
@@ -2448,11 +2578,11 @@
               <w:textDirection w:val="tbRlV"/>
               <w:vAlign w:val="center"/>
             </w:tcPr>
-            ${buildVerticalFlowParagraph([{ text: ansText, bold: true, color: '1B4D3E' }], ansSz, 'exact')}
+            ${buildVerticalFlowParagraph([{ text: ansText, bold: true, color: '1B4D3E' }], ansSz, 'exact', flowJc)}
           </w:tc>`;
           const promptPara = q
-            ? buildVerticalPromptParagraph(q, fit.sz, bracketStyle)
-            : buildVerticalFlowParagraph([{ text: '' }], fit.sz, 'exact');
+            ? buildVerticalPromptParagraph(q, fit.sz, bracketStyle, flowJc)
+            : buildVerticalFlowParagraph([{ text: '' }], fit.sz, 'exact', flowJc);
           promptCells += `<w:tc>
             <w:tcPr>
               <w:tcW w:w="${colsPlan.colW}" w:type="dxa"/>
@@ -2660,6 +2790,7 @@
             const seqStr = q ? String(r + g + 1).padStart(3, '0') : '';
             const ansText = q && isTeacherCopy ? q.answer : '';
             const promptRuns = q ? buildOpenXmlPromptRuns(q, 24, bracketStyle) : '<w:r><w:t></w:t></w:r>';
+            const cellJc = orientation === 'portrait' ? 'left' : 'center';
 
             rowCellsXml += `
               <w:tc>
@@ -2687,7 +2818,7 @@
                     <w:wordWrap w:val="off"/>
                     <w:snapToGrid w:val="0"/>
                     <w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/>
-                    <w:jc w:val="center"/>
+                    <w:jc w:val="${cellJc}"/>
                   </w:pPr>
                   <w:r>
                     <w:rPr><w:rFonts w:ascii="標楷體" w:hAnsi="標楷體" w:eastAsia="標楷體"/><w:b/><w:color w:val="1B4D3E"/><w:sz w:val="24"/><w:szCs w:val="24"/></w:rPr>
@@ -2701,7 +2832,7 @@
                   <w:vAlign w:val="center"/>
                 </w:tcPr>
                 <w:p>
-                  <w:pPr><w:spacing w:before="0" w:after="0"/><w:jc w:val="center"/></w:pPr>
+                  <w:pPr><w:spacing w:before="0" w:after="0"/><w:jc w:val="${cellJc}"/></w:pPr>
                   ${promptRuns}
                 </w:p>
               </w:tc>
@@ -3493,6 +3624,7 @@
     // =======================================================================
     const setDocxYears = (yearList) => {
       state.docx.selectedYears = new Set(yearList.map(Number));
+      saveDocxPrefs();
       resampleDocxQuestions();
     };
     document.getElementById('btn-docx-year-all').addEventListener('click', () => setDocxYears(state.years));
@@ -3507,6 +3639,7 @@
         btn.addEventListener('click', () => {
           container.querySelectorAll('.quiz-pill').forEach((b) => b.classList.toggle('active', b === btn));
           state.docx[stateProp] = transformFn(btn.dataset[dataKey]);
+          saveDocxPrefs();
           if (shouldResample) {
             resampleDocxQuestions();
           } else {
@@ -3529,6 +3662,7 @@
     if (docxTitleInput) {
       docxTitleInput.addEventListener('input', () => {
         state.docx.title = docxTitleInput.value.trim() || '國立竹山高中 國語字音字形測驗卷（高中學生組）';
+        saveDocxPrefs();
         renderDocxPaperPreview();
       });
     }
@@ -3563,6 +3697,9 @@
       state.filters.selectedYears = new Set(state.years.map(Number));
       state.quiz.selectedYears = new Set(state.years.map(Number));
       state.docx.selectedYears = new Set(state.years.map(Number));
+      applyDocxPrefs(loadDocxPrefs());
+      syncDocxPrefControls();
+      saveDocxPrefs();
 
       // 建立年度複選按鈕組
       buildYearChips();

@@ -2807,6 +2807,23 @@ button,
   text-align: center;
 }
 
+/* 橫式直書：題目與解答中央靠上 */
+.docx-paper-sheet.orient-landscape.text-vertical .pv-v-prompt {
+  justify-content: flex-start;
+}
+
+.docx-paper-sheet.orient-landscape.text-vertical .pv-v-page .pv-v-ans,
+.docx-paper-sheet.orient-landscape.text-vertical .pv-v-page .pv-v-ans.char {
+  align-items: flex-start;
+  justify-content: center;
+}
+
+/* 直式橫書：題目與解答靠左置中 */
+.docx-paper-sheet.orient-portrait.text-horizontal .pv-h-prompt,
+.docx-paper-sheet.orient-portrait.text-horizontal .pv-h-ans {
+  text-align: left;
+}
+
 @media (max-width: 768px) {
   .docx-layout-panel {
     padding: 0.75rem;
