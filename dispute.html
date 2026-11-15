@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>國語字音字形爭議字審查與維護系統 - 國立竹山高中</title>
+  <link rel="stylesheet" href="assets/style.css" />
+  <style>
+    /* 爭議字維護專屬樣式 */
+    .dispute-container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem;
+    }
+
+    .dispute-tabs-bar {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid var(--border-color, #e2e8f0);
+      padding-bottom: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .dispute-tab-btn {
+      padding: 0.6rem 1.25rem;
+      font-size: 1.05rem;
+      font-weight: 600;
+      border: 1px solid transparent;
+      border-radius: 8px 8px 0 0;
+      background: #f8fafc;
+      color: #475569;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+
+    .dispute-tab-btn:hover {
+      background: #edf2f7;
+      color: #1e293b;
+    }
+
+    .dispute-tab-btn.active {
+      background: #ffffff;
+      color: var(--primary-color, #1e3a8a);
+      border-color: var(--border-color, #cbd5e1);
+      border-bottom-color: #ffffff;
+      margin-bottom: -0.5rem;
+      padding-bottom: 0.85rem;
+      box-shadow: 0 -2px 6px rgba(0,0,0,0.03);
+    }
+
+    .tab-badge {
+      display: inline-block;
+      padding: 0.15rem 0.55rem;
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .badge-x { background-color: #ef4444; }
+    .badge-m { background-color: #10b981; }
+    .badge-q { background-color: #3b82f6; }
+
+    /* 頂部說明資訊卡片 */
+    .info-card {
+      background: #f0fdf4;
+      border-left: 4px solid #10b981;
+      padding: 1rem 1.25rem;
+      border-radius: 6px;
+      margin-bottom: 1.25rem;
+      font-size: 0.95rem;
+      color: #166534;
+      line-height: 1.6;
+    }
+
+    .info-card.warn {
+      background: #fffbeb;
+      border-left-color: #f59e0b;
+      color: #92400e;
+    }
+
+    /* 控制列與篩選 */
+    .table-control-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+      background: #ffffff;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .search-input {
+      padding: 0.45rem 0.75rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      width: 220px;
+    }
+
+    /* 專屬表格樣式 */
+    .table-responsive {
+      overflow-x: auto;
+      background: #ffffff;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .dispute-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      text-align: left;
+    }
+
+    .dispute-table th {
+      background: #f8fafc;
+      color: #334155;
+      font-weight: 700;
+      padding: 0.75rem 0.5rem;
+      border-bottom: 2px solid #e2e8f0;
+      white-space: nowrap;
+    }
+
+    .dispute-table td {
+      padding: 0.75rem 0.5rem;
+      border-bottom: 1px solid #e2e8f0;
+      vertical-align: middle;
+    }
+
+    .dispute-table tr:hover {
+      background-color: #f8fafc;
+    }
+
+    /* 欄位微調 */
+    .col-id { text-align: center; width: 45px; font-weight: 600; color: #64748b; }
+    .col-sec { text-align: center; width: 45px; }
+    .col-year { text-align: center; width: 50px; font-weight: 600; }
+    .col-num { text-align: center; width: 50px; color: #475569; }
+    .col-topic { min-width: 140px; }
+    .col-current { min-width: 90px; text-align: center; font-weight: 700; }
+    .col-errata { min-width: 140px; }
+    .col-crop { min-width: 140px; text-align: center; }
+    .col-moe { min-width: 140px; }
+    .col-note { min-width: 160px; font-size: 0.85rem; color: #475569; line-height: 1.4; }
+    .col-action { min-width: 160px; }
+
+    /* 標記樣式 */
+    .topic-word {
+      font-size: 1.05rem;
+      font-family: "Noto Serif TC", "Kaiti TC", "BiauKai", serif;
+      letter-spacing: 0.05em;
+    }
+    .test-target {
+      color: #dc2626;
+      font-weight: 700;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+
+    .ans-tag {
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+    .ans-current { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+    .ans-errata { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+    .ans-moe { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+    .ans-raw { background: #f3e8ff; color: #7e22ce; border: 1px solid #e9d5ff; }
+
+    /* 截圖縮圖 */
+    .crop-preview-container {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .crop-thumb {
+      max-height: 68px;
+      max-width: 120px;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      cursor: zoom-in;
+      background: #fff;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .crop-thumb:hover {
+      transform: scale(1.08);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      border-color: #3b82f6;
+    }
+
+    .pdf-link {
+      font-size: 0.78rem;
+      color: #2563eb;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+    }
+    .pdf-link:hover { text-decoration: underline; }
+
+    /* 處理選項樣式 */
+    .action-select {
+      width: 100%;
+      padding: 0.4rem 0.5rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      background-color: #fff;
+      color: #1e293b;
+      font-weight: 500;
+      transition: border-color 0.2s;
+    }
+
+    .action-select.changed {
+      border-color: #2563eb;
+      background-color: #eff6ff;
+      font-weight: 700;
+      color: #1d4ed8;
+    }
+
+    .custom-input {
+      margin-top: 0.35rem;
+      width: 100%;
+      padding: 0.35rem 0.5rem;
+      border: 1px dashed #3b82f6;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      box-sizing: border-box;
+      display: none;
+    }
+
+    /* 底部儲存列 */
+    .save-bottom-bar {
+      margin-top: 1.5rem;
+      padding: 1rem 1.5rem;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .save-btn {
+      padding: 0.65rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #ffffff;
+      background: #10b981;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .save-btn:hover { background: #059669; }
+    .save-btn:disabled { background: #94a3b8; cursor: not-allowed; }
+
+    /* 燈箱 Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      padding: 1rem;
+    }
+
+    .modal-content {
+      background: #ffffff;
+      padding: 1.5rem;
+      border-radius: 10px;
+      max-width: 90vw;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+
+    .modal-img {
+      max-width: 100%;
+      max-height: 75vh;
+      object-fit: contain;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      background: #fafafa;
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      background: #e2e8f0;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-close-btn:hover { background: #cbd5e1; }
+
+    .modal-caption {
+      margin-top: 0.75rem;
+      font-size: 0.95rem;
+      color: #334155;
+      font-weight: 600;
+    }
+
+    /* 分頁導覽 */
+    .pagination-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .page-btn {
+      padding: 0.4rem 0.8rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      background: #ffffff;
+      cursor: pointer;
+      font-size: 0.88rem;
+    }
+    .page-btn.active {
+      background: #2563eb;
+      color: #ffffff;
+      border-color: #2563eb;
+      font-weight: 700;
+    }
+    .page-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <!-- 頂部標題與導覽列 -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <span class="brand-badge">高中學生組 101–114 年</span>
+        <h1 class="brand-title">國立竹山高中 國語字音字形數位學習系統</h1>
+      </div>
+      <nav class="main-nav" aria-label="功能選單">
+        <a href="index.html" class="nav-tab">
+          <span class="nav-step">1</span> 線上複習
+        </a>
+        <a href="index.html#quiz" class="nav-tab">
+          <span class="nav-step">2</span> 線上測驗
+        </a>
+        <a href="index.html#docx" class="nav-tab">
+          <span class="nav-step">3</span> 紙本試卷 (.docx)
+        </a>
+        <button type="button" class="nav-tab active">
+          <span class="nav-step">4</span> 爭議字維護
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="dispute-container">
+    <!-- 分類切換頁籤 -->
+    <div class="dispute-tabs-bar" role="tablist">
+      <button type="button" class="dispute-tab-btn active" data-tab="X" role="tab">
+        <span>X 類：待人工審查</span>
+        <span class="tab-badge badge-x" id="badge-count-X">8</span>
+      </button>
+      <button type="button" class="dispute-tab-btn" data-tab="M" role="tab">
+        <span>M 類：已修正待核實</span>
+        <span class="tab-badge badge-m" id="badge-count-M">97</span>
+      </button>
+      <button type="button" class="dispute-tab-btn" data-tab="Q" role="tab">
+        <span>Q 類：教育部辭典查無完整詞</span>
+        <span class="tab-badge badge-q" id="badge-count-Q">1,254</span>
+      </button>
+    </div>
+
+    <!-- 說明訊息卡片 -->
+    <div class="info-card" id="tab-info-card">
+      <strong>【X 類：待人工審查】</strong>
+      教育部《重編國語辭典修訂本》可查得詞條，但與原卷答案或審訂定音存在分歧，請由下方比對「勘誤表」、「原始檔截圖」與「教育部辭典」，選取適當答案後點擊「確認修改」。
+    </div>
+
+    <!-- 篩選與控制面板 -->
+    <div class="table-control-bar">
+      <div class="control-group">
+        <label for="filter-year"><strong>篩選年度：</strong></label>
+        <select id="filter-year" class="form-select" style="padding: 0.4rem 0.75rem; border-radius: 6px; border: 1px solid #cbd5e1;">
+          <option value="all">全部年度 (101～114)</option>
+        </select>
+
+        <label for="filter-sec"><strong>部別：</strong></label>
+        <select id="filter-sec" class="form-select" style="padding: 0.4rem 0.75rem; border-radius: 6px; border: 1px solid #cbd5e1;">
+          <option value="all">全部部別</option>
+          <option value="甲">甲、字音</option>
+          <option value="乙">乙、字形</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <input type="text" id="search-keyword" class="search-input" placeholder="🔍 搜尋題目詞語或測驗字..." />
+        <span id="filtered-count-text" style="font-size: 0.9rem; color: #64748b; font-weight: 600;">顯示 0 筆</span>
+      </div>
+    </div>
+
+    <!-- 爭議字審查表格容器 -->
+    <div class="table-responsive">
+      <table class="dispute-table" id="dispute-main-table">
+        <thead>
+          <tr>
+            <th class="col-id">序號</th>
+            <th class="col-sec">部別</th>
+            <th class="col-year">年度</th>
+            <th class="col-num">題號</th>
+            <th class="col-topic">題目詞語（測驗字）</th>
+            <th class="col-current">目前系統採用</th>
+            <th class="col-errata">勘誤表使用</th>
+            <th class="col-crop">原始檔截圖</th>
+            <th class="col-moe">教育部辭典答案</th>
+            <th class="col-note">說明</th>
+            <th class="col-action">處理</th>
+          </tr>
+        </thead>
+        <tbody id="dispute-table-body">
+          <!-- 由 JS 動態產生各列資料 -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 分頁列 (針對 Q 類與大型結果) -->
+    <div class="pagination-bar" id="pagination-controls" style="display: none;">
+      <button type="button" class="page-btn" id="btn-page-prev">上一頁</button>
+      <div id="page-numbers-container" style="display: flex; gap: 0.35rem;"></div>
+      <button type="button" class="page-btn" id="btn-page-next">下一頁</button>
+    </div>
+
+    <!-- 底部操作與確認修改面板 -->
+    <div class="save-bottom-bar">
+      <div>
+        <span style="font-weight: 700; color: #1e293b;">變更狀態統計：</span>
+        <span id="pending-changes-summary" style="font-weight: 600; color: #2563eb;">尚未選取任何修改項目</span>
+      </div>
+      <div style="display: flex; gap: 0.75rem;">
+        <button type="button" class="btn-ghost" id="btn-reset-current-tab" style="padding: 0.6rem 1rem; border-radius: 6px; border: 1px solid #cbd5e1; cursor: pointer; background: #fff;">
+          重設本表選擇
+        </button>
+        <button type="button" class="save-btn" id="btn-submit-changes">
+          <span>✓ 確認修改並對齊系統題庫</span>
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- 燈箱 Modal -->
+  <div class="modal-overlay" id="lightbox-modal">
+    <div class="modal-content">
+      <button type="button" class="modal-close-btn" id="btn-close-modal">×</button>
+      <img src="" alt="放大預覽" class="modal-img" id="modal-image" />
+      <div class="modal-caption" id="modal-caption-text">題目原卷截圖</div>
+    </div>
+  </div>
+
+  <!-- GitHub Actions 雲端更新 Modal -->
+  <div class="modal-overlay" id="github-modal">
+    <div class="modal-content" style="max-width: 720px; width: 90%; max-height: 85vh; overflow-y: auto; text-align: left;">
+      <button type="button" class="modal-close-btn" id="btn-close-github-modal">×</button>
+      <h3 style="margin-top: 0; color: #1e3a8a; display: flex; align-items: center; gap: 8px;">
+        <span>🚀 確認修改與雲端自動對齊</span>
+      </h3>
+      <div class="info-card" style="margin-bottom: 1rem;">
+        <strong>【免本機啟動伺服器】</strong><br />
+        您正在使用 GitHub Pages 線上版。點擊下方綠色按鈕將為您在 GitHub 儲存庫建立更新申請，<strong>GitHub Actions 雲端工作流程將自動寫入題庫、執行驗證並發布</strong>！
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <strong>即將更新項目清單：</strong>
+        <div style="max-height: 200px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 6px; margin-top: 0.5rem;">
+          <table style="width: 100%; font-size: 0.85rem; border-collapse: collapse;">
+            <thead style="background: #f8fafc; position: sticky; top: 0;">
+              <tr>
+                <th style="padding: 6px 8px; border-bottom: 1px solid #cbd5e1;">題號</th>
+                <th style="padding: 6px 8px; border-bottom: 1px solid #cbd5e1;">題目</th>
+                <th style="padding: 6px 8px; border-bottom: 1px solid #cbd5e1;">所選答案</th>
+                <th style="padding: 6px 8px; border-bottom: 1px solid #cbd5e1;">狀態變更</th>
+              </tr>
+            </thead>
+            <tbody id="github-modal-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1.25rem;">
+        <button type="button" class="save-btn" id="btn-open-github-issue" style="width: 100%; justify-content: center; font-size: 1.05rem; padding: 0.75rem 1rem;">
+          🚀 前往 GitHub 提交 Issue（一鍵自動更新）
+        </button>
+
+        <div style="display: flex; gap: 0.5rem; justify-content: space-between; flex-wrap: wrap;">
+          <div style="display: flex; gap: 0.5rem;">
+            <button type="button" class="btn-ghost" id="btn-download-json" style="padding: 0.45rem 0.8rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.85rem; cursor: pointer;">
+              📥 下載變更 JSON
+            </button>
+            <button type="button" class="btn-ghost" id="btn-copy-json" style="padding: 0.45rem 0.8rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.85rem; cursor: pointer;">
+              📋 複製變更內容
+            </button>
+          </div>
+          <button type="button" class="btn-ghost" id="btn-local-save-fallback" style="display: none; padding: 0.45rem 0.8rem; border: 1px solid #3b82f6; color: #1d4ed8; border-radius: 6px; font-size: 0.85rem; cursor: pointer;">
+            ⚡ 本機即時寫入
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 全域變數
+    let g_dataset = { X: [], M: [], Q: [] };
+    let g_currentTab = 'X';
+    let g_currentPage = 1;
+    const PAGE_SIZE = 50; // Q 類每頁顯示 50 筆
+    let g_userSelections = {}; // key: `${cat}_${yr}_${sec}_${num}` => { action, custom_val }
+
+    const TAB_INFO = {
+      'X': {
+        title: '【X 類：待人工審查】',
+        text: '教育部《重編國語辭典修訂本》可查得詞條，但與原卷答案或審訂定音存在分歧。請由下方比對「勘誤表」、「原始檔截圖」與「教育部辭典」，選取適當答案後點擊「確認修改」。'
+      },
+      'M': {
+        title: '【M 類：已修正待核實】',
+        text: '過去已比對原卷或官方勘誤表完成錄入修正之題目，可在此進行全量核閱，若確認無誤可點選「目前系統」改記為 Y，或依需要再度修正。'
+      },
+      'Q': {
+        title: '【Q 類：教育部辭典查無完整詞條】',
+        text: '題目多為文言詞組或未獨立收錄之成語，詞典未有獨立條目。支援點擊「單字查詢」直達單字頁面，亦可使用「原始檔」或在手動輸入框填入標準答案。'
+      }
+    };
+
+    // 初始化載入
+    document.addEventListener('DOMContentLoaded', async () => {
+      setupEventListeners();
+      await fetchDisputesData();
+      populateYearFilter();
+      renderCurrentTab();
+    });
+
+    async function fetchDisputesData() {
+      try {
+        const resp = await fetch('/api/disputes');
+        if (resp.ok) {
+          g_dataset = await resp.json();
+        } else {
+          // 回退直接讀取 data/disputes_dataset.json (本機 file:/// 支援)
+          const fallback = await fetch('data/disputes_dataset.json');
+          if (fallback.ok) g_dataset = await fallback.json();
+        }
+      } catch (err) {
+        console.warn('嘗試讀取靜態 json:', err);
+        try {
+          const fallback = await fetch('data/disputes_dataset.json');
+          if (fallback.ok) g_dataset = await fallback.json();
+        } catch (e) {
+          alert('無法載入爭議字資料集，請確認 server.py 是否已啟動。');
+        }
+      }
+
+      // 更新徽章數字
+      document.getElementById('badge-count-X').textContent = (g_dataset.X || []).length;
+      document.getElementById('badge-count-M').textContent = (g_dataset.M || []).length;
+      document.getElementById('badge-count-Q').textContent = (g_dataset.Q || []).length.toLocaleString();
+    }
+
+    function populateYearFilter() {
+      const yearSelect = document.getElementById('filter-year');
+      for (let y = 101; y <= 114; y++) {
+        const opt = document.createElement('option');
+        opt.value = y;
+        opt.textContent = `${y} 年`;
+        yearSelect.appendChild(opt);
+      }
+    }
+
+    function setupEventListeners() {
+      // 標籤切換
+      document.querySelectorAll('.dispute-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.dispute-tab-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          g_currentTab = btn.getAttribute('data-tab');
+          g_currentPage = 1;
+          
+          const info = TAB_INFO[g_currentTab];
+          document.getElementById('tab-info-card').innerHTML = `<strong>${info.title}</strong> ${info.text}`;
+          renderCurrentTab();
+        });
+      });
+
+      // 篩選與搜尋
+      document.getElementById('filter-year').addEventListener('change', () => { g_currentPage = 1; renderCurrentTab(); });
+      document.getElementById('filter-sec').addEventListener('change', () => { g_currentPage = 1; renderCurrentTab(); });
+      document.getElementById('search-keyword').addEventListener('input', () => { g_currentPage = 1; renderCurrentTab(); });
+
+      // 分頁按鈕
+      document.getElementById('btn-page-prev').addEventListener('click', () => {
+        if (g_currentPage > 1) {
+          g_currentPage--;
+          renderCurrentTab();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      });
+      document.getElementById('btn-page-next').addEventListener('click', () => {
+        g_currentPage++;
+        renderCurrentTab();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      // 燈箱關閉
+      document.getElementById('btn-close-modal').addEventListener('click', closeModal);
+      document.getElementById('lightbox-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'lightbox-modal') closeModal();
+      });
+
+      // 重設本表選擇
+      document.getElementById('btn-reset-current-tab').addEventListener('click', () => {
+        if (confirm(`確定要清空目前【${g_currentTab} 類】的所有自訂選擇嗎？`)) {
+          for (let k in g_userSelections) {
+            if (k.startsWith(`${g_currentTab}_`)) {
+              delete g_userSelections[k];
+            }
+          }
+          renderCurrentTab();
+          updatePendingSummary();
+        }
+      });
+
+      // 確認送出按鈕
+      document.getElementById('btn-submit-changes').addEventListener('click', submitChanges);
+    }
+
+    function getFilteredList() {
+      const list = g_dataset[g_currentTab] || [];
+      const yearVal = document.getElementById('filter-year').value;
+      const secVal = document.getElementById('filter-sec').value;
+      const kw = document.getElementById('search-keyword').value.trim();
+
+      return list.filter(item => {
+        if (yearVal !== 'all' && item.year != yearVal) return false;
+        if (secVal !== 'all' && item.sec !== secVal) return false;
+        if (kw) {
+          const matchTopic = item.topic.includes(kw);
+          const matchTarget = item.test_w.includes(kw);
+          const matchAns = item.current_ans.includes(kw);
+          if (!matchTopic && !matchTarget && !matchAns) return false;
+        }
+        return true;
+      });
+    }
+
+    function renderCurrentTab() {
+      const filtered = getFilteredList();
+      const totalFiltered = filtered.length;
+      document.getElementById('filtered-count-text').textContent = `顯示 ${totalFiltered.toLocaleString()} 筆`;
+
+      const tbody = document.getElementById('dispute-table-body');
+      tbody.innerHTML = '';
+
+      const paginationContainer = document.getElementById('pagination-controls');
+
+      // 決定分頁
+      let displayItems = [];
+      if (g_currentTab === 'Q' || totalFiltered > PAGE_SIZE) {
+        paginationContainer.style.display = 'flex';
+        const totalPages = Math.ceil(totalFiltered / PAGE_SIZE) || 1;
+        if (g_currentPage > totalPages) g_currentPage = totalPages;
+
+        const startIdx = (g_currentPage - 1) * PAGE_SIZE;
+        displayItems = filtered.slice(startIdx, startIdx + PAGE_SIZE);
+
+        renderPagination(totalPages);
+      } else {
+        paginationContainer.style.display = 'none';
+        displayItems = filtered;
+      }
+
+      // 渲染表格列
+      displayItems.forEach(item => {
+        const tr = document.createElement('tr');
+        const key = `${g_currentTab}_${item.year}_${item.sec}_${item.num}`;
+        const userSel = g_userSelections[key] || { action: 'keep', custom_val: '' };
+
+        // 題目測驗字標記
+        let topicHtml = item.topic;
+        if (item.test_w && topicHtml.includes(item.test_w)) {
+          topicHtml = topicHtml.replace(item.test_w, `<span class="test-target">${item.test_w}</span>`);
+        }
+
+        // 勘誤表欄位
+        let errataHtml = '—';
+        if (item.errata && item.errata.has_errata) {
+          errataHtml = `
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <div><span class="ans-tag ans-errata">${item.errata.ans}</span></div>
+              <div class="crop-preview-container">
+                <img src="${item.errata.crop_path}" class="crop-thumb" alt="勘誤表截圖" onclick="openModal('${item.errata.crop_path}', '${item.year} 年 ${item.sec} 部 ${item.num} 題 官方勘誤表辨正')" />
+                <a href="${item.errata.pdf_url}" target="_blank" class="pdf-link">📄 勘誤表 PDF</a>
+              </div>
+            </div>
+          `;
+        }
+
+        // 原始檔截圖欄位：一律使用預先裁切好之高解析靜態圖片 (相容 GitHub Pages 與純靜態)
+        const cropSrc = `assets/crops/${item.year}_${item.sec}_${item.num}.png`;
+        const rawCropHtml = `
+          <div class="crop-preview-container">
+            <div><span class="ans-tag ans-raw" title="原卷答案">${item.original.ans || item.current_ans}</span></div>
+            <img src="${cropSrc}" class="crop-thumb" alt="原卷截圖" onclick="openModal('${cropSrc}', '${item.year} 年 ${item.sec} 部 ${item.num} 題 原卷題目截圖')" />
+            <a href="${item.original.pdf_url}" target="_blank" class="pdf-link">📄 ${item.year} 年原卷 PDF</a>
+          </div>
+        `;
+
+        // 教育部辭典欄位
+        let moeHtml = '';
+        if (item.moe && item.moe.is_found) {
+          moeHtml = `
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <div><span class="ans-tag ans-moe">${item.moe.ans}</span></div>
+              <a href="${item.moe.url}" target="_blank" class="pdf-link">🔗 教育部辭典條目</a>
+            </div>
+          `;
+        } else {
+          moeHtml = `
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <span style="color: #64748b; font-size: 0.85rem;">詞條查無</span>
+              <a href="${item.moe.char_url}" target="_blank" class="pdf-link">🔍 單字字典查詢</a>
+            </div>
+          `;
+        }
+
+        // 處理五選一下拉選單
+        const selectClass = userSel.action !== 'keep' ? 'action-select changed' : 'action-select';
+        const actionOptions = [
+          { val: 'keep', label: '1. 暫不處理' },
+          { val: 'current', label: `2. 目前系統 (${item.current_ans}，改記Y)` },
+          item.errata && item.errata.has_errata ? { val: 'errata', label: `3. 勘誤表 (${item.errata.ans}，改記M)` } : null,
+          { val: 'original', label: `4. 原始檔 (${item.original.ans || item.current_ans}，改記M)` },
+          item.moe && item.moe.is_found ? { val: 'moe', label: `5. 教育部辭典 (${item.moe.ans}，改記M)` } : null,
+          { val: 'custom', label: '6. 手動自訂答案 (改記M)' }
+        ].filter(Boolean);
+
+        const optionsHtml = actionOptions.map(opt => `<option value="${opt.val}" ${userSel.action === opt.val ? 'selected' : ''}>${opt.label}</option>`).join('');
+
+        const isCustomShow = userSel.action === 'custom' ? 'block' : 'none';
+
+        tr.innerHTML = `
+          <td class="col-id">${item.id}</td>
+          <td class="col-sec"><span class="badge ${item.sec === '甲' ? 'badge-primary' : 'badge-secondary'}">${item.sec}</span></td>
+          <td class="col-year">${item.year}</td>
+          <td class="col-num">${item.num}</td>
+          <td class="col-topic"><span class="topic-word">${topicHtml}</span></td>
+          <td class="col-current"><span class="ans-tag ans-current">${item.current_ans}</span></td>
+          <td class="col-errata">${errataHtml}</td>
+          <td class="col-crop">${rawCropHtml}</td>
+          <td class="col-moe">${moeHtml}</td>
+          <td class="col-note">${item.note || ''}</td>
+          <td class="col-action">
+            <select class="${selectClass}" onchange="onActionChange(this, '${key}')">
+              ${optionsHtml}
+            </select>
+            <input type="text" class="custom-input" style="display: ${isCustomShow};" placeholder="輸入自訂注音或國字..." value="${userSel.custom_val || ''}" oninput="onCustomValChange(this, '${key}')" />
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      updatePendingSummary();
+    }
+
+    function renderPagination(totalPages) {
+      document.getElementById('btn-page-prev').disabled = (g_currentPage <= 1);
+      document.getElementById('btn-page-next').disabled = (g_currentPage >= totalPages);
+
+      const container = document.getElementById('page-numbers-container');
+      container.innerHTML = '';
+
+      // 最多顯示 7 個頁碼按鈕
+      let startP = Math.max(1, g_currentPage - 3);
+      let endP = Math.min(totalPages, startP + 6);
+      if (endP - startP < 6) startP = Math.max(1, endP - 6);
+
+      for (let p = startP; p <= endP; p++) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `page-btn ${p === g_currentPage ? 'active' : ''}`;
+        btn.textContent = p;
+        btn.onclick = () => { g_currentPage = p; renderCurrentTab(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+        container.appendChild(btn);
+      }
+    }
+
+    function onActionChange(selectElem, key) {
+      const val = selectElem.value;
+      if (!g_userSelections[key]) g_userSelections[key] = { action: 'keep', custom_val: '' };
+      g_userSelections[key].action = val;
+
+      const tr = selectElem.closest('tr');
+      const customInput = tr.querySelector('.custom-input');
+      if (val === 'custom') {
+        customInput.style.display = 'block';
+        customInput.focus();
+      } else {
+        customInput.style.display = 'none';
+      }
+
+      if (val !== 'keep') {
+        selectElem.className = 'action-select changed';
+      } else {
+        selectElem.className = 'action-select';
+      }
+      updatePendingSummary();
+    }
+
+    function onCustomValChange(inputElem, key) {
+      if (!g_userSelections[key]) g_userSelections[key] = { action: 'custom', custom_val: '' };
+      g_userSelections[key].custom_val = inputElem.value;
+      updatePendingSummary();
+    }
+
+    function updatePendingSummary() {
+      const changedKeys = Object.keys(g_userSelections).filter(k => g_userSelections[k].action !== 'keep');
+      const count = changedKeys.length;
+      const summaryElem = document.getElementById('pending-changes-summary');
+      const submitBtn = document.getElementById('btn-submit-changes');
+
+      if (count === 0) {
+        summaryElem.textContent = '尚未選取任何修改項目（所有項目皆維持暫不處理）';
+        summaryElem.style.color = '#64748b';
+        submitBtn.disabled = true;
+      } else {
+        summaryElem.textContent = `已選取 ${count} 項準備確認更新`;
+        summaryElem.style.color = '#2563eb';
+        submitBtn.disabled = false;
+      }
+    }
+
+    let g_currentChangesPayload = [];
+
+    async function submitChanges() {
+      const changedKeys = Object.keys(g_userSelections).filter(k => g_userSelections[k].action !== 'keep');
+      if (changedKeys.length === 0) {
+        alert('尚未選擇任何需要修改的項目。');
+        return;
+      }
+
+      // 組裝 payload
+      const changes = [];
+      changedKeys.forEach(k => {
+        const [cat, yr, sec, num] = k.split('_');
+        const sel = g_userSelections[k];
+        
+        const item = (g_dataset[cat] || []).find(it => it.year == yr && it.sec == sec && it.num == num);
+        if (item) {
+          let chosenVal = item.current_ans;
+          let newStatus = 'M';
+          if (sel.action === 'current') {
+            chosenVal = item.current_ans;
+            newStatus = 'Y';
+          } else if (sel.action === 'errata') {
+            chosenVal = item.errata ? item.errata.ans : item.current_ans;
+          } else if (sel.action === 'original') {
+            chosenVal = item.original ? (item.original.ans || item.current_ans) : item.current_ans;
+          } else if (sel.action === 'moe') {
+            chosenVal = item.moe ? item.moe.ans : item.current_ans;
+          } else if (sel.action === 'custom') {
+            chosenVal = sel.custom_val || item.current_ans;
+          }
+
+          changes.push({
+            category: cat,
+            year: item.year,
+            sec: item.sec,
+            num: item.num,
+            topic: item.topic,
+            action: sel.action,
+            chosen_val: chosenVal,
+            new_status: newStatus,
+            errata_val: item.errata ? item.errata.ans : '',
+            original_val: item.original ? item.original.ans : '',
+            moe_val: item.moe ? item.moe.ans : '',
+            custom_val: sel.custom_val || ''
+          });
+        }
+      });
+
+      g_currentChangesPayload = changes;
+
+      // 檢查是否在本機伺服器環境
+      const isLocalServer = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') && location.port;
+      
+      if (isLocalServer) {
+        // 本地端直接一步到位確認儲存
+        if (confirm(`【本地端直接更新】\n即將為您直接更新 ${changes.length} 筆題目，寫入統整檔案、重產題庫並自動驗證。\n\n是否立即執行？`)) {
+          executeLocalSave(changes);
+        }
+      } else {
+        // GitHub Pages 純靜態環境：開啟 GitHub Actions 雲端更新彈窗
+        openGithubModal(changes, isLocalServer);
+      }
+    }
+
+    function openGithubModal(changes, isLocalServer) {
+      const tbody = document.getElementById('github-modal-table-body');
+      tbody.innerHTML = '';
+      changes.forEach(c => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; font-weight: 600;">${c.year} ${c.sec} ${c.num}</td>
+          <td style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0;">${c.topic}</td>
+          <td style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; font-weight: 700; color: #2563eb;">${c.chosen_val}</td>
+          <td style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0;"><span class="badge ${c.new_status === 'Y' ? 'badge-primary' : 'badge-secondary'}">${c.new_status}</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      const localBtn = document.getElementById('btn-local-save-fallback');
+      if (isLocalServer) {
+        localBtn.style.display = 'inline-block';
+        localBtn.onclick = () => executeLocalSave(changes);
+      } else {
+        localBtn.style.display = 'none';
+      }
+
+      document.getElementById('github-modal').style.display = 'flex';
+    }
+
+    function closeGithubModal() {
+      document.getElementById('github-modal').style.display = 'none';
+    }
+
+    // 點擊前往 GitHub 建立 Issue
+    document.getElementById('btn-open-github-issue').addEventListener('click', () => {
+      const changes = g_currentChangesPayload;
+      if (!changes || changes.length === 0) return;
+
+      const dateStr = new Date().toISOString().slice(0, 10);
+      const title = encodeURIComponent(`[Dispute Update] 批次更新 ${changes.length} 筆題目 (${dateStr})`);
+      
+      const cleanPayload = changes.map(c => ({
+        category: c.category,
+        year: c.year,
+        sec: c.sec,
+        num: c.num,
+        action: c.action,
+        errata_val: c.errata_val,
+        original_val: c.original_val,
+        moe_val: c.moe_val,
+        custom_val: c.custom_val
+      }));
+
+      const bodyText = `### 題目修改申請 (Dispute Update)
+
+本 Issue 由 GitHub Pages 線上爭議字審查系統自動建立。
+GitHub Actions 工作流程將會自動解析此內容、更新題庫檔案、執行驗證並發布。
+
+- **待更新筆數**：${changes.length} 筆
+- **送出時間**：${new Date().toLocaleString()}
+
+\`\`\`json
+${JSON.stringify(cleanPayload, null, 2)}
+\`\`\`
+`;
+      const body = encodeURIComponent(bodyText);
+      const issueUrl = `https://github.com/johnnyy-lab/su_word_exam/issues/new?title=${title}&body=${body}`;
+
+      window.open(issueUrl, '_blank');
+      closeGithubModal();
+    });
+
+    // 下載 JSON
+    document.getElementById('btn-download-json').addEventListener('click', () => {
+      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(g_currentChangesPayload, null, 2));
+      const a = document.createElement('a');
+      a.setAttribute('href', dataStr);
+      a.setAttribute('download', `dispute_changes_${Date.now()}.json`);
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    });
+
+    // 複製 JSON
+    document.getElementById('btn-copy-json').addEventListener('click', () => {
+      navigator.clipboard.writeText(JSON.stringify(g_currentChangesPayload, null, 2)).then(() => {
+        alert('📋 修改內容已成功複製至剪貼簿！');
+      });
+    });
+
+    document.getElementById('btn-close-github-modal').addEventListener('click', closeGithubModal);
+    document.getElementById('github-modal').addEventListener('click', (e) => {
+      if (e.target.id === 'github-modal') closeGithubModal();
+    });
+
+    async function executeLocalSave(changes) {
+      if (!confirm(`確定要在本機直接寫入更新 ${changes.length} 筆題目嗎？`)) return;
+      closeGithubModal();
+      const submitBtn = document.getElementById('btn-submit-changes');
+      submitBtn.disabled = true;
+      submitBtn.textContent = '⏳ 正在寫入檔案並重新驗證中...';
+
+      try {
+        const resp = await fetch('/api/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ changes })
+        });
+
+        if (resp.ok) {
+          const res = await resp.json();
+          if (res.success) {
+            alert(`🎉 本機修改成功！\n共更新 ${res.updated_count} 筆題目。\n自動化驗證結果: ${res.verify_passed ? '通過 (PASS)' : '有錯誤，請檢查終端'}`);
+            g_userSelections = {};
+            await fetchDisputesData();
+            renderCurrentTab();
+          } else {
+            alert(`修改失敗: ${res.error || '未知錯誤'}`);
+          }
+        } else {
+          alert('伺服器回傳錯誤代碼，請確認 server.py 正在運行。');
+        }
+      } catch (err) {
+        alert(`無法連線至伺服器: ${err.message}\n請確認已在終端執行 python server.py。`);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = '✓ 確認修改並對齊系統題庫';
+      }
+    }
+
+    function openModal(src, caption) {
+      document.getElementById('modal-image').src = src;
+      document.getElementById('modal-caption-text').textContent = caption;
+      document.getElementById('lightbox-modal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('lightbox-modal').style.display = 'none';
+      document.getElementById('modal-image').src = '';
+    }
+  </script>
+</body>
+</html>

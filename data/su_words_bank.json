@@ -4,7 +4,7 @@
     "description": "收錄民國 101 至 114 年全國語文競賽高中學生組決賽試題與標準答案，全題經 300+ DPI 原卷影像考證與官方勘誤核實。",
     "source_file": "國語字音字形-高中統整.md",
     "version": "1.0.0",
-    "created_at": "2026-11-14T07:45:07.896031",
+    "created_at": "2026-11-15T09:35:59.720145",
     "total_questions": 2800,
     "total_years": 14,
     "years": [
@@ -8519,8 +8519,8 @@
           "type_name": "字形",
           "num": 6,
           "num_str": "006",
-          "prompt": "ㄐㄧㄥ 基",
-          "target": "ㄐㄧㄥ",
+          "prompt": "ㄑㄧㄥ 基",
+          "target": "ㄑㄧㄥ",
           "answer": "烴"
         },
         {
@@ -10721,7 +10721,7 @@
           "num_str": "089",
           "prompt": "抽丁拔楔",
           "target": "楔",
-          "answer": "ㄒㄧㄝˋ"
+          "answer": "ㄒㄧㄝ"
         },
         {
           "id": "105-yin-090",
@@ -12863,7 +12863,7 @@
           "num_str": "067",
           "prompt": "戇頭戇腦",
           "target": "戇",
-          "answer": "ㄓㄨㄤˋ"
+          "answer": "ㄍㄤˋ"
         },
         {
           "id": "106-yin-068",
@@ -13547,8 +13547,8 @@
           "type_name": "字形",
           "num": 24,
           "num_str": "024",
-          "prompt": "ㄒㄩㄣˋ 私廢公",
-          "target": "ㄒㄩㄣˋ",
+          "prompt": "ㄒㄩㄣˊ 私廢公",
+          "target": "ㄒㄩㄣˊ",
           "answer": "徇"
         },
         {
@@ -13751,8 +13751,8 @@
           "type_name": "字形",
           "num": 41,
           "num_str": "041",
-          "prompt": "羽 ㄍㄜˊ 已就",
-          "target": "ㄍㄜˊ",
+          "prompt": "羽 ㄏㄜˊ 已就",
+          "target": "ㄏㄜˊ",
           "answer": "翮"
         },
         {
@@ -39581,7 +39581,7 @@
       "num_str": "089",
       "prompt": "抽丁拔楔",
       "target": "楔",
-      "answer": "ㄒㄧㄝˋ"
+      "answer": "ㄒㄧㄝ"
     },
     {
       "id": "105-yin-090",
@@ -40517,7 +40517,7 @@
       "num_str": "067",
       "prompt": "戇頭戇腦",
       "target": "戇",
-      "answer": "ㄓㄨㄤˋ"
+      "answer": "ㄍㄤˋ"
     },
     {
       "id": "106-yin-068",
@@ -54183,8 +54183,8 @@
       "type_name": "字形",
       "num": 6,
       "num_str": "006",
-      "prompt": "ㄐㄧㄥ 基",
-      "target": "ㄐㄧㄥ",
+      "prompt": "ㄑㄧㄥ 基",
+      "target": "ㄑㄧㄥ",
       "answer": "烴"
     },
     {
@@ -56799,8 +56799,8 @@
       "type_name": "字形",
       "num": 24,
       "num_str": "024",
-      "prompt": "ㄒㄩㄣˋ 私廢公",
-      "target": "ㄒㄩㄣˋ",
+      "prompt": "ㄒㄩㄣˊ 私廢公",
+      "target": "ㄒㄩㄣˊ",
       "answer": "徇"
     },
     {
@@ -57003,8 +57003,8 @@
       "type_name": "字形",
       "num": 41,
       "num_str": "041",
-      "prompt": "羽 ㄍㄜˊ 已就",
-      "target": "ㄍㄜˊ",
+      "prompt": "羽 ㄏㄜˊ 已就",
+      "target": "ㄏㄜˊ",
       "answer": "翮"
     },
     {

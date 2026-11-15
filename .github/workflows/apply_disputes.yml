@@ -1,0 +1,86 @@
+name: 自動處理爭議字題庫更新 (Dispute Auto Updater)
+
+on:
+  issues:
+    types: [opened, edited]
+  workflow_dispatch:
+    inputs:
+      issue_body:
+        description: '修改項目的 JSON 字串或 Issue 內容'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  update-disputes:
+    if: contains(github.event.issue.title, '[Dispute Update]') || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 檢出儲存庫代碼
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 設定 Python 3.13 環境
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: 'pip'
+
+      - name: 安裝相依套件
+        run: |
+          python -m pip install --upgrade pip
+          pip install pymupdf Pillow
+
+      - name: 執行題庫更新與全量自動化驗收
+        id: run_update
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body || inputs.issue_body }}
+        run: |
+          python data/apply_dispute_issue.py > update_log.txt 2>&1
+          cat update_log.txt
+
+      - name: 提交更新並推送回儲存庫
+        if: success()
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/ verify_all.py
+          if git diff --staged --quiet; then
+            echo "沒有需要提交的變更。"
+          else
+            git commit -m "chore(dispute): 自動依 Issue #${{ github.event.issue.number }} 更新題庫對齊"
+            git push
+          fi
+
+      - name: 在 Issue 回覆成功訊息並結案
+        if: success() && github.event_name == 'issues'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUM: ${{ github.event.issue.number }}
+        run: |
+          gh issue comment $ISSUE_NUM --body "🎉 **題庫已成功在雲端自動完成更新與對齊！**
+
+- 依據您在線上審查系統中勾選的選項，已自動更新 \`data/國語字音字形-高中統整.md\`。
+- 自動化驗收腳本 \`verify_all.py\`（6 大檢查項）**全部通過 (ALL PASS)**。
+- 結構化題庫 \`su_words_bank.json\` 與 \`su_words_bank.js\` 已同步重產並發布。
+- GitHub Pages 將於 1～2 分鐘內自動完成重新部署！"
+          gh issue close $ISSUE_NUM --reason "completed"
+
+      - name: 若失敗在 Issue 回報錯誤
+        if: failure() && github.event_name == 'issues'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUM: ${{ github.event.issue.number }}
+        run: |
+          LOG_CONTENT=$(cat update_log.txt | tail -n 30)
+          gh issue comment $ISSUE_NUM --body "❌ **自動更新執行失敗，未進行任何代碼提交。**
+
+錯誤記錄摘要：
+\`\`\`text
+$LOG_CONTENT
+\`\`\`
+請檢查所選選項或驗收斷言條件。"
