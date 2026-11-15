@@ -65,8 +65,14 @@ def load_recheck_review():
                     m = re.search(r'\((https://[^\)]+)\)', moe_link)
                     url = m.group(1) if m else ''
                     
+                    # 關鍵修正：若為乙部（字形），答案一律為國字！
+                    # 第 5 欄 test_w 是標準國字答案；第 9 欄 raw_ans 是提示注音
+                    correct_raw_ans = test_w.replace('**', '').replace('`', '').strip() if sec == '乙' else raw_ans.replace('`', '').strip()
+                    
                     review_data[key] = {
-                        'raw_ans': raw_ans.replace('`', '').strip(),
+                        'sec': sec,
+                        'char_ans': test_w.replace('**', '').replace('`', '').strip(),
+                        'raw_ans': correct_raw_ans,
                         'moe_ph': moe_ph.replace('`', '').strip(),
                         'moe_url': url,
                         'review_note': note
@@ -145,23 +151,32 @@ def main():
                 
                 rev_item = review_map.get(key, {})
                 rep_item = report_map.get(key, {})
-                raw_ans = rev_item.get('raw_ans', '')
-                if not raw_ans:
-                    raw_ans = clean_ans
                 
-                # 教育部辭典資料：精確保留測驗字之注音或國字
+                # 原始檔答案處理（乙部字形題嚴格鎖定為國字）
+                if current_sec == '乙':
+                    raw_ans = rev_item.get('char_ans') or clean_ans
+                    # 雙重防護：若字串含有注音符號，一律回退至 clean_ans (國字答案)
+                    if re.search(r'[\u3105-\u3129]', raw_ans):
+                        raw_ans = clean_ans
+                else:
+                    raw_ans = rev_item.get('raw_ans') or clean_ans
+                
+                # 教育部辭典資料：甲部萃取單字注音，乙部嚴格為國字答案
                 if status in ['X', 'M']:
-                    raw_moe = rev_item.get('moe_ph') or rep_item.get('moe_ans', '')
                     if current_sec == '甲':
+                        raw_moe = rev_item.get('moe_ph') or rep_item.get('moe_ans', '')
                         moe_ans = extract_target_pronunciation(topic, test_w, raw_moe)
                     else:
-                        # 乙部直接顯示測驗字本身之字形
+                        # 乙部（字形題）一律顯示答案國字
                         moe_ans = clean_ans
                     moe_url = rev_item.get('moe_url') or rep_item.get('moe_url', '')
                     is_found = bool(moe_url)
                     char_url = f'https://dict.revised.moe.edu.tw/search.jsp?md=2&word={test_w}'
                 else: # Q 類
-                    moe_ans = '詞條查無'
+                    if current_sec == '甲':
+                        moe_ans = '詞條查無'
+                    else:
+                        moe_ans = clean_ans
                     moe_url = ''
                     is_found = False
                     char_url = f'https://dict.revised.moe.edu.tw/search.jsp?md=2&word={test_w}'
