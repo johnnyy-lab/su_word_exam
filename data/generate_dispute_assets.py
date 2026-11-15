@@ -81,20 +81,38 @@ def load_recheck_review():
 
 def load_recheck_report():
     report_data = {}
-    if not os.path.exists(REPORT_PATH):
-        return report_data
-    with open(REPORT_PATH, 'r', encoding='utf-8') as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            sec = row.get('\ufeff部別') or row.get('部別')
-            yr = row.get('年度')
-            num = row.get('題號')
-            if sec and yr and num:
-                key = f'{yr}_{sec}_{int(num):03d}'
-                report_data[key] = {
-                    'moe_url': row.get('辭典連結', ''),
-                    'moe_ans': row.get('辭典音讀', '')
-                }
+    if os.path.exists(REPORT_PATH):
+        with open(REPORT_PATH, 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                sec = row.get('\ufeff部別') or row.get('部別')
+                yr = row.get('年度')
+                num = row.get('題號')
+                if sec and yr and num:
+                    key = f'{yr}_{sec}_{int(num):03d}'
+                    report_data[key] = {
+                        'moe_url': row.get('辭典連結', ''),
+                        'moe_ans': row.get('辭典音讀', '')
+                    }
+                    
+    # 同步讀取 Q 類深度複檢結果
+    q_res_path = os.path.join(DATA_DIR, 'recheck_q_results.csv')
+    if os.path.exists(q_res_path):
+        with open(q_res_path, 'r', encoding='utf-8-sig') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                sec = row.get('\ufeff部別') or row.get('部別')
+                yr = row.get('年度')
+                num = row.get('題號')
+                dict_ph = row.get('辭典注音', '')
+                if sec and yr and num and dict_ph:
+                    key = f'{yr}_{sec}_{int(num):03d}'
+                    if key not in report_data or not report_data[key].get('moe_ans'):
+                        report_data[key] = {
+                            'moe_url': '',
+                            'moe_ans': dict_ph,
+                            'note': f"四階複檢命中: {row.get('命中途徑', '')}"
+                        }
     return report_data
 
 def main():

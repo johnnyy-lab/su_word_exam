@@ -15,6 +15,7 @@ test/
 
 # 辭典複檢快取與自動備份，不入 GitHub
 data/.dict_cache.json
+data/.recheck_q_cache.json
 data/*.md.bak
 
 # 作業系統
