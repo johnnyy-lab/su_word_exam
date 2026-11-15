@@ -8,6 +8,7 @@ if BASE_DIR not in sys.path:
 import re
 import csv
 import json
+from urllib.parse import quote
 from data.crop_engine import crop_item_image, CROPS_DIR, ERRATA_DIR
 
 DATA_DIR = os.path.join(BASE_DIR, 'data')
@@ -27,6 +28,45 @@ ERRATA_MAP = {
     '106_乙_056': {'ans': '璿', 'crop': 'assets/crops/errata/106_乙_056.png', 'note': '勘誤表辨正字形為「璿」（提示音ㄒㄩㄢˊ，璿/璇皆可）'},
     '107_甲_026': {'ans': 'ㄧˊ', 'crop': 'assets/crops/errata/107_甲_026.png', 'note': '勘誤表辨正定音為 ㄧˊ'},
     '107_乙_014': {'ans': '沓', 'crop': 'assets/crops/errata/107_乙_014.png', 'note': '勘誤表辨正字形為「沓」（提示音ㄊㄚˋ，沓/遢皆可）'}
+}
+
+# 教育部辭典精準命中對照表（確保 X 類題目必有直達連結與標準定音）
+MOE_EXACT_MAP = {
+    '102_甲_037': {
+        'url': 'https://dict.revised.moe.edu.tw/dictView.jsp?ID=25359',
+        'ans': 'ㄆㄧㄢˊ',
+        'note': '教育部《重編國語辭典修訂本》收錄「平章百姓」，定音為 ㄆㄧㄢˊ'
+    },
+    '102_甲_040': {
+        'url': 'https://dict.concised.moe.edu.tw/dictView.jsp?ID=8598',
+        'ans': 'ㄉㄧㄝ',
+        'note': '教育部《國語辭典簡編本》單字「嗲」條目例句收錄「嗲聲嗲氣」，審訂定音為 ㄉㄧㄝ'
+    },
+    '107_甲_010': {
+        'url': 'https://dict.revised.moe.edu.tw/dictView.jsp?ID=117364',
+        'ans': 'ㄓㄥ',
+        'note': '教育部《重編國語辭典修訂本》收錄「諍言」，定音為 ㄓㄥ ㄧㄢˊ，單字審訂定音為 ㄓㄥ'
+    },
+    '108_甲_007': {
+        'url': 'https://dict.revised.moe.edu.tw/dictView.jsp?ID=102375',
+        'ans': 'ㄊㄧㄥ',
+        'note': '教育部《重編國語辭典修訂本》收錄「烴基」，定音為 ㄊㄧㄥ ㄐㄧ'
+    },
+    '109_甲_079': {
+        'url': 'https://dict.revised.moe.edu.tw/dictView.jsp?ID=2639',
+        'ans': 'ㄊㄧˊ',
+        'note': '教育部《重編國語辭典修訂本》單字「禔」條目引《漢書．揚雄傳》「中外禔福」，定音為 ㄊㄧˊ'
+    },
+    '111_甲_075': {
+        'url': 'https://dict.revised.moe.edu.tw/dictView.jsp?ID=753',
+        'ans': 'ㄆㄤˊ',
+        'note': '教育部《重編國語辭典修訂本》單字「雱」條目引《詩經．邶風．北風》「雨雪其雱」，定音為 ㄆㄤˊ'
+    },
+    '107_乙_001': {
+        'url': 'https://dict.revised.moe.edu.tw/dictView.jsp?ID=7264',
+        'ans': '擤 (注音ㄒㄧㄥˇ)',
+        'note': '教育部《重編國語辭典修訂本》單字「擤」條目造句收錄「擤鼻涕」，標準定音為 ㄒㄧㄥˇ'
+    }
 }
 
 def extract_target_pronunciation(topic, test_char, full_ph):
@@ -179,13 +219,18 @@ def main():
                 else:
                     raw_ans = rev_item.get('raw_ans') or clean_ans
                 
-                # 教育部辭典資料：甲部萃取單字注音，乙部嚴格為國字答案
-                if status in ['X', 'M']:
+                # 教育部辭典資料：優先套用 MOE_EXACT_MAP 精準直達連結與音讀
+                exact_moe = MOE_EXACT_MAP.get(key)
+                if exact_moe:
+                    moe_ans = exact_moe['ans']
+                    moe_url = exact_moe['url']
+                    is_found = True
+                    char_url = 'https://dict.concised.moe.edu.tw/search.jsp?md=1&word=' + quote(test_w) if 'concised' in moe_url else f'https://dict.revised.moe.edu.tw/search.jsp?md=2&word={test_w}'
+                elif status in ['X', 'M']:
                     if current_sec == '甲':
                         raw_moe = rev_item.get('moe_ph') or rep_item.get('moe_ans', '')
                         moe_ans = extract_target_pronunciation(topic, test_w, raw_moe)
                     else:
-                        # 乙部（字形題）一律顯示答案國字
                         moe_ans = clean_ans
                     moe_url = rev_item.get('moe_url') or rep_item.get('moe_url', '')
                     is_found = bool(moe_url)
@@ -201,7 +246,9 @@ def main():
                 
                 note = rev_item.get('review_note', '')
                 if not note:
-                    if status == 'Q':
+                    if exact_moe and exact_moe.get('note'):
+                        note = exact_moe['note']
+                    elif status == 'Q':
                         note = '教育部《重編國語辭典修訂本》查無完整詞條，建議以原卷或單字音審訂'
                     elif status == 'X':
                         note = '待人工審查'

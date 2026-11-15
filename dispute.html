@@ -759,10 +759,11 @@
         // 教育部辭典欄位
         let moeHtml = '';
         if (item.moe && item.moe.is_found) {
+          const siteLabel = (item.moe.url && item.moe.url.includes('concised')) ? '國語辭典簡編本' : '重編國語辭典修訂本';
           moeHtml = `
             <div style="display: flex; flex-direction: column; gap: 4px;">
               <div><span class="ans-tag ans-moe">${item.moe.ans}</span></div>
-              <a href="${item.moe.url}" target="_blank" class="pdf-link">🔗 教育部辭典條目</a>
+              <a href="${item.moe.url}" target="_blank" class="pdf-link">🔗 ${siteLabel}</a>
             </div>
           `;
         } else {
