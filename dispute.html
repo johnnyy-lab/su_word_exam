@@ -733,7 +733,7 @@
         }
 
         // 勘誤表欄位
-        let errataHtml = '—';
+        let errataHtml = '<span style="color: #94a3b8; font-size: 0.9rem;">(無勘誤)</span>';
         if (item.errata && item.errata.has_errata) {
           errataHtml = `
             <div style="display: flex; flex-direction: column; gap: 4px;">

@@ -10,7 +10,6 @@ import csv
 import json
 from data.crop_engine import crop_item_image, CROPS_DIR, ERRATA_DIR
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 MD_PATH = os.path.join(DATA_DIR, '國語字音字形-高中統整.md')
 REVIEW_PATH = os.path.join(DATA_DIR, 'recheck_X_review.md')
@@ -30,6 +29,27 @@ ERRATA_MAP = {
     '107_乙_014': {'ans': '沓', 'crop': 'assets/crops/errata/107_乙_014.png', 'note': '勘誤表辨正字形為「沓」（提示音ㄊㄚˋ，沓/遢皆可）'}
 }
 
+def extract_target_pronunciation(topic, test_char, full_ph):
+    """
+    從辭典完整詞條音讀中，精確萃取對應測驗字的單字注音，避免整串成語全部飆出來
+    """
+    if not full_ph or full_ph == '詞條查無':
+        return '詞條查無'
+    tokens = full_ph.strip().split()
+    if not tokens:
+        return full_ph
+    # 清理題目詞語中的符號與提示注音
+    clean_topic = re.sub(r'[\s\d_、()（）\u3105-\u3129\u02ca\u02c7\u02cb\u02d9]', '', topic)
+    if test_char in clean_topic:
+        idx = clean_topic.find(test_char)
+        if 0 <= idx < len(tokens):
+            return tokens[idx]
+    if len(clean_topic) == len(tokens):
+        for i, ch in enumerate(clean_topic):
+            if ch == test_char:
+                return tokens[i]
+    return tokens[0]
+
 def load_recheck_review():
     review_data = {}
     if not os.path.exists(REVIEW_PATH):
@@ -42,7 +62,6 @@ def load_recheck_review():
                     sec, yr, num, word, test_w, orig_ph, moe_ph, moe_link, raw_ans, status, note = parts[:11]
                     key = f'{yr}_{sec}_{int(num):03d}'
                     
-                    # 擷取辭典 URL
                     m = re.search(r'\((https://[^\)]+)\)', moe_link)
                     url = m.group(1) if m else ''
                     
@@ -101,14 +120,9 @@ def main():
                 if status not in ['X', 'M', 'Q']:
                     continue
                 
-                # 取得原卷截圖路徑與 PDF 連結
                 pdf_filename = f'{yr}年國語字音字形-高中.pdf' if yr == 110 else f'{yr}年國語字音字形(高中).pdf'
                 pdf_rel_path = f'topics/{pdf_filename}'
                 crop_rel_path = f'assets/crops/{key}.png'
-                
-                # 若為 X 或 M 類，確保靜態裁切圖存在
-                if status in ['X', 'M']:
-                    crop_item_image(yr, current_sec, num_int, dpi=180, save_cache=True)
                 
                 # 勘誤表資訊
                 errata_info = ERRATA_MAP.get(key)
@@ -123,22 +137,26 @@ def main():
                 else:
                     errata_obj = {
                         'has_errata': False,
-                        'ans': '',
+                        'ans': '(無勘誤)',
                         'crop_path': '',
                         'pdf_url': '',
                         'note': ''
                     }
                 
-                # 原卷答案與說明
                 rev_item = review_map.get(key, {})
                 rep_item = report_map.get(key, {})
                 raw_ans = rev_item.get('raw_ans', '')
                 if not raw_ans:
-                    raw_ans = clean_ans # 預設為目前系統答案
+                    raw_ans = clean_ans
                 
-                # 教育部辭典資料
+                # 教育部辭典資料：精確保留測驗字之注音或國字
                 if status in ['X', 'M']:
-                    moe_ans = rev_item.get('moe_ph') or rep_item.get('moe_ans', '')
+                    raw_moe = rev_item.get('moe_ph') or rep_item.get('moe_ans', '')
+                    if current_sec == '甲':
+                        moe_ans = extract_target_pronunciation(topic, test_w, raw_moe)
+                    else:
+                        # 乙部直接顯示測驗字本身之字形
+                        moe_ans = clean_ans
                     moe_url = rev_item.get('moe_url') or rep_item.get('moe_url', '')
                     is_found = bool(moe_url)
                     char_url = f'https://dict.revised.moe.edu.tw/search.jsp?md=2&word={test_w}'
@@ -148,7 +166,6 @@ def main():
                     is_found = False
                     char_url = f'https://dict.revised.moe.edu.tw/search.jsp?md=2&word={test_w}'
                 
-                # 說明欄位
                 note = rev_item.get('review_note', '')
                 if not note:
                     if status == 'Q':
@@ -180,7 +197,7 @@ def main():
                         'char_url': char_url
                     },
                     'note': note,
-                    'action': 'keep' # 1. 暫不處理
+                    'action': 'keep'
                 }
                 dataset[status].append(entry)
                 seq_map[status] += 1
