@@ -34,36 +34,6 @@
       "id": 2,
       "category": "X",
       "sec": "甲",
-      "year": 105,
-      "num": "089",
-      "topic": "抽丁拔楔",
-      "test_w": "楔",
-      "current_ans": "ㄒㄧㄝˋ",
-      "errata": {
-        "has_errata": true,
-        "ans": "ㄒㄧㄝ",
-        "crop_path": "assets/crops/errata/105_甲_089.png",
-        "pdf_url": "old/103-107年國語字音字形勘誤表.pdf",
-        "note": "勘誤表辨正定音為 ㄒㄧㄝ"
-      },
-      "original": {
-        "ans": "ㄒㄧㄝˋ",
-        "crop_path": "assets/crops/105_甲_089.png",
-        "pdf_url": "topics/105年國語字音字形(高中).pdf"
-      },
-      "moe": {
-        "is_found": true,
-        "ans": "ㄒㄧㄝˋ",
-        "url": "https://dict.revised.moe.edu.tw/dictView.jsp?ID=122513",
-        "char_url": "https://dict.revised.moe.edu.tw/search.jsp?md=2&word=楔"
-      },
-      "note": "原卷方格印ㄒㄧㄝˋ，依103-107官方勘誤表辨正定音為ㄒㄧㄝ（恢復原勘誤音，與辭典ㄒㄧㄝˋ不符，維持X）",
-      "action": "keep"
-    },
-    {
-      "id": 3,
-      "category": "X",
-      "sec": "甲",
       "year": 107,
       "num": "010",
       "topic": "諍言",
@@ -91,7 +61,7 @@
       "action": "keep"
     },
     {
-      "id": 4,
+      "id": 3,
       "category": "X",
       "sec": "甲",
       "year": 108,
@@ -121,98 +91,7 @@
       "action": "keep"
     }
   ],
-  "M": [
-    {
-      "id": 1,
-      "category": "M",
-      "sec": "甲",
-      "year": 107,
-      "num": "056",
-      "topic": "謾天昧地",
-      "test_w": "謾",
-      "current_ans": "ㄇㄢˋ",
-      "errata": {
-        "has_errata": false,
-        "ans": "(無勘誤)",
-        "crop_path": "",
-        "pdf_url": "",
-        "note": ""
-      },
-      "original": {
-        "ans": "ㄇㄢˋ",
-        "crop_path": "assets/crops/107_甲_056.png",
-        "pdf_url": "topics/107年國語字音字形(高中).pdf"
-      },
-      "moe": {
-        "is_found": true,
-        "ans": "ㄇㄢˊ",
-        "url": "https://dict.revised.moe.edu.tw/dictView.jsp?ID=29667",
-        "char_url": "https://dict.revised.moe.edu.tw/search.jsp?md=2&word=謾"
-      },
-      "note": "原卷方格印ㄇㄢˋ，與辭典ㄇㄢˊ不符，保持X",
-      "action": "keep"
-    },
-    {
-      "id": 2,
-      "category": "M",
-      "sec": "甲",
-      "year": 111,
-      "num": "002",
-      "topic": "磽薄",
-      "test_w": "磽",
-      "current_ans": "ㄑㄧㄠ",
-      "errata": {
-        "has_errata": false,
-        "ans": "(無勘誤)",
-        "crop_path": "",
-        "pdf_url": "",
-        "note": ""
-      },
-      "original": {
-        "ans": "ㄑㄧㄠ",
-        "crop_path": "assets/crops/111_甲_002.png",
-        "pdf_url": "topics/111年國語字音字形(高中).pdf"
-      },
-      "moe": {
-        "is_found": true,
-        "ans": "ㄐㄧㄠ",
-        "url": "https://dict.revised.moe.edu.tw/dictView.jsp?ID=91332",
-        "char_url": "https://dict.revised.moe.edu.tw/search.jsp?md=2&word=磽"
-      },
-      "note": "原卷題目詞語為「磽薄」，測驗字為「磽」，原卷注音為ㄑㄧㄠ，與辭典一致，原錄入誤將題目錄為「澆薄」",
-      "action": "keep"
-    },
-    {
-      "id": 3,
-      "category": "M",
-      "sec": "甲",
-      "year": 114,
-      "num": "053",
-      "topic": "為民喉舌",
-      "test_w": "為",
-      "current_ans": "ㄨㄟˊ",
-      "errata": {
-        "has_errata": false,
-        "ans": "(無勘誤)",
-        "crop_path": "",
-        "pdf_url": "",
-        "note": ""
-      },
-      "original": {
-        "ans": "ㄨㄟˊ",
-        "crop_path": "assets/crops/114_甲_053.png",
-        "pdf_url": "topics/114年國語字音字形(高中).pdf"
-      },
-      "moe": {
-        "is_found": true,
-        "ans": "ㄨㄟˊ",
-        "url": "https://dict.revised.moe.edu.tw/dictView.jsp?ID=160754",
-        "char_url": "https://dict.revised.moe.edu.tw/search.jsp?md=2&word=為"
-      },
-      "note": "原卷方格注音實為二聲ㄨㄟˊ，且114年評審總講評明文定音為ㄨㄟˊ（選手常誤作ㄨㄟˋ），先前辨識誤判聲調，現已更正為ㄨㄟˊ並改記為M",
-      "action": "keep"
-    }
-  ],
+  "M": [],
   "Q": [
     {
       "id": 1,
