@@ -38,7 +38,7 @@
       "num": "040",
       "topic": "嗲聲嗲氣",
       "test_w": "嗲",
-      "current_ans": "ㄉㄧㄚˇ",
+      "current_ans": "ㄉㄧㄝ",
       "errata": {
         "has_errata": false,
         "ans": "(無勘誤)",
@@ -47,7 +47,7 @@
         "note": ""
       },
       "original": {
-        "ans": "ㄉㄧㄚˇ",
+        "ans": "ㄉㄧㄝ",
         "crop_path": "assets/crops/102_甲_040.png",
         "pdf_url": "topics/102年國語字音字形(高中).pdf"
       },
@@ -57,7 +57,7 @@
         "url": "https://dict.concised.moe.edu.tw/dictView.jsp?ID=8598",
         "char_url": "https://dict.concised.moe.edu.tw/search.jsp?md=1&word=%E5%97%B2"
       },
-      "note": "簡編本單字「嗲」條目例句「嗲聲嗲氣」，審訂定音為ㄉㄧㄝ，原卷記ㄉㄧㄚˇ，保持X",
+      "note": "簡編本單字「嗲」條目例句「嗲聲嗲氣」，審訂定音為ㄉㄧㄝ，經原卷高解析核對實印ㄉㄧㄝ（非ㄉㄧㄚˇ），更新系統答案，保持X待審",
       "action": "keep"
     },
     {
@@ -128,7 +128,7 @@
       "num": "079",
       "topic": "中外禔福",
       "test_w": "禔",
-      "current_ans": "ㄓˊ",
+      "current_ans": "ㄊㄧˊ",
       "errata": {
         "has_errata": false,
         "ans": "(無勘誤)",
@@ -137,7 +137,7 @@
         "note": ""
       },
       "original": {
-        "ans": "ㄓˊ",
+        "ans": "ㄊㄧˊ",
         "crop_path": "assets/crops/109_甲_079.png",
         "pdf_url": "topics/109年國語字音字形(高中).pdf"
       },
@@ -147,7 +147,7 @@
         "url": "https://dict.revised.moe.edu.tw/dictView.jsp?ID=2639",
         "char_url": "https://dict.revised.moe.edu.tw/search.jsp?md=2&word=禔"
       },
-      "note": "修訂本單字「禔」條目引《漢書．揚雄傳》「中外禔福」，定音為ㄊㄧˊ，原卷方格印ㄓˊ，保持X",
+      "note": "修訂本單字「禔」條目引《漢書．司馬相如傳》「中外禔福」，定音為ㄊㄧˊ，經原卷高解析核對實印ㄊㄧˊ（非ㄓˊ），更新系統答案，保持X待審",
       "action": "keep"
     },
     {

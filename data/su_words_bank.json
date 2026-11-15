@@ -4,7 +4,7 @@
     "description": "收錄民國 101 至 114 年全國語文競賽高中學生組決賽試題與標準答案，全題經 300+ DPI 原卷影像考證與官方勘誤核實。",
     "source_file": "國語字音字形-高中統整.md",
     "version": "1.0.0",
-    "created_at": "2026-11-15T16:59:01.544391",
+    "created_at": "2026-11-15T17:41:30.598536",
     "total_questions": 2800,
     "total_years": 14,
     "years": [
@@ -2915,7 +2915,7 @@
           "num_str": "040",
           "prompt": "嗲聲嗲氣",
           "target": "嗲",
-          "answer": "ㄉㄧㄚˇ"
+          "answer": "ㄉㄧㄝ"
         },
         {
           "id": "102-yin-041",
@@ -20225,7 +20225,7 @@
           "num_str": "079",
           "prompt": "中外禔福",
           "target": "禔",
-          "answer": "ㄓˊ"
+          "answer": "ㄊㄧˊ"
         },
         {
           "id": "109-yin-080",
@@ -35393,7 +35393,7 @@
       "num_str": "040",
       "prompt": "嗲聲嗲氣",
       "target": "嗲",
-      "answer": "ㄉㄧㄚˇ"
+      "answer": "ㄉㄧㄝ"
     },
     {
       "id": "102-yin-041",
@@ -44261,7 +44261,7 @@
       "num_str": "079",
       "prompt": "中外禔福",
       "target": "禔",
-      "answer": "ㄓˊ"
+      "answer": "ㄊㄧˊ"
     },
     {
       "id": "109-yin-080",
