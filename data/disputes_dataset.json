@@ -94,36 +94,6 @@
       "id": 4,
       "category": "X",
       "sec": "甲",
-      "year": 107,
-      "num": "056",
-      "topic": "謾天昧地",
-      "test_w": "謾",
-      "current_ans": "ㄇㄢˋ",
-      "errata": {
-        "has_errata": false,
-        "ans": "(無勘誤)",
-        "crop_path": "",
-        "pdf_url": "",
-        "note": ""
-      },
-      "original": {
-        "ans": "ㄇㄢˋ",
-        "crop_path": "assets/crops/107_甲_056.png",
-        "pdf_url": "topics/107年國語字音字形(高中).pdf"
-      },
-      "moe": {
-        "is_found": true,
-        "ans": "ㄇㄢˊ",
-        "url": "https://dict.revised.moe.edu.tw/dictView.jsp?ID=29667",
-        "char_url": "https://dict.revised.moe.edu.tw/search.jsp?md=2&word=謾"
-      },
-      "note": "原卷方格印ㄇㄢˋ，與辭典ㄇㄢˊ不符，保持X",
-      "action": "keep"
-    },
-    {
-      "id": 5,
-      "category": "X",
-      "sec": "甲",
       "year": 108,
       "num": "007",
       "topic": "烴基",
@@ -151,7 +121,7 @@
       "action": "keep"
     },
     {
-      "id": 6,
+      "id": 5,
       "category": "X",
       "sec": "甲",
       "year": 114,
@@ -181,7 +151,7 @@
       "action": "keep"
     },
     {
-      "id": 7,
+      "id": 6,
       "category": "X",
       "sec": "乙",
       "year": 102,
@@ -211,7 +181,7 @@
       "action": "keep"
     },
     {
-      "id": 8,
+      "id": 7,
       "category": "X",
       "sec": "乙",
       "year": 104,
@@ -697,6 +667,36 @@
       "category": "M",
       "sec": "甲",
       "year": 107,
+      "num": "056",
+      "topic": "謾天昧地",
+      "test_w": "謾",
+      "current_ans": "ㄇㄢˊ",
+      "errata": {
+        "has_errata": false,
+        "ans": "(無勘誤)",
+        "crop_path": "",
+        "pdf_url": "",
+        "note": ""
+      },
+      "original": {
+        "ans": "ㄇㄢˋ",
+        "crop_path": "assets/crops/107_甲_056.png",
+        "pdf_url": "topics/107年國語字音字形(高中).pdf"
+      },
+      "moe": {
+        "is_found": true,
+        "ans": "ㄇㄢˊ",
+        "url": "https://dict.revised.moe.edu.tw/dictView.jsp?ID=29667",
+        "char_url": "https://dict.revised.moe.edu.tw/search.jsp?md=2&word=謾"
+      },
+      "note": "原卷方格印ㄇㄢˋ，與辭典ㄇㄢˊ不符，保持X",
+      "action": "keep"
+    },
+    {
+      "id": 17,
+      "category": "M",
+      "sec": "甲",
+      "year": 107,
       "num": "089",
       "topic": "聽憑尊便",
       "test_w": "聽",
@@ -723,7 +723,7 @@
       "action": "keep"
     },
     {
-      "id": 17,
+      "id": 18,
       "category": "M",
       "sec": "甲",
       "year": 108,
@@ -753,7 +753,7 @@
       "action": "keep"
     },
     {
-      "id": 18,
+      "id": 19,
       "category": "M",
       "sec": "甲",
       "year": 109,
@@ -783,7 +783,7 @@
       "action": "keep"
     },
     {
-      "id": 19,
+      "id": 20,
       "category": "M",
       "sec": "甲",
       "year": 109,
@@ -813,7 +813,7 @@
       "action": "keep"
     },
     {
-      "id": 20,
+      "id": 21,
       "category": "M",
       "sec": "甲",
       "year": 109,
@@ -843,7 +843,7 @@
       "action": "keep"
     },
     {
-      "id": 21,
+      "id": 22,
       "category": "M",
       "sec": "甲",
       "year": 109,
@@ -873,7 +873,7 @@
       "action": "keep"
     },
     {
-      "id": 22,
+      "id": 23,
       "category": "M",
       "sec": "甲",
       "year": 111,
@@ -903,7 +903,7 @@
       "action": "keep"
     },
     {
-      "id": 23,
+      "id": 24,
       "category": "M",
       "sec": "甲",
       "year": 112,
@@ -933,7 +933,7 @@
       "action": "keep"
     },
     {
-      "id": 24,
+      "id": 25,
       "category": "M",
       "sec": "甲",
       "year": 113,
@@ -963,7 +963,7 @@
       "action": "keep"
     },
     {
-      "id": 25,
+      "id": 26,
       "category": "M",
       "sec": "甲",
       "year": 113,
@@ -993,7 +993,7 @@
       "action": "keep"
     },
     {
-      "id": 26,
+      "id": 27,
       "category": "M",
       "sec": "甲",
       "year": 113,
@@ -1023,7 +1023,7 @@
       "action": "keep"
     },
     {
-      "id": 27,
+      "id": 28,
       "category": "M",
       "sec": "乙",
       "year": 102,
@@ -1053,7 +1053,7 @@
       "action": "keep"
     },
     {
-      "id": 28,
+      "id": 29,
       "category": "M",
       "sec": "乙",
       "year": 102,
@@ -1083,7 +1083,7 @@
       "action": "keep"
     },
     {
-      "id": 29,
+      "id": 30,
       "category": "M",
       "sec": "乙",
       "year": 103,
@@ -1113,7 +1113,7 @@
       "action": "keep"
     },
     {
-      "id": 30,
+      "id": 31,
       "category": "M",
       "sec": "乙",
       "year": 103,
@@ -1143,7 +1143,7 @@
       "action": "keep"
     },
     {
-      "id": 31,
+      "id": 32,
       "category": "M",
       "sec": "乙",
       "year": 104,
@@ -1173,7 +1173,7 @@
       "action": "keep"
     },
     {
-      "id": 32,
+      "id": 33,
       "category": "M",
       "sec": "乙",
       "year": 104,
@@ -1203,7 +1203,7 @@
       "action": "keep"
     },
     {
-      "id": 33,
+      "id": 34,
       "category": "M",
       "sec": "乙",
       "year": 104,
@@ -1233,7 +1233,7 @@
       "action": "keep"
     },
     {
-      "id": 34,
+      "id": 35,
       "category": "M",
       "sec": "乙",
       "year": 104,
@@ -1263,7 +1263,7 @@
       "action": "keep"
     },
     {
-      "id": 35,
+      "id": 36,
       "category": "M",
       "sec": "乙",
       "year": 104,
@@ -1293,7 +1293,7 @@
       "action": "keep"
     },
     {
-      "id": 36,
+      "id": 37,
       "category": "M",
       "sec": "乙",
       "year": 104,
@@ -1323,7 +1323,7 @@
       "action": "keep"
     },
     {
-      "id": 37,
+      "id": 38,
       "category": "M",
       "sec": "乙",
       "year": 104,
@@ -1353,7 +1353,7 @@
       "action": "keep"
     },
     {
-      "id": 38,
+      "id": 39,
       "category": "M",
       "sec": "乙",
       "year": 104,
@@ -1383,7 +1383,7 @@
       "action": "keep"
     },
     {
-      "id": 39,
+      "id": 40,
       "category": "M",
       "sec": "乙",
       "year": 105,
@@ -1413,7 +1413,7 @@
       "action": "keep"
     },
     {
-      "id": 40,
+      "id": 41,
       "category": "M",
       "sec": "乙",
       "year": 106,
@@ -1443,7 +1443,7 @@
       "action": "keep"
     },
     {
-      "id": 41,
+      "id": 42,
       "category": "M",
       "sec": "乙",
       "year": 106,
@@ -1473,7 +1473,7 @@
       "action": "keep"
     },
     {
-      "id": 42,
+      "id": 43,
       "category": "M",
       "sec": "乙",
       "year": 106,
@@ -1503,7 +1503,7 @@
       "action": "keep"
     },
     {
-      "id": 43,
+      "id": 44,
       "category": "M",
       "sec": "乙",
       "year": 107,
@@ -1533,7 +1533,7 @@
       "action": "keep"
     },
     {
-      "id": 44,
+      "id": 45,
       "category": "M",
       "sec": "乙",
       "year": 107,
@@ -1563,7 +1563,7 @@
       "action": "keep"
     },
     {
-      "id": 45,
+      "id": 46,
       "category": "M",
       "sec": "乙",
       "year": 107,
@@ -1593,7 +1593,7 @@
       "action": "keep"
     },
     {
-      "id": 46,
+      "id": 47,
       "category": "M",
       "sec": "乙",
       "year": 107,
@@ -1623,7 +1623,7 @@
       "action": "keep"
     },
     {
-      "id": 47,
+      "id": 48,
       "category": "M",
       "sec": "乙",
       "year": 107,
@@ -1653,7 +1653,7 @@
       "action": "keep"
     },
     {
-      "id": 48,
+      "id": 49,
       "category": "M",
       "sec": "乙",
       "year": 107,
@@ -1683,7 +1683,7 @@
       "action": "keep"
     },
     {
-      "id": 49,
+      "id": 50,
       "category": "M",
       "sec": "乙",
       "year": 107,
@@ -1713,7 +1713,7 @@
       "action": "keep"
     },
     {
-      "id": 50,
+      "id": 51,
       "category": "M",
       "sec": "乙",
       "year": 107,
@@ -1743,7 +1743,7 @@
       "action": "keep"
     },
     {
-      "id": 51,
+      "id": 52,
       "category": "M",
       "sec": "乙",
       "year": 107,
@@ -1773,7 +1773,7 @@
       "action": "keep"
     },
     {
-      "id": 52,
+      "id": 53,
       "category": "M",
       "sec": "乙",
       "year": 107,
@@ -1803,7 +1803,7 @@
       "action": "keep"
     },
     {
-      "id": 53,
+      "id": 54,
       "category": "M",
       "sec": "乙",
       "year": 107,
@@ -1833,7 +1833,7 @@
       "action": "keep"
     },
     {
-      "id": 54,
+      "id": 55,
       "category": "M",
       "sec": "乙",
       "year": 107,
@@ -1863,7 +1863,7 @@
       "action": "keep"
     },
     {
-      "id": 55,
+      "id": 56,
       "category": "M",
       "sec": "乙",
       "year": 107,
@@ -1893,7 +1893,7 @@
       "action": "keep"
     },
     {
-      "id": 56,
+      "id": 57,
       "category": "M",
       "sec": "乙",
       "year": 107,
@@ -1923,7 +1923,7 @@
       "action": "keep"
     },
     {
-      "id": 57,
+      "id": 58,
       "category": "M",
       "sec": "乙",
       "year": 107,
@@ -1953,7 +1953,7 @@
       "action": "keep"
     },
     {
-      "id": 58,
+      "id": 59,
       "category": "M",
       "sec": "乙",
       "year": 107,
@@ -1983,7 +1983,7 @@
       "action": "keep"
     },
     {
-      "id": 59,
+      "id": 60,
       "category": "M",
       "sec": "乙",
       "year": 107,
@@ -2013,7 +2013,7 @@
       "action": "keep"
     },
     {
-      "id": 60,
+      "id": 61,
       "category": "M",
       "sec": "乙",
       "year": 107,
@@ -2043,7 +2043,7 @@
       "action": "keep"
     },
     {
-      "id": 61,
+      "id": 62,
       "category": "M",
       "sec": "乙",
       "year": 108,
@@ -2073,7 +2073,7 @@
       "action": "keep"
     },
     {
-      "id": 62,
+      "id": 63,
       "category": "M",
       "sec": "乙",
       "year": 108,
@@ -2103,7 +2103,7 @@
       "action": "keep"
     },
     {
-      "id": 63,
+      "id": 64,
       "category": "M",
       "sec": "乙",
       "year": 108,
@@ -2133,7 +2133,7 @@
       "action": "keep"
     },
     {
-      "id": 64,
+      "id": 65,
       "category": "M",
       "sec": "乙",
       "year": 108,
@@ -2163,7 +2163,7 @@
       "action": "keep"
     },
     {
-      "id": 65,
+      "id": 66,
       "category": "M",
       "sec": "乙",
       "year": 108,
@@ -2193,7 +2193,7 @@
       "action": "keep"
     },
     {
-      "id": 66,
+      "id": 67,
       "category": "M",
       "sec": "乙",
       "year": 108,
@@ -2223,7 +2223,7 @@
       "action": "keep"
     },
     {
-      "id": 67,
+      "id": 68,
       "category": "M",
       "sec": "乙",
       "year": 108,
@@ -2253,7 +2253,7 @@
       "action": "keep"
     },
     {
-      "id": 68,
+      "id": 69,
       "category": "M",
       "sec": "乙",
       "year": 109,
@@ -2283,7 +2283,7 @@
       "action": "keep"
     },
     {
-      "id": 69,
+      "id": 70,
       "category": "M",
       "sec": "乙",
       "year": 109,
@@ -2313,7 +2313,7 @@
       "action": "keep"
     },
     {
-      "id": 70,
+      "id": 71,
       "category": "M",
       "sec": "乙",
       "year": 109,
@@ -2343,7 +2343,7 @@
       "action": "keep"
     },
     {
-      "id": 71,
+      "id": 72,
       "category": "M",
       "sec": "乙",
       "year": 109,
@@ -2373,7 +2373,7 @@
       "action": "keep"
     },
     {
-      "id": 72,
+      "id": 73,
       "category": "M",
       "sec": "乙",
       "year": 109,
@@ -2403,7 +2403,7 @@
       "action": "keep"
     },
     {
-      "id": 73,
+      "id": 74,
       "category": "M",
       "sec": "乙",
       "year": 109,
@@ -2433,7 +2433,7 @@
       "action": "keep"
     },
     {
-      "id": 74,
+      "id": 75,
       "category": "M",
       "sec": "乙",
       "year": 109,
@@ -2463,7 +2463,7 @@
       "action": "keep"
     },
     {
-      "id": 75,
+      "id": 76,
       "category": "M",
       "sec": "乙",
       "year": 109,
@@ -2493,7 +2493,7 @@
       "action": "keep"
     },
     {
-      "id": 76,
+      "id": 77,
       "category": "M",
       "sec": "乙",
       "year": 109,
@@ -2523,7 +2523,7 @@
       "action": "keep"
     },
     {
-      "id": 77,
+      "id": 78,
       "category": "M",
       "sec": "乙",
       "year": 109,
@@ -2553,7 +2553,7 @@
       "action": "keep"
     },
     {
-      "id": 78,
+      "id": 79,
       "category": "M",
       "sec": "乙",
       "year": 109,
@@ -2583,7 +2583,7 @@
       "action": "keep"
     },
     {
-      "id": 79,
+      "id": 80,
       "category": "M",
       "sec": "乙",
       "year": 109,
@@ -2613,7 +2613,7 @@
       "action": "keep"
     },
     {
-      "id": 80,
+      "id": 81,
       "category": "M",
       "sec": "乙",
       "year": 109,
@@ -2643,7 +2643,7 @@
       "action": "keep"
     },
     {
-      "id": 81,
+      "id": 82,
       "category": "M",
       "sec": "乙",
       "year": 109,
@@ -2673,7 +2673,7 @@
       "action": "keep"
     },
     {
-      "id": 82,
+      "id": 83,
       "category": "M",
       "sec": "乙",
       "year": 109,
@@ -2703,7 +2703,7 @@
       "action": "keep"
     },
     {
-      "id": 83,
+      "id": 84,
       "category": "M",
       "sec": "乙",
       "year": 110,
@@ -2733,7 +2733,7 @@
       "action": "keep"
     },
     {
-      "id": 84,
+      "id": 85,
       "category": "M",
       "sec": "乙",
       "year": 110,
@@ -2763,7 +2763,7 @@
       "action": "keep"
     },
     {
-      "id": 85,
+      "id": 86,
       "category": "M",
       "sec": "乙",
       "year": 110,
@@ -2793,7 +2793,7 @@
       "action": "keep"
     },
     {
-      "id": 86,
+      "id": 87,
       "category": "M",
       "sec": "乙",
       "year": 111,
@@ -2823,7 +2823,7 @@
       "action": "keep"
     },
     {
-      "id": 87,
+      "id": 88,
       "category": "M",
       "sec": "乙",
       "year": 111,
@@ -2853,7 +2853,7 @@
       "action": "keep"
     },
     {
-      "id": 88,
+      "id": 89,
       "category": "M",
       "sec": "乙",
       "year": 111,
@@ -2883,7 +2883,7 @@
       "action": "keep"
     },
     {
-      "id": 89,
+      "id": 90,
       "category": "M",
       "sec": "乙",
       "year": 111,
@@ -2913,7 +2913,7 @@
       "action": "keep"
     },
     {
-      "id": 90,
+      "id": 91,
       "category": "M",
       "sec": "乙",
       "year": 111,
@@ -2943,7 +2943,7 @@
       "action": "keep"
     },
     {
-      "id": 91,
+      "id": 92,
       "category": "M",
       "sec": "乙",
       "year": 111,
@@ -2973,7 +2973,7 @@
       "action": "keep"
     },
     {
-      "id": 92,
+      "id": 93,
       "category": "M",
       "sec": "乙",
       "year": 111,
@@ -3003,7 +3003,7 @@
       "action": "keep"
     },
     {
-      "id": 93,
+      "id": 94,
       "category": "M",
       "sec": "乙",
       "year": 111,
@@ -3033,7 +3033,7 @@
       "action": "keep"
     },
     {
-      "id": 94,
+      "id": 95,
       "category": "M",
       "sec": "乙",
       "year": 111,
@@ -3063,7 +3063,7 @@
       "action": "keep"
     },
     {
-      "id": 95,
+      "id": 96,
       "category": "M",
       "sec": "乙",
       "year": 111,
@@ -3093,7 +3093,7 @@
       "action": "keep"
     },
     {
-      "id": 96,
+      "id": 97,
       "category": "M",
       "sec": "乙",
       "year": 111,
@@ -3123,7 +3123,7 @@
       "action": "keep"
     },
     {
-      "id": 97,
+      "id": 98,
       "category": "M",
       "sec": "乙",
       "year": 114,
