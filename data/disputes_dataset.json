@@ -34,36 +34,6 @@
       "id": 2,
       "category": "X",
       "sec": "甲",
-      "year": 102,
-      "num": "040",
-      "topic": "嗲聲嗲氣",
-      "test_w": "嗲",
-      "current_ans": "ㄉㄧㄝ",
-      "errata": {
-        "has_errata": false,
-        "ans": "(無勘誤)",
-        "crop_path": "",
-        "pdf_url": "",
-        "note": ""
-      },
-      "original": {
-        "ans": "ㄉㄧㄝ",
-        "crop_path": "assets/crops/102_甲_040.png",
-        "pdf_url": "topics/102年國語字音字形(高中).pdf"
-      },
-      "moe": {
-        "is_found": true,
-        "ans": "ㄉㄧㄝ",
-        "url": "https://dict.concised.moe.edu.tw/dictView.jsp?ID=8598",
-        "char_url": "https://dict.concised.moe.edu.tw/search.jsp?md=1&word=%E5%97%B2"
-      },
-      "note": "簡編本單字「嗲」條目例句「嗲聲嗲氣」，審訂定音為ㄉㄧㄝ，經原卷高解析核對實印ㄉㄧㄝ（非ㄉㄧㄚˇ），更新系統答案，保持X待審",
-      "action": "keep"
-    },
-    {
-      "id": 3,
-      "category": "X",
-      "sec": "甲",
       "year": 107,
       "num": "010",
       "topic": "諍言",
@@ -91,7 +61,7 @@
       "action": "keep"
     },
     {
-      "id": 4,
+      "id": 3,
       "category": "X",
       "sec": "甲",
       "year": 108,
@@ -118,96 +88,6 @@
         "char_url": "https://dict.revised.moe.edu.tw/search.jsp?md=2&word=烴"
       },
       "note": "原卷方格印ㄑㄧㄥ，與辭典ㄊㄧㄥ不符，保持X",
-      "action": "keep"
-    },
-    {
-      "id": 5,
-      "category": "X",
-      "sec": "甲",
-      "year": 109,
-      "num": "079",
-      "topic": "中外禔福",
-      "test_w": "禔",
-      "current_ans": "ㄊㄧˊ",
-      "errata": {
-        "has_errata": false,
-        "ans": "(無勘誤)",
-        "crop_path": "",
-        "pdf_url": "",
-        "note": ""
-      },
-      "original": {
-        "ans": "ㄊㄧˊ",
-        "crop_path": "assets/crops/109_甲_079.png",
-        "pdf_url": "topics/109年國語字音字形(高中).pdf"
-      },
-      "moe": {
-        "is_found": true,
-        "ans": "ㄊㄧˊ",
-        "url": "https://dict.revised.moe.edu.tw/dictView.jsp?ID=2639",
-        "char_url": "https://dict.revised.moe.edu.tw/search.jsp?md=2&word=禔"
-      },
-      "note": "修訂本單字「禔」條目引《漢書．司馬相如傳》「中外禔福」，定音為ㄊㄧˊ，經原卷高解析核對實印ㄊㄧˊ（非ㄓˊ），更新系統答案，保持X待審",
-      "action": "keep"
-    },
-    {
-      "id": 6,
-      "category": "X",
-      "sec": "甲",
-      "year": 111,
-      "num": "075",
-      "topic": "雨雪其雱",
-      "test_w": "雱",
-      "current_ans": "ㄆㄤ",
-      "errata": {
-        "has_errata": false,
-        "ans": "(無勘誤)",
-        "crop_path": "",
-        "pdf_url": "",
-        "note": ""
-      },
-      "original": {
-        "ans": "ㄆㄤ",
-        "crop_path": "assets/crops/111_甲_075.png",
-        "pdf_url": "topics/111年國語字音字形(高中).pdf"
-      },
-      "moe": {
-        "is_found": true,
-        "ans": "ㄆㄤˊ",
-        "url": "https://dict.revised.moe.edu.tw/dictView.jsp?ID=753",
-        "char_url": "https://dict.revised.moe.edu.tw/search.jsp?md=2&word=雱"
-      },
-      "note": "修訂本單字「雱」條目引《詩經》「雨雪其雱」，定音為ㄆㄤˊ，原卷方格印ㄆㄤ，保持X",
-      "action": "keep"
-    },
-    {
-      "id": 7,
-      "category": "X",
-      "sec": "乙",
-      "year": 107,
-      "num": "001",
-      "topic": "ㄒㄧˋ 鼻涕",
-      "test_w": "ㄒㄧˋ",
-      "current_ans": "擤",
-      "errata": {
-        "has_errata": false,
-        "ans": "(無勘誤)",
-        "crop_path": "",
-        "pdf_url": "",
-        "note": ""
-      },
-      "original": {
-        "ans": "擤",
-        "crop_path": "assets/crops/107_乙_001.png",
-        "pdf_url": "topics/107年國語字音字形(高中).pdf"
-      },
-      "moe": {
-        "is_found": true,
-        "ans": "擤 (注音ㄒㄧㄥˇ)",
-        "url": "https://dict.revised.moe.edu.tw/dictView.jsp?ID=7264",
-        "char_url": "https://dict.revised.moe.edu.tw/search.jsp?md=2&word=ㄒㄧˋ"
-      },
-      "note": "修訂本單字「擤」條目造句「擤鼻涕」，標準定音為ㄒㄧㄥˇ，題幹提示注音印ㄒㄧˋ，保持X",
       "action": "keep"
     }
   ],
