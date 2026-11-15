@@ -1061,7 +1061,14 @@ ${JSON.stringify(cleanPayload, null, 2)}
             alert(`修改失敗: ${res.error || '未知錯誤'}`);
           }
         } else {
-          alert('伺服器回傳錯誤代碼，請確認 server.py 正在運行。');
+          let detail = '';
+          try {
+            const res = await resp.json();
+            if (res.error) detail = `\n${res.error}`;
+          } catch (parseErr) {
+            detail = '';
+          }
+          alert(`伺服器回傳錯誤代碼，請確認 server.py 正在運行。${detail}`);
         }
       } catch (err) {
         alert(`無法連線至伺服器: ${err.message}\n請確認已在終端執行 python server.py。`);

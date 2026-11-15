@@ -198,17 +198,27 @@ def apply_dispute_changes(changes):
         with open(md_path, 'w', encoding='utf-8') as f:
             f.writelines(new_lines)
 
+        # 準備環境變數強制子程序輸出 UTF-8
+        sub_env = {**os.environ, 'PYTHONIOENCODING': 'utf-8'}
+
         # 重新匯出 su_words_bank.json 與 .js
         exp_script = os.path.join(BASE_DIR, 'data', 'export_dataset.py')
-        subprocess.run([sys.executable, exp_script], check=True)
+        subprocess.run([sys.executable, exp_script], env=sub_env, check=True)
 
         # 重新產生爭議字資料集
         gen_script = os.path.join(BASE_DIR, 'data', 'generate_dispute_assets.py')
-        subprocess.run([sys.executable, gen_script], check=True)
+        subprocess.run([sys.executable, gen_script], env=sub_env, check=True)
 
-        # 執行自動化驗證
+        # 執行自動化驗證 (加入 errors='replace' 與 UTF-8 環境變數避免 Windows 解碼異常崩潰)
         verify_script = os.path.join(BASE_DIR, 'verify_all.py')
-        res = subprocess.run([sys.executable, verify_script], capture_output=True, text=True, encoding='utf-8')
+        res = subprocess.run(
+            [sys.executable, verify_script],
+            capture_output=True,
+            text=True,
+            encoding='utf-8',
+            errors='replace',
+            env=sub_env
+        )
         verify_passed = (res.returncode == 0)
 
         return {
